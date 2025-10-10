@@ -1,0 +1,26 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+# Build output
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Tt]est[Rr]esult*/
+
+# VS Code/JetBrains
+.vscode/
+.idea/
+
+# Misc
+*.cache
+*.coverage
+*.coveragexml
+*.opendb
+*.VC.db
+.DS_Store
+Thumbs.db
