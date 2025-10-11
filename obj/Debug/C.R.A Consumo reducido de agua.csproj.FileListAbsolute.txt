@@ -1,0 +1,36 @@
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\bin\Debug\C.R.A Consumo reducido de agua.exe.config
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\bin\Debug\C.R.A Consumo reducido de agua.exe
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\bin\Debug\C.R.A Consumo reducido de agua.pdb
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Consumo reducido de agua.csproj.AssemblyReference.cache
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\MainWindow.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\App.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Consumo reducido de agua_MarkupCompile.cache
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Consumo reducido de agua_MarkupCompile.lref
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\MainWindow.baml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Consumo reducido de agua.g.resources
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A_Consumo_reducido_de_agua.Properties.Resources.resources
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Consumo reducido de agua.csproj.GenerateResource.cache
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Consumo reducido de agua.csproj.CoreCompileInputs.cache
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Consumo reducido de agua.exe
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Consumo reducido de agua.pdb
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Consumo reducido de agua.exe.config
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Registro.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Registro.baml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Login.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Login.baml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Inicio.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Inicio.baml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Configuracion.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Invitados.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Reporte.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Usuario.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Configuracion.baml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Invitados.baml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Reporte.baml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Usuario.baml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Preguntas.g.cs
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\Preguntas.baml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\bin\Debug\WpfAnimatedGif.dll
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\bin\Debug\WpfAnimatedGif.pdb
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\bin\Debug\WpfAnimatedGif.xml
+C:\Users\danie\source\repos\C.R.A Consumo reducido de agua\obj\Debug\C.R.A Co.A4B37975.Up2Date
