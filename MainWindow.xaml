@@ -3,36 +3,37 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         xmlns:vm="clr-namespace:CRA.ViewModels"
-        Title="Ejemplo pal proyecto" Width="800" Height="700" Icon="/carpincho.png" Cursor="Arrow">
-
-    <!-- Efecto de sombra -->
-    <Window.Effect>
-        <DropShadowEffect />
-    </Window.Effect>
-
+        Title="Ejemplo pal proyecto" Width="800" Height="700" Icon="/carpincho.png" WindowStartupLocation="CenterOwner">
+    
     <!-- Recursos -->
     <Window.Resources>
+        
         <vm:PeriodToCheckedConverter x:Key="PeriodToCheckedConverter"/>
+        
+        <Style TargetType="Button">
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="FontWeight" Value="Light"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        
     </Window.Resources>
 
-    <Grid Height="600" Margin="10">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height=".1*"/>
+            <RowDefinition Height=".9*"/>
         </Grid.RowDefinitions>
 
         <!-- Añade los botones para seleccionar el periodo en el que se muestra los datos -->
-        <StackPanel Orientation="Horizontal" Margin="0,49,540,529" Grid.Row="1">
-            <Button Command="{Binding GoToPage1Command}" Margin="0,0,8,0" Width="45">Day</Button>
-            <Button Command="{Binding GoToPage2Command}" Margin="0,0,8,0" Width="45">Week</Button>
-            <Button Command="{Binding GoToPage3Command}" Margin="0,0,8,0" Width="45">Month</Button>
-            <Button Command="{Binding SeeAllCommand}" Margin="0,0,8,0" Width="45">Year</Button>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <Button Command="{Binding GoToPage1Command}" >Day</Button>
+            <Button Command="{Binding GoToPage2Command}">Week</Button>
+            <Button Command="{Binding GoToPage3Command}">Month</Button>
+            <Button Command="{Binding SeeAllCommand}">Year</Button>
         </StackPanel>
 
-        <lvc:CartesianChart Grid.Row="1"
-                            ZoomMode="X"
-                            Series="{Binding Values}"
-                            Width="600" Height="448"
-                            HorizontalAlignment="Left" />
+        <lvc:CartesianChart Grid.Row="1" ZoomMode="X" Series="{Binding Values}" XAxes="{Binding XAxes}" YAxes="{Binding YAxes}"
+                            Width="800" Height="600"/>
     </Grid>
 </Window>

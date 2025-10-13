@@ -1,9 +1,12 @@
-using System;
-using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView.Painting.Effects;
+using SkiaSharp;
+using System;
+using System.Collections.Generic;
 
 namespace CRA.ViewModels
 {
@@ -17,6 +20,33 @@ namespace CRA.ViewModels
         [ObservableProperty]
         private IEnumerable<ISeries> values = Array.Empty<ISeries>();
 
+        public Axis[] XAxes { get; set; } = new Axis[]
+        {
+            new Axis
+            {
+                Name = "Day",
+                NamePaint = new SolidColorPaint(SKColors.Black),
+                LabelsPaint = new SolidColorPaint(SKColors.Blue),
+                TextSize = 20,
+                SeparatorsPaint = new SolidColorPaint(SKColors.LightGray) { StrokeThickness = 2 }
+            }
+        };
+
+        public Axis[] YAxes { get; set; } = new Axis[]
+        {
+                new Axis
+                {
+                    Name = "Liters",
+                    LabelsPaint = new SolidColorPaint(SKColors.Green),
+                    TextSize = 20,
+                    SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
+                    {
+                        StrokeThickness = 2,
+                        PathEffect = new DashEffect(new float[] { 3, 3 })
+                    }
+                }
+        };
+
         public MainViewModel()
         {
             SelectedPeriod = "day"; // inicial por defecto
@@ -27,7 +57,7 @@ namespace CRA.ViewModels
         {
             var rnd = new Random();
             var data = new double[count];
-            for (int i = 0; i < count; i++) data[i] = rnd.Next(min, max + 1);
+            for (int i = 0; i < count; i++) data[i] = rnd.Next(min, max);
             return data;
         }
 
