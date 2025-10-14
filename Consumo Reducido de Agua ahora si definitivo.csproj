@@ -1,0 +1,117 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>Consumo_Reducido_de_Agua_ahora_si_definitivo</RootNamespace>
+    <Nullable>enable</Nullable>
+	<EnableDefaultItems>true</EnableDefaultItems>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Boton Iniciar sesion.png" />
+    <None Remove="Boton Registrarse.png" />
+    <None Remove="Captura de pantalla 2025-09-29 082544.png" />
+    <None Remove="Captura de pantalla 2025-10-08 132404.png" />
+    <None Remove="Captura de pantalla 2025-10-10 073526.png" />
+    <None Remove="Casa.jpeg" />
+    <None Remove="Casa2.png" />
+    <None Remove="Configuracion texto.png" />
+    <None Remove="Configuracion.png" />
+    <None Remove="descarga.png" />
+    <None Remove="flecha.png" />
+    <None Remove="Fondo Preguntas %282%29.png" />
+    <None Remove="fondo preguntas.png" />
+    <None Remove="Grafica barras.png" />
+    <None Remove="Grafica lineas y puntos.png" />
+    <None Remove="Image1.png" />
+    <None Remove="Image2.png" />
+    <None Remove="Image3.png" />
+    <None Remove="Image4.png" />
+    <None Remove="logo programa Pagina.png" />
+    <None Remove="logo programa.png" />
+    <None Remove="Marea.png" />
+    <None Remove="Menu Principal seleccionado.png" />
+    <None Remove="Menu Principal.png" />
+    <None Remove="perrito chivas.png" />
+    <None Remove="Propio.jpg" />
+    <None Remove="Propio.png" />
+    <None Remove="Renta.jpeg" />
+    <None Remove="Renta.png" />
+    <None Remove="Reportar.png" />
+    <None Remove="teto-tetoris.gif" />
+    <None Remove="Texto Inicio.png" />
+    <None Remove="Usuario e invitados.png" />
+    <None Remove="Vecindad.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.9" />
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Casa2.png" />
+    <Resource Include="Empresa.jpg" />
+    <Resource Include="Boton Iniciar sesion.png" />
+    <Resource Include="Boton Registrarse.png" />
+    <Resource Include="Captura de pantalla 2025-09-29 082544.png" />
+    <Resource Include="Captura de pantalla 2025-10-08 132404.png" />
+    <Resource Include="Captura de pantalla 2025-10-10 073526.png" />
+    <Resource Include="Casa.jpeg" />
+    <Resource Include="Configuracion texto.png" />
+    <Resource Include="Configuracion.png" />
+    <Resource Include="descarga.png" />
+    <Resource Include="flecha.png" />
+    <Resource Include="Fondo Preguntas (2).png" />
+    <Resource Include="fondo preguntas.png" />
+    <Resource Include="Grafica barras.png" />
+    <Resource Include="Grafica lineas y puntos.png" />
+    <Resource Include="Image1.png" />
+    <Resource Include="Image2.png" />
+    <Resource Include="Image3.png" />
+    <Resource Include="Image4.png" />
+    <Resource Include="logo programa Pagina.png" />
+    <Resource Include="logo programa.png" />
+    <Resource Include="Marea.png" />
+    <Resource Include="Menu Principal seleccionado.png" />
+    <Resource Include="Menu Principal.png" />
+    <Resource Include="perrito chivas.png" />
+    <Resource Include="Propio.jpg" />
+    <Resource Include="Propio.png" />
+    <Resource Include="Renta.jpeg" />
+    <Resource Include="Renta.png" />
+    <Resource Include="Reportar.png" />
+    <Resource Include="teto-tetoris.gif" />
+    <Resource Include="Texto Inicio.png" />
+    <Resource Include="Usuario e invitados.png" />
+    <Resource Include="Vecindad.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings1.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings1.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Properties\Settings1.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
