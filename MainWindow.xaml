@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         xmlns:vm="clr-namespace:CRA.ViewModels"
-        Title="Ejemplo pal proyecto" Width="800" Height="700" Icon="/carpincho.png" WindowStartupLocation="CenterOwner">
+        Title="Ejemplo pal proyecto" Width="850" Height="700" Icon="/carpincho.png" WindowStartupLocation="CenterOwner">
     
     <!-- Recursos -->
     <Window.Resources>
