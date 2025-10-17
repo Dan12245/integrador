@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consumo Reducido de Agua ahora si definitivo", "Consumo Reducido de Agua ahora si definitivo.csproj", "{AB7AF239-C1AC-4877-ABCF-8676A7A373DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB7AF239-C1AC-4877-ABCF-8676A7A373DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB7AF239-C1AC-4877-ABCF-8676A7A373DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB7AF239-C1AC-4877-ABCF-8676A7A373DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB7AF239-C1AC-4877-ABCF-8676A7A373DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {03165ABC-7FE3-4EF9-A1ED-00857B5330A3}
+	EndGlobalSection
+EndGlobal
