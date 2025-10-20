@@ -36,10 +36,10 @@
     </UserControl.Resources>
 
     <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid x:Name="Login_Window" Background="#FFB2CFE6" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid x:Name="Login_Window" Background="#FFB2CFE6" Height="434" Width="800" KeyboardNavigation.TabNavigation="Cycle">
 
-            <Image Margin="-187,48,547,-53" Source="/descarga.png" Stretch="Fill"/>
-            <Image x:Name="MareaImage" Margin="-76,343,-182,-146" Source="/Marea.png" Stretch="Fill"/>
+            <Image Margin="-187,48,547,-53" Source="Images/descarga.png" Stretch="Fill"/>
+            <Image x:Name="MareaImage" Margin="-76,343,-182,-146" Source="Images/Marea.png" Stretch="Fill"/>
             <Rectangle Height="426" Width="392" UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Center" RadiusX="26.535" RadiusY="26.535">
                 <Rectangle.Stroke>
                     <SolidColorBrush Color="Black" Opacity="0"/>
@@ -51,7 +51,8 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
-            <Button x:Name="Boton_Login" Content="Login" Click ="Boton_Login_Click"  HorizontalAlignment="Left" Margin="258,87,0,0" VerticalAlignment="Top" FontSize="16" Width="156" Height="35" RenderTransformOrigin="0,0">
+            <Button x:Name="Boton_Login" Content="Login" Click ="Boton_Login_Click"  HorizontalAlignment="Left" Margin="258,87,0,0" TabIndex="5"
+                    VerticalAlignment="Top" FontSize="16" Width="156" Height="35" RenderTransformOrigin="0,0">
                 <Button.BorderBrush>
                     <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
                 </Button.BorderBrush>
@@ -63,10 +64,11 @@
                     <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Register" Content="Register" HorizontalAlignment="Left" Margin="388,87,0,0" VerticalAlignment="Top" Background="#FF7385E3" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="154" Height="35" RenderTransformOrigin="0,0"  OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
+            <Button x:Name="Boton_Register" Content="Register" HorizontalAlignment="Left" Margin="388,87,0,0" VerticalAlignment="Top" TabIndex="6"
+                    Background="#FF7385E3" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="154" Height="35" RenderTransformOrigin="0,0"  OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
 
-            <Image Margin="-806,4,876,4" Source="/Captura de pantalla 2025-09-29 082544.png" Stretch="Fill"/>
-            <Image Margin="352,0,352,339" Source="/logo programa Pagina.png" Stretch="Fill" RenderTransformOrigin="0.493,0.323"/>
+            <Image Margin="-806,4,876,4" Source="Images/Captura de pantalla 2025-09-29 082544.png" Stretch="Fill"/>
+            <Image Margin="0,0,0,342" Width="75" Source="Images/Logo.png"/>
             <Rectangle Height="289" Width="328" UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Top" RadiusX="26.535" RadiusY="26.535" Margin="0,117,0,0">
                 <Rectangle.Stroke>
                     <SolidColorBrush Color="Black" Opacity="0"/>
@@ -78,18 +80,23 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
-            <PasswordBox x:Name="Campo_Contraseña" HorizontalAlignment="Center" Margin="0,253,0,0" VerticalAlignment="Top" Width="294" Height="32" VerticalContentAlignment="Center" Background="#FFD9D9D9" Foreground="#FF717171" PasswordChanged="PasswordPlaceHolder"/>
-            <TextBox x:Name="Campo_Email" HorizontalAlignment="Center" TextChanged="PlaceHolderTexto" TextWrapping="Wrap" VerticalAlignment="Center" Width="294" Height="30" FontFamily="Yu Gothic" FontSize="16" MaxLines="3" VerticalContentAlignment="Center"  Background="#FFD9D9D9" Foreground="#FF717171"/>
+            <PasswordBox x:Name="Campo_Contraseña" HorizontalAlignment="Center" Margin="0,253,0,0" VerticalAlignment="Top" TabIndex="2"
+                         Width="294" Height="32" VerticalContentAlignment="Center" Background="#FFD9D9D9" Foreground="#FF717171" PasswordChanged="PasswordPlaceHolder"/>
+            <TextBox x:Name="Campo_Email" HorizontalAlignment="Center" TextChanged="PlaceHolderTexto" TabIndex="1"
+                     VerticalAlignment="Center" Width="294" Height="30" FontFamily="Yu Gothic" FontSize="16" MaxLines="3" VerticalContentAlignment="Center"  Background="#FFD9D9D9" Foreground="#FF717171"/>
             <Rectangle HorizontalAlignment="Center" Height="1" Margin="0,137,0,0" Stroke="Black" VerticalAlignment="Top" Width="284"/>
             <Rectangle HorizontalAlignment="Center" Height="2" Stroke="Black" VerticalAlignment="Top" Width="284" Margin="0,395,0,0"/>
-            <Button x:Name="Registrarse" Content="" Click="Boton_Registrarse" HorizontalAlignment="Center" Margin="0,353,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Foreground="White" FontSize="16"  Width="286" Height="32" IsDefault="True">
+            <Button x:Name="Registrarse" Content="" Click="Boton_Registrarse" HorizontalAlignment="Center" Margin="0,353,0,0" TabIndex="4"
+                    VerticalAlignment="Top" BorderBrush="{x:Null}" Foreground="White" FontSize="16"  Width="286" Height="32" IsDefault="True">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Boton Registrarse.png"/>
+                    <ImageBrush ImageSource="Images/Boton Registrarse.png"/>
                 </Button.Background>
             </Button>
-            <PasswordBox x:Name="Campo_Repetir_Contraseña" HorizontalAlignment="Center" Margin="0,305,0,0" VerticalAlignment="Top" Width="294" Height="31" VerticalContentAlignment="Center" Background="#FFD9D9D9" Foreground="#FF717171" PasswordChanged="PasswordPlaceHolder"/>
-            <TextBox x:Name="Campo_Nombre" HorizontalAlignment="Center" TextChanged="PlaceHolderTexto" Margin="0,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="294" Height="30" FontFamily="Yu Gothic" FontSize="16" MaxLines="3" VerticalContentAlignment="Center"  Background="#FFD9D9D9" Foreground="#FF717171"/>
-            <TextBlock x:Name="email_place_holder" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="257,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontFamily="Yu Gothic" FontSize="16">
+            <PasswordBox x:Name="Campo_Repetir_Contraseña" HorizontalAlignment="Center" Margin="0,305,0,0" VerticalAlignment="Top" TabIndex="3"
+                         Width="294" Height="31" VerticalContentAlignment="Center" Background="#FFD9D9D9" Foreground="#FF717171" PasswordChanged="PasswordPlaceHolder"/>
+            <TextBox x:Name="Campo_Nombre" HorizontalAlignment="Center" TextChanged="PlaceHolderTexto" Margin="0,150,0,0" TabIndex="0"
+                     VerticalAlignment="Top" Width="294" Height="30" FontFamily="Yu Gothic" FontSize="16" MaxLines="3" VerticalContentAlignment="Center"  Background="#FFD9D9D9" Foreground="#FF717171"/>
+            <TextBlock x:Name="email_place_holder" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="257,0,0,0" VerticalAlignment="Center" FontFamily="Yu Gothic" FontSize="16">
                 <TextBlock.Foreground>
                     <SolidColorBrush Color="#FF717171" Opacity="1"/>
                 </TextBlock.Foreground><Run Language="es-mx" Text="Email"/></TextBlock>

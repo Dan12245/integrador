@@ -35,10 +35,10 @@
     </UserControl.Resources>
 
     <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid x:Name="Login_Window" Background="#FFB2CFE6" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid x:Name="Login_Window" KeyboardNavigation.TabNavigation="Cycle" Background="#FFB2CFE6" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-            <Image Margin="-187,48,547,-53" Source="/descarga.png" Stretch="Fill"/>
-            <Image x:Name="MareaImage" Margin="-76,343,-182,-146" Source="/Marea.png" Stretch="Fill"/>
+            <Image Margin="-187,48,547,-53" Source="Images/descarga.png" Stretch="Fill"/>
+            <Image x:Name="MareaImage" Margin="-76,343,-182,-146" Source="Images/Marea.png" Stretch="Fill"/>
 
             <Rectangle Height="426" Width="392" UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Center" RadiusX="26.535" RadiusY="26.535">
                 <Rectangle.Stroke>
@@ -51,20 +51,12 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
-            <Button x:Name="Boton_Register" Content="Register" Click="Boton_Register_Click" HorizontalAlignment="Left" Margin="387,87,0,0" VerticalAlignment="Top" FontSize="16" Width="155" Height="35" RenderTransformOrigin="0,0">
-                <Button.BorderBrush>
-                    <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
-                </Button.BorderBrush>
+            <Button x:Name="Boton_Register" Content="Register" Click="Boton_Register_Click" HorizontalAlignment="Left" TabIndex="1"
+                     Margin="387,87,0,0" VerticalAlignment="Top" Width="155" Height="35" Opacity="0.25"/>
 
-                <Button.Foreground>
-                    <SolidColorBrush Color="White" Opacity="0.4"/>
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
-                </Button.Background>
-            </Button>
-            <Image Margin="352,0,352,339" Source="/logo programa Pagina.png" Stretch="Fill" RenderTransformOrigin="0.493,0.323"/>
-            <Button x:Name="Boton_Login" Content="Login" HorizontalAlignment="Left" Margin="258,87,0,0" VerticalAlignment="Top" Background="#FF7385E3" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="154" Height="35" RenderTransformOrigin="0,0" Click="Button_Click_1" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
+            <Image Margin="0,0,0,342" Width="75" Source="Images/Logo.png"/>
+            <Button x:Name="Boton_Login" Content="Login" HorizontalAlignment="Left" Margin="258,87,0,0" VerticalAlignment="Top" TabIndex="0"
+             Background="#FF7385E3" Width="154" Height="35" Click="Button_Click_1" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
             <Rectangle Height="289" Width="328" UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Top" RadiusX="26.535" RadiusY="26.535" Margin="0,117,0,0">
                 <Rectangle.Stroke>
                     <SolidColorBrush Color="Black" Opacity="0"/>
@@ -77,15 +69,20 @@
                 </Rectangle.Fill>
             </Rectangle>
             <Rectangle HorizontalAlignment="Center" Height="32" Margin="0,226,0,0" Stroke="#FFABADB3" VerticalAlignment="Top" Width="294" Fill="#FFD9D9D9" IsEnabled="False"/>
-            <PasswordBox x:Name="txtPassword" HorizontalAlignment="Center" VerticalAlignment="Top" Width="294" Height="32" VerticalContentAlignment="Center" Background="#FFD9D9D9" Foreground="#FF717171" Margin="0,226,0,0" PasswordChanged="txtPassword_PasswordChanged"/>
-            <TextBox x:Name="txtEmail" HorizontalAlignment="Center" Margin="0,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="294" Height="31" FontFamily="Yu Gothic" FontSize="16" MaxLines="3" VerticalContentAlignment="Center" TextChanged="txtEmail_TextChanged" Background="#FFD9D9D9" Foreground="#FF717171"/>
-            <Button Content="Olvido el correo?" HorizontalAlignment="Left" Margin="253,183,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="16"/>
-            <Button Content="Olvido la contraseña?" HorizontalAlignment="Left" Margin="253,261,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="16" Click="Button_Click"/>
+            <PasswordBox x:Name="txtPassword" HorizontalAlignment="Center" VerticalAlignment="Top" Width="294" Height="32" TabIndex="3"
+                         VerticalContentAlignment="Center" Background="#FFD9D9D9" Foreground="#FF717171" Margin="0,226,0,0" PasswordChanged="txtPassword_PasswordChanged"/>
+            <TextBox x:Name="txtEmail" HorizontalAlignment="Center" Margin="0,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" TabIndex="2"
+                     Width="294" Height="31" FontFamily="Yu Gothic" FontSize="16" MaxLines="3" VerticalContentAlignment="Center" TextChanged="txtEmail_TextChanged" Background="#FFD9D9D9" Foreground="#FF717171"/>
+            <Button Content="Olvido el correo?" HorizontalAlignment="Left" Margin="253,183,0,0" VerticalAlignment="Top" TabIndex="5"
+                    Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="16"/>
+            <Button Content="Olvido la contraseña?" HorizontalAlignment="Left" Margin="253,261,0,0" VerticalAlignment="Top" TabIndex="6"
+                    Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="16" Click="Button_Click"/>
             <Rectangle HorizontalAlignment="Center" Height="1" Margin="0,137,0,0" Stroke="Black" VerticalAlignment="Top" Width="284"/>
             <Rectangle HorizontalAlignment="Center" Height="2" Stroke="Black" VerticalAlignment="Top" Width="284" Margin="0,395,0,0"/>
-            <Button x:Name="Iniciar_Sesion" Content="" HorizontalAlignment="Center" Margin="0,298,0,0" VerticalAlignment="Top" BorderBrush="{x:Null}" Foreground="White" FontSize="16" Click="btnLogin_Click" Width="286" Height="32" IsDefault="True">
+            <Button x:Name="Iniciar_Sesion" Content="" HorizontalAlignment="Center" Margin="0,298,0,0" VerticalAlignment="Top" TabIndex="4"
+                    BorderBrush="{x:Null}" Foreground="White" FontSize="16" Click="btnLogin_Click" Width="286" Height="32" IsDefault="True">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Boton Iniciar sesion.png"/>
+                    <ImageBrush ImageSource="Images/Boton Iniciar sesion.png"/>
                 </Button.Background>
             </Button>
             <TextBlock x:Name="txtPlaceholderPass" IsHitTestVisible="False"  HorizontalAlignment="Left" Margin="256,229,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Yu Gothic" FontSize="16">
@@ -96,14 +93,14 @@
                 <TextBlock.Foreground>
                     <SolidColorBrush Color="#FF717171" Opacity="1"/>
                 </TextBlock.Foreground><Run Language="es-mx" Text="Email"/></TextBlock>
-            <Button x:Name="Icono_Correo" Content="" HorizontalAlignment="Left" Margin="515,152,0,0" VerticalAlignment="Top" Width="27" BorderBrush="{x:Null}" Height="27">
+            <Button x:Name="Icono_Correo" HorizontalAlignment="Left" Margin="515,152,0,0" VerticalAlignment="Top" Width="27" BorderBrush="{x:Null}" Height="27">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Correo.png" Opacity="0.4"/>
+                    <ImageBrush ImageSource="Images/Correo.png" Opacity="0.4"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Icono_Contraseña" Content="" HorizontalAlignment="Left" Margin="516,234,0,0" VerticalAlignment="Top" Click="Icono_Contraseña_Click" Width="27" BorderBrush="{x:Null}" Foreground="{x:Null}" Height="16">
+            <Button x:Name="Icono_Contraseña" HorizontalAlignment="Left" Margin="516,234,0,0" VerticalAlignment="Top" Click="Icono_Contraseña_Click" Width="27" BorderBrush="{x:Null}" Foreground="{x:Null}" Height="16">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Ojo.png" Opacity="0.8"/>
+                    <ImageBrush ImageSource="Images/Ojo.png" Opacity="0.7"/>
                 </Button.Background>
             </Button>
 

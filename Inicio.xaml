@@ -47,7 +47,7 @@
     <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid x:Name="Login_Window" Background="#FF86A5FF" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Rectangle HorizontalAlignment="Left" Height="434" Stroke="#FF394D7E" VerticalAlignment="Center" Width="98" Fill="#FF394D7E"/>
-            <Image Source="/Captura de pantalla 2025-10-08 132404.png" Stretch="Fill" Margin="-848,0,848,0"/>
+            <Image Source="Images/Captura de pantalla 2025-10-08 132404.png" Stretch="Fill" Margin="-848,0,848,0"/>
             <Button x:Name="Boton_Configuracion" Content="" Click="Boton_ir_a_Configuracion" HorizontalAlignment="Left" Margin="20,174,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
 
                 <Button.Foreground>
@@ -66,7 +66,6 @@
                     <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                 </Button.Background>
             </Button>
-            <Image Margin="21,10,723,374" Source="/logo programa.png" Stretch="Fill" />
             <Rectangle HorizontalAlignment="Left" Height="2" Margin="98,75,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="702"/>
             <Button x:Name="Boton_Usuario" Content="" Click="Boton_Usuario_Invitados" HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
 
@@ -94,11 +93,11 @@
                     <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                 </Button.Background>
             </Button>
-            <Image Margin="32,378,734,20" Source="/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="30,284,730,114" Source="/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="28,182,730,212" Source="/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="26,90,726,307" Source="/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="130,14,32,374" Source="/Texto Inicio.png" Stretch="Fill"/>
+            <Image Margin="32,378,734,20" Source="Images/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="30,284,730,114" Source="Images/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="28,182,730,212" Source="Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="130,14,32,374" Source="Images/Texto Inicio.png" Stretch="Fill"/>
             <Rectangle HorizontalAlignment="Left" Height="335" Margin="113,89,0,0" VerticalAlignment="Top" Width="677" Fill="#FFCBDAFF" RadiusX="31.5" RadiusY="31.5">
                 <Rectangle.Stroke>
                     <SolidColorBrush Color="Black" Opacity="0"/>
@@ -111,11 +110,11 @@
             </ComboBox>
             <Border BorderBrush="Black" BorderThickness="1" Margin="476,125,32,191"/>
             <TextBlock x:Name="Texto_Fecha" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="321" Margin="476,247,0,0" FontSize="16" Width="294" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Text="Aca deberia haber una grafica, "/><Run Language="es-mx" Text="con fechas "/><Run Text="pero pos a lo mejor y vale verga tambien xd"/></TextBlock>
-            <Button HorizontalAlignment="Left" Margin="722,357,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Height="67" Width="68" Click="btnSalto_Click">
+            <Button HorizontalAlignment="Left" Margin="722,357,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Height="67" Width="61" Click="btnSalto_Click">
                 <Button.RenderTransform>
                     <TranslateTransform x:Name="btnSaltoTransform" Y="0"/>
                 </Button.RenderTransform>
-                <Image gif:ImageBehavior.AnimatedSource="/teto-tetoris.gif"/>
+                <Image gif:ImageBehavior.AnimatedSource="Images/teto-tetoris.gif"/>
             </Button>
             <Button Content="Button" Click ="btnSiguiente_Click" HorizontalAlignment="Left" Margin="729,291,0,0" VerticalAlignment="Top" Height="36" Width="54">
                 <Button.Foreground>
@@ -125,7 +124,7 @@
                     <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
                 </Button.BorderBrush>
                 <Button.Background>
-                    <ImageBrush ImageSource="/flecha.png"/>
+                    <ImageBrush ImageSource="Images/flecha.png"/>
                 </Button.Background>
             </Button>
             <Button Content="" Click="btnAnterior_Click" HorizontalAlignment="Left" Margin="130,291,0,0" VerticalAlignment="Top" Height="36" Width="54" RenderTransformOrigin="0.5,0.5">
@@ -144,12 +143,17 @@
                     <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
                 </Button.BorderBrush>
                 <Button.Background>
-                    <ImageBrush ImageSource="/flecha.png"/>
+                    <ImageBrush ImageSource="Images/flecha.png"/>
                 </Button.Background>
             </Button>
-            <TextBlock x:Name="texto_consejo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="527" Margin="197,293,0,0" FontSize="16" Width="527" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Language="es-mx" Text="Consejos consejosamente consejosos"/></TextBlock>
-            <Image Margin="410,347,307,10" Source="/perrito chivas.png" Stretch="Fill"/>
-            <TextBlock x:Name="texto_modo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="224" Margin="498,405,0,0" FontSize="16" Width="219" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Language="es-mx" Text="Modo sexo :diablo:"/></TextBlock>
+            <TextBlock x:Name="texto_consejo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="527" Margin="197,300,0,0" FontSize="16" 
+                       Width="527" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
+                <Run Language="es-mx" Text="Consejos consejosamente consejosos"/></TextBlock>
+            <Image Margin="419,324,298,33" Source="Images/perrito chivas.png" Stretch="Fill"/>
+            <TextBlock x:Name="texto_modo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="224" Margin="351,405,0,0" FontSize="16" 
+                       Width="219" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
+                <Run Language="es-mx" Text="Modo sexo :diablo:"/></TextBlock>
+            <Image Margin="12,4,714,364" Source="Images/Logo.png" Height="65"/>
 
         </Grid>
     </Viewbox>

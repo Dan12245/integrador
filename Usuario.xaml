@@ -56,7 +56,8 @@
                     <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                 </Button.Background>
             </Button>
-            <Image Margin="21,10,723,374" Source="/logo programa.png" Stretch="Fill" />
+            <Image Margin="12,5,712,364" Source="Images/Logo.png" Height="65"/>
+
             <Button x:Name="Boton_Usuario" Content=""  HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
                 <Button.RenderTransform>
                     <TransformGroup>
@@ -91,11 +92,11 @@
                     <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                 </Button.Background>
             </Button>
-            <Image Margin="32,378,734,20" Source="/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="30,284,730,114" Source="/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="29,183,729,211" Source="/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="26,90,726,307" Source="/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="-796,-7,813,0" Source="/Captura de pantalla 2025-10-17 101012.png" Stretch="Fill"/>
+            <Image Margin="32,378,734,20" Source="Images/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="30,284,730,114" Source="Images/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="29,183,729,211" Source=" Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="-796,-7,813,0" Source="Images/Captura de pantalla 2025-10-17 101012.png" Stretch="Fill"/>
             <Button x:Name="Boton_Register" Content="Invitados" Click="Boton_ir_a_Invitados" HorizontalAlignment="Left" Margin="301,8,0,0" VerticalAlignment="Top" FontSize="16" Width="229" Height="35" RenderTransformOrigin="0,0">
                 <Button.BorderBrush>
                     <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
@@ -111,7 +112,7 @@
             <Button x:Name="Boton_Login" Content="Usuario Principal" HorizontalAlignment="Left" Margin="111,8,0,0" VerticalAlignment="Top" Background="#FFBDC8FD" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="227" Height="35" RenderTransformOrigin="0,0" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
             <Rectangle HorizontalAlignment="Left" Height="2" Margin="98,42,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="702"/>
             <TextBlock x:Name="Texto_Nombre" HorizontalAlignment="Left" Margin="258,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="513" MaxWidth="513"><Run Text="si este texto llega a salir, reportarlo al "/><LineBreak/><Run Language="es-mx" Text="pendejo de dani que se le olvido que el visual no vale verga"/></TextBlock>
-            <Image Margin="126,71,0,254" Source="/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
+            <Image Margin="126,71,0,254" Source="Images/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
             <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" Margin="126,185,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="645" MaxWidth="645"><Run Text="Cantidad de domicilios: 1"/><LineBreak/><Run/><LineBreak/><Run Text="Domicilio: Calle placeholder69uwu#666"/><LineBreak/><Run/><LineBreak/><Run Language="es-mx" Text="Invitados: 3000 :O"/><LineBreak/><Run/></TextBlock>
             <Rectangle HorizontalAlignment="Left" Height="2" Margin="144,317,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="610"/>
             <TextBlock x:Name="Datos_Usuario_Copiar" TextAlignment="Center" HorizontalAlignment="Left" Margin="126,329,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="645" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Meta de reduccion de consumo"/></TextBlock>

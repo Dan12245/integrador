@@ -64,7 +64,7 @@
                     <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                 </Button.Background>
             </Button>
-            <Image Margin="21,10,723,374" Source="/logo programa.png" Stretch="Fill" />
+            <Image Margin="13,6,713,363" Source="Images/Logo.png" Height="65"/>
             <Button x:Name="Boton_Usuario" Content="" Click="Boton_Invitados" HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
 
                 <Button.Foreground>
@@ -91,10 +91,10 @@
                     <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                 </Button.Background>
             </Button>
-            <Image Margin="32,378,734,20" Source="/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="30,284,730,114" Source="/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="29,183,729,211" Source="/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="26,90,726,307" Source="/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="32,378,734,20" Source="Images/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="30,284,730,114" Source="Images/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="29,183,729,211" Source="Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
         </Grid>
     </Viewbox>
 </UserControl>

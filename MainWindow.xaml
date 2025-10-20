@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:C.R.A_Consumo_reducido_de_agua"
         mc:Ignorable="d"
-        Title="Consumo Reducido de Agua (C.R.A)" Height="450" Width="800" Background="#FFB2CFE6" Icon="/logo programa.png">
+        Title="Consumo Reducido de Agua (C.R.A)" Height="450" Width="800" Background="#FFB2CFE6" Icon="Images/logo programa.png">
 
     <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid x:Name="Login_Window" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -18,7 +18,7 @@
             </Grid.Background>
 
             <Image x:Name="LogoInicio"
-           Source="/Logo.png"
+           Source="Images/Logo.png"
            Width="250"
            RenderTransformOrigin="0.5,0.5"
            Opacity="0" OpacityMask="Black">

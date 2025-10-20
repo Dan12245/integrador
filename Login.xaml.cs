@@ -155,10 +155,10 @@ namespace C.R.A_Consumo_reducido_de_agua
 
                 // Mostrar el TextBox y desactivar el PasswordBox
                 txtPlaceholderPass.Opacity = 1;
-                txtPlaceholderPass.IsHitTestVisible = true;
+                txtPlaceholderPass.IsHitTestVisible = false;
 
                 txtPassword.Opacity = 0;
-                txtPassword.IsHitTestVisible = false;
+                txtPassword.IsHitTestVisible = true;
 
                 mostrandoContraseña = true;
             }

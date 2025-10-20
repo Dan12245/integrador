@@ -47,7 +47,7 @@
     <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid x:Name="Login_Window" Height="382" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.Background>
-                <ImageBrush ImageSource="/Fondo Preguntas (2).png"/>
+                <ImageBrush ImageSource="Images/Fondo Preguntas (2).png"/>
             </Grid.Background>
             <Button x:Name="Boton_Continuar" Content="Continuar" Click="Boton_Continuar_Click" HorizontalAlignment="Center" Margin="0,275,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="244" Height="54" RenderTransformOrigin="0,0">
 
@@ -66,7 +66,7 @@
                     <SolidColorBrush Color="White" Opacity="0.4"/>
                 </Button.Foreground>
                 <Button.Background>
-                    <ImageBrush ImageSource="/Casa.jpeg"/>
+                    <ImageBrush ImageSource="Images/Casa.jpeg"/>
                 </Button.Background>
             </Button>
             <Button x:Name="Boton_Empresarial" Content="" Click="Seleccion_Empresarial" HorizontalAlignment="Left" Margin="446,130,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="250" Height="149" RenderTransformOrigin="0,0">
@@ -75,7 +75,7 @@
                     <SolidColorBrush Color="White" Opacity="0.4"/>
                 </Button.Foreground>
                 <Button.Background>
-                    <ImageBrush ImageSource="/Empresa.jpg"/>
+                    <ImageBrush ImageSource="Images/Empresa.jpg"/>
                 </Button.Background>
             </Button>
             <ComboBox x:Name="Listado" HorizontalAlignment="Center" Margin="0,147,0,0" VerticalAlignment="Top" Width="428" Height="32" SelectionChanged="Cambiar_Idioma"/>
