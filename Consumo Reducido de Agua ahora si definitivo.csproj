@@ -8,7 +8,18 @@
     <EnableDefaultItems>true</EnableDefaultItems>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <!-- Exclude stray branch/build artifacts anywhere under 'solutions' from default item globs -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);solutions\**\*</DefaultItemExcludes>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Hard exclude any files under the 'solutions' directory to avoid compiling artifacts from other branches/projects -->
+    <Compile Remove="solutions\**\*.cs" />
+    <Page Remove="solutions\**\*.xaml" />
+    <Resource Remove="solutions\**\*" />
+    <EmbeddedResource Remove="solutions\**\*" />
+    <None Remove="solutions\**\*" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Boton Iniciar sesion.png" />
