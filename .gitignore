@@ -1,6 +1,26 @@
-﻿################################################################################
-# Ce fichier .gitignore a été automatiquement créé par Microsoft(R) Visual Studio.
-################################################################################
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.rsuser
+*.userosscache
+*.sln.docstates
 
-/.vs
-/solutions/PatioDeJuegos
+# Build output
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Tt]est[Rr]esult*/
+
+# VS Code/JetBrains
+.vscode/
+.idea/
+
+# Misc
+*.cache
+*.coverage
+*.coveragexml
+*.opendb
+*.VC.db
+.DS_Store
+Thumbs.db
