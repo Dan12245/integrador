@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.19041</TargetFramework>
     <RootNamespace>Consumo_Reducido_de_Agua_ahora_si_definitivo</RootNamespace>
     <Nullable>enable</Nullable>
-	<EnableDefaultItems>true</EnableDefaultItems>
+    <EnableDefaultItems>true</EnableDefaultItems>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
@@ -56,8 +56,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="9.0.4" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.9" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+
+    <!-- LiveCharts 2 WPF stack -->
+    <PackageReference Include="LiveChartsCore" Version="2.0.0-rc6.1" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView" Version="2.0.0-rc6.1" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc6.1" />
+    <PackageReference Include="Npgsql" Version="10.0.0-rc.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0-rc.2.25502.107" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
 

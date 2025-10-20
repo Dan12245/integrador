@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
-using CRA.ViewModels;
+using C.R.A_Consumo_reducido_de_agua.ViewModels;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -22,7 +22,6 @@ using System.Text.Json.Serialization;
 using IOPath = System.IO.Path;
 using System.Xml.Linq;
 
-namespace CRA
 namespace C.R.A_Consumo_reducido_de_agua
 {
     /// <summary>

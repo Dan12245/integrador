@@ -6,7 +6,7 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using System.Globalization;
 
-namespace CRA.ViewModels
+namespace C.R.A_Consumo_reducido_de_agua.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
@@ -30,12 +30,8 @@ namespace CRA.ViewModels
         {
             new Axis
             {
-                Name = "Day",
-                NamePaint = new SolidColorPaint(SKColors.Black),
-                LabelsPaint = new SolidColorPaint(SKColors.Blue),
-                TextSize = 20,
-                LabelsRotation = 90,
-                SeparatorsPaint = new SolidColorPaint(SKColors.LightGray) { StrokeThickness = 2 }
+            TextSize = 10 // Label X font size
+
             }
         };
 
@@ -43,10 +39,7 @@ namespace CRA.ViewModels
         {
             new Axis
             {
-                Name = "Liters",
-                LabelsPaint = new SolidColorPaint(SKColors.Green),
-                TextSize = 20,
-                SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray),
+            TextSize = 10 // Label Y font size
             }
         };
 
@@ -92,7 +85,7 @@ namespace CRA.ViewModels
 
                 case "week":
                     {
-                        // Les 7 derniers jours (ou moins si début d’année)
+                        // 0 to 6 to represent last 7 days
                         var end = todayIndex;
                         var start = Math.Max(0, end - 6);
                         var count = end - start + 1;
@@ -130,7 +123,7 @@ namespace CRA.ViewModels
 
                 case "year":
                     {
-                        // 12 points : moyenne par mois
+                        // Average per month
                         var monthAverages = GetMonthlyAverages(year, totalConsumption);
                         Values = new ISeries[]
                         {

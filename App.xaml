@@ -1,9 +1,17 @@
-﻿<Application x:Class="CRA.App"
+<Application x:Class="C.R.A_Consumo_reducido_de_agua.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:CRA"
+             xmlns:local="clr-namespace:C.R.A_Consumo_reducido_de_agua"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <!-- Rounding et ClearType globaux -->
+        <Style TargetType="FrameworkElement">
+            <Setter Property="UseLayoutRounding" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+        <Style TargetType="TextElement">
+            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+        </Style>
     </Application.Resources>
 </Application>

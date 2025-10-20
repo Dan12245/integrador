@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace CRA
+namespace C.R.A_Consumo_reducido_de_agua
 {
     /// <summary>
     /// Interaction logic for App.xaml

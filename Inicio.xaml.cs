@@ -49,7 +49,6 @@ namespace C.R.A_Consumo_reducido_de_agua
 
             Texto_Bienvenida.Text = $"Hola, {GlobalData.UserName}!";
             Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10, 101)}% este mes!";
-            Texto_Fecha.Text = $"Consumo durante el " +  DateTime.Now.ToString("dd 'de' MMMM 'de' yyyy");
 
             // Mostrar primer consejo
             texto_consejo.Text = consejos[indiceActual];

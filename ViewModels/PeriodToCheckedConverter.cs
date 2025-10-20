@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace CRA.ViewModels
+namespace C.R.A_Consumo_reducido_de_agua.ViewModels
 {
     public class PeriodToCheckedConverter : IValueConverter
     {
