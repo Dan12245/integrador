@@ -67,30 +67,32 @@ namespace C.R.A_Consumo_reducido_de_agua
             string imagenBoton2,
             RoutedEventHandler eventoBoton2)
         {
-            // Crear los ImageBrush individuales
-            ImageBrush brushEmpresarial = new ImageBrush();
-            brushEmpresarial.ImageSource = new BitmapImage(
-                new Uri($"pack://application:,,,/{imagenBoton2}", UriKind.Absolute)
-            );
-            brushEmpresarial.Stretch = Stretch.UniformToFill;
+            // Ensure callers pass only filenames; we prepend the folder here
+            string basePath = "Images/";
 
-            ImageBrush brushDomestico = new ImageBrush();
-            brushDomestico.ImageSource = new BitmapImage(
-                new Uri($"pack://application:,,,/{imagenBoton1}", UriKind.Absolute)
-            );
-            brushDomestico.Stretch = Stretch.UniformToFill;
+            var empresarialUri = new Uri($"pack://application:,,,/{basePath}{imagenBoton2}", UriKind.Absolute);
+            var domesticoUri   = new Uri($"pack://application:,,,/{basePath}{imagenBoton1}", UriKind.Absolute);
 
-            // Aplicar texturas a cada botón
+            var brushEmpresarial = new ImageBrush
+            {
+                ImageSource = new BitmapImage(empresarialUri),
+                Stretch = Stretch.UniformToFill
+            };
+
+            var brushDomestico = new ImageBrush
+            {
+                ImageSource = new BitmapImage(domesticoUri),
+                Stretch = Stretch.UniformToFill
+            };
+
             Boton_Empresarial.Background = brushEmpresarial;
-            Boton_Domestico.Background = brushDomestico;
+            Boton_Domestico.Background   = brushDomestico;
 
-            // Quitar todos los eventos anteriores para evitar duplicaciones
             LimpiarEventos(Boton_Empresarial);
             LimpiarEventos(Boton_Domestico);
 
-            // Asignar los nuevos eventos
             Boton_Empresarial.Click += eventoBoton2;
-            Boton_Domestico.Click += eventoBoton1;
+            Boton_Domestico.Click   += eventoBoton1;
         }
 
         private void LimpiarEventos(Button boton)
