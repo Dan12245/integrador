@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.IO;        
 using System.Linq;
 using System.Net.Mail; 
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using CRA.ViewModels;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -21,9 +22,11 @@ using System.Text.Json.Serialization;
 using IOPath = System.IO.Path;
 using System.Xml.Linq;
 
+namespace CRA
 namespace C.R.A_Consumo_reducido_de_agua
 {
     /// <summary>
+    /// Interaction logic for MainWindow.xaml
     /// Lógica de interacción para MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
@@ -116,6 +119,7 @@ namespace C.R.A_Consumo_reducido_de_agua
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
             UserData.Save();
         }
 
@@ -136,7 +140,7 @@ namespace C.R.A_Consumo_reducido_de_agua
             Login_Window.Children.Clear();
             Login_Window.Children.Add(nuevoControl);
         }
-
+            
         // Este evento se ejecuta cuando termina la animación
         private void LogoAnimacion_Completed(object sender, EventArgs e)
         {
