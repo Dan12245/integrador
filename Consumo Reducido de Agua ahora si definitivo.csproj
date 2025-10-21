@@ -154,8 +154,8 @@
 
   <ItemGroup>
     <!--setso -->
-    <Resource Remove="Images\Logo.png" />
-    <Content Include="Images\Logo.png">
+    <Resource Remove="Images\LogoOpacidad15.png"/>
+    <Content Include="Images\LogoOpacidad15.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -14,9 +14,16 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
    public class InvoiceDocument : IDocument
     {
         public InvoiceModel Model { get; }
-        public InvoiceDocument(InvoiceModel model)
+        public byte[] ChartWeekData { get; }
+        public byte[] ChartMonthData { get; }
+        public byte[] ChartYearData { get; }
+        public InvoiceDocument(InvoiceModel model, byte[] chartWeekData = null,
+            byte[] chartMonthData = null, byte[] chartYearData = null)
         {
             Model = model;
+            ChartWeekData = chartWeekData;
+            ChartMonthData = chartMonthData;
+            ChartYearData = chartYearData;
         }
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
         public DocumentSettings GetSettings() => DocumentSettings.Default;
@@ -57,8 +64,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                         text.Span($"{Model.IssueDate:d}");
                     });
                 });
-                row.ConstantItem(65).Height(65)
-                .Image(System.IO.Path.Combine(AppContext.BaseDirectory, "Images", "Logo.png"));
             });
         }
         void ComposeContent(IContainer container)
@@ -68,12 +73,21 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                 column.Item()
                     .Layers(layers =>
                     {
-                        layers.Layer().AlignBottom().Image(System.IO.Path.Combine(AppContext.BaseDirectory, "Images", "Logo.png"));
+                        layers.Layer().AlignBottom().Image(System.IO.Path.Combine(AppContext.BaseDirectory, "Images", "LogoOpacidad15.png"));
 
                         layers.PrimaryLayer()
                         .Column(innerColumn =>
                         {
                             innerColumn.Spacing(31);
+                            innerColumn.Item().Text("Chart information").FontSize(20).AlignCenter().Bold();
+
+                            //Add chart image if available
+                            if (ChartWeekData != null && ChartWeekData.Length > 0)
+                                innerColumn.Item().Image(ChartWeekData);
+                            if (ChartMonthData != null && ChartMonthData.Length > 0)
+                                innerColumn.Item().Image(ChartMonthData);
+                            if (ChartYearData != null && ChartYearData.Length > 0)
+                                innerColumn.Item().Image(ChartYearData);
 
                             innerColumn.Item().Row(row =>
                             {
@@ -90,11 +104,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                                 innerColumn.Item().PaddingTop(35).Element(ComposeComments);
                         });
                     });
-
-
             });
         }
-
         void ComposeTable(IContainer container)
         {
             container.Table(table =>

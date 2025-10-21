@@ -1,4 +1,5 @@
-﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels;
+﻿using C.R.A_Consumo_reducido_de_agua.ViewModels;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels;
 using QuestPDF.Companion;
 using QuestPDF.Drawing;
 using QuestPDF.Fluent;
@@ -20,6 +21,7 @@ namespace C.R.A_Consumo_reducido_de_agua
     public partial class Inicio : UserControl
     {
         string ruta = "UserData.json";
+        private MainViewModel mainViewModel = new MainViewModel();
         public Inicio()
         {
             InitializeComponent();
@@ -49,7 +51,16 @@ namespace C.R.A_Consumo_reducido_de_agua
 
             var data = new InvoiceDocumentDataSource();
             var model = data.GetInvoiceDetails();
-            var document = new InvoiceDocument(model);
+
+            //Be sure all the graphs are generated before creating the document
+            mainViewModel.SelectedPeriod = "month";
+            mainViewModel.SelectedPeriod = "year";
+            mainViewModel.SelectedPeriod = "week";
+
+            var document = new InvoiceDocument(
+                model, mainViewModel.ChartWeekData,
+                mainViewModel.ChartMonthData,
+                mainViewModel.ChartYearData);
 
             document.ShowInCompanionAsync();
 
