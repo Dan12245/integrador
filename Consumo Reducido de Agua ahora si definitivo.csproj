@@ -67,13 +67,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 
     <!-- LiveCharts 2 WPF stack -->
     <PackageReference Include="LiveChartsCore" Version="2.0.0-rc6.1" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView" Version="2.0.0-rc6.1" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc6.1" />
-    <PackageReference Include="Npgsql" Version="10.0.0-rc.1" />
+    <PackageReference Include="Npgsql" Version="9.0.4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0-rc.2.25502.107" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
