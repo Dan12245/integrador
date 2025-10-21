@@ -85,31 +85,31 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         // --- LOGIN ---
         private void btnLogin_Click(object sender, RoutedEventArgs e)
-        {
-            string email = txtEmail.Text;
-            string password = txtPassword.Password;
+ {
+     string email = txtEmail.Text;
+     string password = txtPassword.Password;
 
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-            {
-                MessageBox.Show("Por favor, complete todos los campos.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+     if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+     {
+         MessageBox.Show("Por favor, complete todos los campos.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+         return;
+     }
 
-            if (Application.Current.MainWindow is MainWindow main)
-            {
-                conexion con = new conexion();
-                if (con.sesion(email, password))
-                {
-                    string nombreUsuario = GlobalData.UserName;
-                    main.CambiarEscena(new Inicio());
-                }
-                else
-                {
-                    MessageBox.Show("Correo o contraseña incorrectos.", "Acceso denegado", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-              
-            }
-        }
+     if (Application.Current.MainWindow is MainWindow main)
+     {
+         conexion con = new conexion();
+         if (con.sesion(email, password))
+         {
+             string nombreUsuario = GlobalData.UserName;
+             main.CambiarEscena(new Inicio());
+         }
+         else
+         {
+             MessageBox.Show("Correo o contraseña incorrectos.", "Acceso denegado", MessageBoxButton.OK, MessageBoxImage.Error);
+         }
+       
+     }
+ }
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
@@ -179,3 +179,4 @@ namespace C.R.A_Consumo_reducido_de_agua
 
     }
 }
+
