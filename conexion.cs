@@ -135,31 +135,34 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             {
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
-
-                // 1. Obtener el user_id a partir del correo
+                // hacemos la conexion y hacemos una variable para guardar el id del usuario
                 int userId = 0;
+                //hacemos nuestro query para buscar el id y lo almacenamos en nuestra variable
                 string query = "SELECT user_id FROM cra.users WHERE email=@correo";
                 using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
                 {
+                    //ejecutamos el query y guardamos el id
                     command.Parameters.AddWithValue("@correo", email);
                     object result = command.ExecuteScalar();
                     userId = Convert.ToInt32(result);
                 }
 
-                // 2. Insertar en buildings
+                // estos datos estan fijos por mientras, uan vez tengamos el boton para agregar datos
+                //los cambio
                 string alias = "mi casita toda chula";
                 string descripcion = "tiene una puerta, un cuarto y no tiene baños";
-
+                // hacemos el query para ingresar los datos del usuario
                 query = "INSERT INTO cra.buildings (user_id, alias, description) VALUES (@user_id, @alias, @description)";
                 using (NpgsqlCommand ejecutor = new NpgsqlCommand(query, conex))
                 {
+                    //aca nomas los estamos metiendo
                     ejecutor.Parameters.AddWithValue("@user_id", userId);
                     ejecutor.Parameters.AddWithValue("@alias", alias);
                     ejecutor.Parameters.AddWithValue("@description", descripcion);
 
                     ejecutor.ExecuteNonQuery();
                 }
-
+                // y le decimos al usuario que ya la registro
                 MessageBox.Show("Domicilio registrado!");
                 return true;
             }
