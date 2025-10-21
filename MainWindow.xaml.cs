@@ -143,8 +143,11 @@ namespace C.R.A_Consumo_reducido_de_agua
         // Este evento se ejecuta cuando termina la animación
         private void LogoAnimacion_Completed(object sender, EventArgs e)
         {
-            // Reemplaza "Inicio" con el UserControl que quieras mostrar después
-            CambiarEscena(new Login());
+#if DEBUG
+            CambiarEscena(new Inicio());   // Démarrer directement sur Inicio en Debug
+#else
+            CambiarEscena(new Login());    // Comportement normal en Release
+#endif
         }
     }
 }

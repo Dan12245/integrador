@@ -1,51 +1,36 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels;
+using QuestPDF.Companion;
+using QuestPDF.Drawing;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using QuestPDF.Previewer;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
+using Windows.System;
 using static C.R.A_Consumo_reducido_de_agua.MainWindow;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
 
+
 namespace C.R.A_Consumo_reducido_de_agua
 {
-    /// <summary>
-    /// Lógica de interacción para Inicio.xaml
-    /// </summary>
     public partial class Inicio : UserControl
     {
         string ruta = "UserData.json";
         public Inicio()
         {
-            
             InitializeComponent();
             UserData.Load();
             if (GlobalData.UserName == null)
-            {
                 GlobalData.UserName = "Usuario";
-            }
 
-            if  (UserData.Uso == false){
+            if  (UserData.Uso == false)
                 texto_modo.Text = "Modo Empresarial";
-            }
-
             else
-            {
                 texto_modo.Text = "Modo Doméstico";
-            }
 
             Texto_Bienvenida.Text = $"Hola, {GlobalData.UserName}!";
             Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10, 101)}% este mes!";
@@ -58,6 +43,17 @@ namespace C.R.A_Consumo_reducido_de_agua
             timer.Interval = TimeSpan.FromSeconds(5);
             timer.Tick += Timer_Tick;
             timer.Start();
+
+            // Generar el documento PDF de ejemplo
+            QuestPDF.Settings.License = LicenseType.Community; // Establecer el tipo de licencia
+
+            var data = new InvoiceDocumentDataSource();
+            var model = data.GetInvoiceDetails();
+            var document = new InvoiceDocument(model);
+
+            document.ShowInCompanionAsync();
+
+
         }
 
         private List<string> consejos = new List<string>
@@ -145,5 +141,7 @@ namespace C.R.A_Consumo_reducido_de_agua
         {
 
         }
+
     }
+
 }
