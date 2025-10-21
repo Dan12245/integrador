@@ -1,13 +1,18 @@
+using BCrypt.Net;
+using CRA;
 using Npgsql;
 using System;
+using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Media3D;
+using Windows.System;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using BCrypt.Net;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 {
@@ -122,6 +127,54 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 MessageBox.Show("no se pudo conectar a la base de datos, error:" + ex.ToString());
                 return false;
             }
+        } 
+        //Funcion para agregar domicilio
+            public bool agregar_domicilio(string email) {
+                //hacemos nuestra conexion
+            try
+            {
+                conex.ConnectionString = cadena_conexion;
+                conex.Open();
+
+                // 1. Obtener el user_id a partir del correo
+                int userId = 0;
+                string query = "SELECT user_id FROM cra.users WHERE email=@correo";
+                using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+                {
+                    command.Parameters.AddWithValue("@correo", email);
+                    object result = command.ExecuteScalar();
+                    userId = Convert.ToInt32(result);
+                }
+
+                // 2. Insertar en buildings
+                string alias = "mi casita toda chula";
+                string descripcion = "tiene una puerta, un cuarto y no tiene baños";
+
+                query = "INSERT INTO cra.buildings (user_id, alias, description) VALUES (@user_id, @alias, @description)";
+                using (NpgsqlCommand ejecutor = new NpgsqlCommand(query, conex))
+                {
+                    ejecutor.Parameters.AddWithValue("@user_id", userId);
+                    ejecutor.Parameters.AddWithValue("@alias", alias);
+                    ejecutor.Parameters.AddWithValue("@description", descripcion);
+
+                    ejecutor.ExecuteNonQuery();
+                }
+
+                MessageBox.Show("Domicilio registrado!");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                if (conex.State == System.Data.ConnectionState.Open)
+                    conex.Close();
+            }
         }
+            
+             
     }
 }

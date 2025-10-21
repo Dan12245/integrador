@@ -17,6 +17,10 @@ namespace CRA
         //solamente es una solucion que consegui para que aparezca el nombre cuando haces login
         public string UserName { get; set; }
     }
+    public static class mail
+    {
+        public static string email { get; set; }
+    }
     //esto si es importante, es para que no nos tiren la tabla
     public class Usuario
     {

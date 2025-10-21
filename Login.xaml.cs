@@ -1,4 +1,5 @@
 ﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo;
+using CRA;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,58 +86,59 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         // --- LOGIN ---
         private void btnLogin_Click(object sender, RoutedEventArgs e)
- {
-     string email = txtEmail.Text;
-     string password = txtPassword.Password;
+        {
+          string email = txtEmail.Text;   
+          string password = txtPassword.Password;
 
-     if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-     {
-         MessageBox.Show("Por favor, complete todos los campos.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-         return;
-     }
+             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+             {
+                 MessageBox.Show("Por favor, complete todos los campos.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                 return;
+             }
 
-     if (Application.Current.MainWindow is MainWindow main)
-     {
-         conexion con = new conexion();
-         if (con.sesion(email, password))
-         {
-             string nombreUsuario = GlobalData.UserName;
-             main.CambiarEscena(new Inicio());
-         }
-         else
-         {
-             MessageBox.Show("Correo o contraseña incorrectos.", "Acceso denegado", MessageBoxButton.OK, MessageBoxImage.Error);
-         }
+             if (Application.Current.MainWindow is MainWindow main)
+             {
+                 conexion con = new conexion();
+                 if (con.sesion(email, password))
+                 {
+                    string nombreUsuario = GlobalData.UserName;
+                    mail.email= email;
+                    main.CambiarEscena(new Inicio());
+                 }
+                 else
+                 {
+                     MessageBox.Show("Correo o contraseña incorrectos.", "Acceso denegado", MessageBoxButton.OK, MessageBoxImage.Error);
+                 }
        
-     }
- }
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
+             }
+         }
+                private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+                {
 
-        }
-        private void Boton_Register_Click(object sender, RoutedEventArgs e)
-        {
-            if (Application.Current.MainWindow is MainWindow main)
-            {
-                // Cambiar a la escena Registro
-                main.CambiarEscena(new Registro());
-            }
-        }
+                }
+                private void Boton_Register_Click(object sender, RoutedEventArgs e)
+                {
+                    if (Application.Current.MainWindow is MainWindow main)
+                    {
+                        // Cambiar a la escena Registro
+                        main.CambiarEscena(new Registro());
+                    }
+                }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
+                private void Button_Click(object sender, RoutedEventArgs e)
+                {
 
-        }
+                }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
+                private void Button_Click_1(object sender, RoutedEventArgs e)
+                {
 
-        }
+                }
 
-        private void Boton_Login_Click(object sender, RoutedEventArgs e)
-        {
-            if (Application.Current.MainWindow is MainWindow main)
-            {
+                private void Boton_Login_Click(object sender, RoutedEventArgs e)
+                {
+                    if (Application.Current.MainWindow is MainWindow main)
+                    {
                 // Cambiar a la escena Registro (este mismo control)
                 main.CambiarEscena(new Inicio());
             }
@@ -177,6 +179,7 @@ namespace C.R.A_Consumo_reducido_de_agua
             }
         }
 
+        
     }
 }
 
