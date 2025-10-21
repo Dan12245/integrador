@@ -162,6 +162,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
                     ejecutor.ExecuteNonQuery();
                 }
+                conex.Close();
                 // y le decimos al usuario que ya la registro
                 MessageBox.Show("Domicilio registrado!");
                 return true;
@@ -171,13 +172,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 MessageBox.Show("Error: " + ex.Message);
                 return false;
             }
-            finally
-            {
-                if (conex.State == System.Data.ConnectionState.Open)
-                    conex.Close();
-            }
         }
             
              
     }
 }
+
