@@ -1,18 +1,8 @@
-using BCrypt.Net;
 using CRA;
 using Npgsql;
-using System;
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Media3D;
 using Windows.System;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 {
@@ -215,7 +205,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 string query = "SELECT * FROM cra.users WHERE inv_code=@inv_code";
                 using (var ejecutor = new NpgsqlCommand(query, conex))
                 {
-                     ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
+                    ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
                     //usamos el using para no tener que estar cerrando la conexion a cada 5 lineas
                     return true;
                 }
@@ -232,12 +222,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             try
             {
                 string email = "d@d.com";
-                conex.ConnectionString=cadena_conexion;
+                conex.ConnectionString = cadena_conexion;
                 conex.Open();
                 //aca nomas hacemos un DELETE ya que postgress puede borrar todo con una configuracion
                 //que ya esta activada para borrar todo lo relacionado con la foreign key, en este caso
                 //el id del usuario, asi que ya no hay que meter mas que este query
-                string query= "DELETE FROM cra.users WHERE email = @email;";
+                string query = "DELETE FROM cra.users WHERE email = @email;";
                 using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
                 {
                     command.Parameters.AddWithValue("@email", email);
@@ -246,12 +236,129 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 MessageBox.Show("usuario eliminado");
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                MessageBox.Show("Error"+ex.Message);
+                MessageBox.Show("Error" + ex.Message);
             }
         }
         //faltan las funciones para añadir, editar o eliminar un registro del consumo, pero todavia no
         //tenemos ni la base para eso asi que lo dejamos para despues
+        public bool agregar_consumo(string email)
+        {
+            try
+            {
+                int consumo = 20;
+                conex.ConnectionString = cadena_conexion;
+                conex.Open();
+                int userId = 0;
+                //jalamos el id del usuario para poder buscar el edificio correcto
+                //hacemos nuestro query para buscar el id y lo almacenamos en nuestra variable
+                string query = "SELECT user_id FROM cra.users WHERE email=@correo";
+                using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+                {
+                    //ejecutamos el query y guardamos el id
+                    command.Parameters.AddWithValue("@correo", email);
+                    object result = command.ExecuteScalar();
+                    userId = Convert.ToInt32(result);
+                }
+                int building_id = 0;
+                //ya con el id del usuario sacamos el del edificio para poder asignarlo en la tabla
+                //de consumo y no se meta con otro usuario
+                 query = "SELECT building_id FROM cra.buildings WHERE user_id=@user_id";
+                using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+                {
+                    //ejecutamos el query y guardamos el id
+                    command.Parameters.AddWithValue("@user_id", userId);
+                    object result = command.ExecuteScalar();
+                    building_id = Convert.ToInt32(result);
+                }
+                //esta wea solo es para meter la fecha
+                DateTime fecha = DateTime.Now;
+                //y ya con todo eso lo metemos a la tabla de consumo
+                query = "INSERT INTO cra.consumption_per_day (building_id,day,liters)VALUES(@building_id,@day,@liters)";
+                using (var ejecutor = new NpgsqlCommand(query, conex))
+                {
+                    ejecutor.Parameters.AddWithValue("@building_id",building_id);
+                    ejecutor.Parameters.AddWithValue("@day", fecha);
+                    ejecutor.Parameters.AddWithValue("@liters", consumo);
+                    ejecutor.ExecuteNonQuery();
+                    MessageBox.Show("Consumo registrado");
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error"+ex.Message);
+                return false;
+            }
+        }
+        //eliminar consumo
+        public bool eliminar_consumo()
+        {
+            try{
+                conex.ConnectionString = cadena_conexion;
+                conex.Open();
+                ///esta wea despues veo como la cambio para que el usuario no batalle a la hora de eliminar
+                ///el consumo pq la neta no tengo una idea de como hacerlo de momento
+                DateTime fecha = DateTime.Now;
+                string query = "DELETE FROM cra.consumption_per_day WHERE day=@day";
+                using (var ejecutor = new NpgsqlCommand(query, conex))
+                {
+                    ejecutor.Parameters.AddWithValue("@day", fecha);
+                    ejecutor.ExecuteNonQuery();
+                    MessageBox.Show("Consumo eliminado");
+                    return true;
+                }               
+            }
+            catch (Exception ex){
+                MessageBox.Show("Error"+ex.Message); 
+                return false;
+            }
+        }
+        //cambiar un consumo
+        public void cambiar_consumo(string email)
+        {
+            try { 
+            conex.ConnectionString=cadena_conexion;
+            conex.Open();
+            int userId = 0;
+            //jalamos el id del usuario para poder buscar el edificio correcto
+            //hacemos nuestro query para buscar el id y lo almacenamos en nuestra variable
+            string query = "SELECT user_id FROM cra.users WHERE email=@correo";
+            using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+            {
+                //ejecutamos el query y guardamos el id
+                command.Parameters.AddWithValue("@correo", email);
+                object result = command.ExecuteScalar();
+                userId = Convert.ToInt32(result);
+            }
+            int building_id = 0;
+            //ya con el id del usuario sacamos el del edificio para poder asignarlo en la tabla
+            //de consumo y no se meta con otro usuario
+             query = "SELECT building_id FROM cra.buildings WHERE user_id=@user_id";
+            using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+            {
+                //ejecutamos el query y guardamos el id
+                command.Parameters.AddWithValue("@user_id", userId);
+                object result = command.ExecuteScalar();
+                building_id = Convert.ToInt32(result);
+            }
+             query = "UPDATE cra.consumption_per_day SET liters=@liters WHERE building_id=@building_id AND day=@day";
+            DateTime fecha = DateTime.Now;
+                int litros = 4;
+            using (var ejecutor = new NpgsqlCommand(query, conex))
+            {
+                ejecutor.Parameters.AddWithValue("@liters",litros);
+                ejecutor.Parameters.AddWithValue("@building_id", building_id);
+                ejecutor.Parameters.AddWithValue("@day", fecha.Date);
+                ejecutor.ExecuteNonQuery();
+                MessageBox.Show("Consumo cambiado");
+            }
+            }
+            catch (Exception ex) {
+                MessageBox.Show("error"+ex.Message);
+            }
+        }
+
     }
 }
