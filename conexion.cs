@@ -215,7 +215,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 string query = "SELECT * FROM cra.users WHERE inv_code=@inv_code";
                 using (var ejecutor = new NpgsqlCommand(query, conex))
                 {
-                        ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
+                     ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
                     //usamos el using para no tener que estar cerrando la conexion a cada 5 lineas
                     return true;
                 }
