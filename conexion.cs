@@ -170,7 +170,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 // y le decimos al usuario que ya la registro
                 MessageBox.Show("Domicilio registrado!");
                 return true;
-                conex.Close();
             }
             catch (Exception ex)
             {
@@ -227,5 +226,32 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 return false;
             }
         }
+        //creo que tampoco tengo que explicar algo de esto
+        public void Eliminar_usuario()
+        {
+            try
+            {
+                string email = "d@d.com";
+                conex.ConnectionString=cadena_conexion;
+                conex.Open();
+                //aca nomas hacemos un DELETE ya que postgress puede borrar todo con una configuracion
+                //que ya esta activada para borrar todo lo relacionado con la foreign key, en este caso
+                //el id del usuario, asi que ya no hay que meter mas que este query
+                string query= "DELETE FROM cra.users WHERE email = @email;";
+                using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+                {
+                    command.Parameters.AddWithValue("@email", email);
+                    command.ExecuteNonQuery();
+                }
+                MessageBox.Show("usuario eliminado");
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error"+ex.Message);
+            }
+        }
+        //faltan las funciones para añadir, editar o eliminar un registro del consumo, pero todavia no
+        //tenemos ni la base para eso asi que lo dejamos para despues
     }
 }
