@@ -16,8 +16,11 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 {
+    //esta parte es importane pq aca hacemos el string de conexion no lo borren o nos quedamos sin base de  datos
     class conexion
     {
+        //si quieren cambiar de base de datos aca ponen los parametros nuevos y se genera solo
+        //pero si la cadena es diferente ps nomas acomodan la wea
         NpgsqlConnection conex = new NpgsqlConnection();
         static string server = "aws-1-us-east-2.pooler.supabase.com";
         static string puerto = "6543";
@@ -31,7 +34,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
         //cadena de conexion
         string cadena_conexion = "User Id=" + usuario + ";" + "Password=" + password + ";" + "Server=" + server + ";" + "Port=" + puerto + ";" + "Database=" + bd;
-       //Esta funcion es relleno, solo es para comprobar si hay conexion con la base de datos
+        //Esta funcion es relleno, solo es para comprobar si hay conexion con la base de datos
         public NpgsqlConnection establecer_conexion()
         {
             try
@@ -60,7 +63,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
                 //escribimos el comando
                 string cadena = "INSERT INTO cra.users (name, email, password) VALUES (@Name, @correo, @contra)";
-               //hacemos nuestro ejecutor y lo usamos
+                //hacemos nuestro ejecutor y lo usamos
                 using var ejecutor = new NpgsqlCommand(cadena, conex);
                 //las variables que vamos a insertar a la base de datos
                 ejecutor.Parameters.AddWithValue("@Name", nombre);
@@ -127,10 +130,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 MessageBox.Show("no se pudo conectar a la base de datos, error:" + ex.ToString());
                 return false;
             }
-        } 
+        }
         //Funcion para agregar domicilio
-            public bool agregar_domicilio(string email) {
-                //hacemos nuestra conexion
+        public bool agregar_domicilio(string email)
+        {
+            //hacemos nuestra conexion
             try
             {
                 conex.ConnectionString = cadena_conexion;
@@ -165,19 +169,62 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 // y le decimos al usuario que ya la registro
                 MessageBox.Show("Domicilio registrado!");
                 return true;
+                conex.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
                 return false;
             }
-            finally
+        }
+        //creo que el nombre explica bien lo que hace la funcion
+        public void eliminar_domicilio()
+        {
+            try
             {
-                if (conex.State == System.Data.ConnectionState.Open)
-                    conex.Close();
+                //este string no importa mucho, solo es para tener algo que borrar, una ves tengamos
+                //la opcion de eliminar lo quito
+                string alias = "mi casita toda chula";
+                // hacemos la conexion y la abrimos
+                conex.ConnectionString = cadena_conexion;
+                conex.Open();
+                //hacemos nuestro query para buscar alias del domicilio a eliminar
+                string query = "DELETE FROM cra.buildings WHERE alias=@alias";
+                using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+                {
+                    command.Parameters.AddWithValue("@alias", alias);
+                    command.ExecuteNonQuery();
+                }
+                MessageBox.Show("Domicilio eliminado");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
             }
         }
-            
-             
+        //funcion para ver si el codigo de invitacion existe
+        public bool Invitar_usuario()
+        {
+            try
+            {
+                //esta variable tambien se puede borrar sin tanto pedo, nomas ando esperando a que
+                //suelten la version con los botones para lo demas
+                string invitacion = "437208959";
+                conex.ConnectionString = cadena_conexion;
+                conex.Open();
+                string query = "SELECT * FROM cra.users WHERE inv_code=@inv_code";
+                using (var ejecutor = new NpgsqlCommand(query, conex))
+                {
+                        ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
+                    //usamos el using para no tener que estar cerrando la conexion a cada 5 lineas
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+                return false;
+            }
+        }
     }
 }
