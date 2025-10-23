@@ -299,6 +299,28 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         #endregion
         //aca van las funciones para los invitados
         #region invitados
+        public bool existe_invitacion(string email)
+        {
+            string invitacion = "437208959";
+            conex.ConnectionString = cadena_conexion;
+            conex.Open();
+            int user_id = id_usuario(email);
+            string query = "SELECT COUNT(*) FROM cra.users WHERE inv_code=@inv_code";
+            using (var ejecutor = new NpgsqlCommand(query, conex))
+            {
+                ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
+                int existe = Convert.ToInt32(ejecutor.ExecuteScalar());
+                if (existe == 0)
+                {
+                    MessageBox.Show("Código de invitación no válido.");
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
         //no se si esta funcion va aca o neh, asi que por mientras se queda aca
         public bool Invitar_usuario(string email, string name, bool y_o_n)
         {
@@ -310,27 +332,23 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
                 int user_id = id_usuario(email);
-                string query = "SELECT COUNT(*) FROM cra.users WHERE inv_code=@inv_code";
-                using (var ejecutor = new NpgsqlCommand(query, conex))
-                {
-                    ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
-                    int existe = Convert.ToInt32(ejecutor.ExecuteScalar());
-                    if (existe == 0)
+                if (existe_invitacion(email)) {
+                    string query = "INSERT INTO cra.invited_users (user_id,name,read_only) VALUES (@user_id,@name,@read_only)";
+                    using (var ejecutor = new NpgsqlCommand(query, conex))
                     {
-                        MessageBox.Show("Código de invitación no válido.");
-                        return false;
+                        ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                        ejecutor.Parameters.AddWithValue("@name", name);
+                        ejecutor.Parameters.AddWithValue("@read_only", y_o_n);
+                        ejecutor.ExecuteNonQuery();
+
+                        return true;
                     }
                 }
-                query = "INSERT INTO cra.invited_users (user_id,name,read_only) VALUES (@user_id,@name,@read_only)";
-                using (var ejecutor = new NpgsqlCommand(query, conex))
+                else
                 {
-                    ejecutor.Parameters.AddWithValue("@user_id", user_id);
-                    ejecutor.Parameters.AddWithValue("@name", name);
-                    ejecutor.Parameters.AddWithValue("@read_only", y_o_n);
-                    ejecutor.ExecuteNonQuery();
-
-                    return true;
+                    return false;
                 }
+                
             }
             catch (Exception ex)
             {
@@ -338,9 +356,59 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 return false;
             }
         }
-        public void eliminar_invitado(){
-
-
+        public void editar_invitado(string email, string name, bool read_only)
+        {
+            try
+            {
+                conex.ConnectionString = cadena_conexion;
+                conex.Open();
+                int user_id = id_usuario(email);
+                if (existe_invitacion(email))
+                {
+                    string query = "UPDATE cra.invited_users SET user_id=@user_id and @read_only=read_only WHERE building_id=@building_id AND day=@day";
+                    int litros = 4;
+                    using (var ejecutor = new NpgsqlCommand(query, conex))
+                    {
+                        ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                        ejecutor.Parameters.AddWithValue("@read_only", read_only);
+                        ejecutor.ExecuteNonQuery();
+                        MessageBox.Show("Consumo cambiado");
+                    }
+                }
+                    
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("error" + ex.Message);
+            }
+        }
+        public void eliminar_invitado(string email, string name){
+            conex.ConnectionString = cadena_conexion;
+            conex.Open();
+            try
+            {
+                    int user_id = id_usuario(email);                
+                if (existe_invitacion(email))
+                {
+                    string query = "DELETE FROM cra.invited_users WHERE user_id = @user_id and name=@name;";
+                    using (var ejecutor = new NpgsqlCommand(query, conex))
+                    {
+                        ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                        ejecutor.Parameters.AddWithValue("@name", name);
+                        ejecutor.ExecuteNonQuery();
+                    }
+                    MessageBox.Show("invitado eliminado");
+                }
+                else
+                {
+                    MessageBox.Show("invitado no encontrado");
+                }
+                
+            }
+            catch (Exception ex) {
+                MessageBox.Show("error"+ex.Message);
+            }
+            
         }
         #endregion
         //y las funciones relacionadas con el consumo
