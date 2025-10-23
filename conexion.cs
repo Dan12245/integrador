@@ -1,6 +1,7 @@
 using CRA;
 using Npgsql;
 using System.Windows;
+using System.Xml.Linq;
 using Windows.System;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
 
@@ -41,11 +42,10 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             return conex;
         }
-
-        ///Esta wea esta separada en regiones para que sea mas facil de encontrar una funcion en caso de
-        ///que se necesite cambiar o algo
-        ///hablando de aca van las funciones que tienen que ver con el usuario principal de la app
-        ///digamos el arrendador (o arrendatario, no me acuerdo cual es cual y me da hueva buscar)
+        //Esta wea esta separada en regiones para que sea mas facil de encontrar una funcion en caso de
+        //que se necesite cambiar o algo
+        //hablando de aca van las funciones que tienen que ver con el usuario principal de la app
+        //digamos el arrendador (o arrendatario, no me acuerdo cual es cual y me da hueva buscar)
         #region Usuario principal
         //Con esta funcion registramos a un usuario nuevo en la base de datos
         public bool registrar_usuario(string nombre, string email, string password)
@@ -300,7 +300,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //aca van las funciones para los invitados
         #region invitados
         //no se si esta funcion va aca o neh, asi que por mientras se queda aca
-        public bool Invitar_usuario()
+        public bool Invitar_usuario(string email, string name, bool y_o_n)
         {
             try
             {
@@ -309,11 +309,26 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 string invitacion = "437208959";
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
-                string query = "SELECT * FROM cra.users WHERE inv_code=@inv_code";
+                int user_id = id_usuario(email);
+                string query = "SELECT COUNT(*) FROM cra.users WHERE inv_code=@inv_code";
                 using (var ejecutor = new NpgsqlCommand(query, conex))
                 {
                     ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
-                    //usamos el using para no tener que estar cerrando la conexion a cada 5 lineas
+                    int existe = Convert.ToInt32(ejecutor.ExecuteScalar());
+                    if (existe == 0)
+                    {
+                        MessageBox.Show("Código de invitación no válido.");
+                        return false;
+                    }
+                }
+                query = "INSERT INTO cra.invited_users (user_id,name,read_only) VALUES (@user_id,@name,@read_only)";
+                using (var ejecutor = new NpgsqlCommand(query, conex))
+                {
+                    ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                    ejecutor.Parameters.AddWithValue("@name", name);
+                    ejecutor.Parameters.AddWithValue("@read_only", y_o_n);
+                    ejecutor.ExecuteNonQuery();
+
                     return true;
                 }
             }
@@ -328,6 +343,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
         }
         #endregion
+        //y las funciones relacionadas con el consumo
         #region consumo
         public bool agregar_consumo(string email)
         {
@@ -363,8 +379,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             {
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
-                ///esta wea despues veo como la cambio para que el usuario no batalle a la hora de eliminar
-                ///el consumo pq la neta no tengo una idea de como hacerlo de momento
+                //esta wea despues veo como la cambio para que el usuario no batalle a la hora de eliminar
+                //el consumo pq la neta no tengo una idea de como hacerlo de momento
                 DateTime fecha = DateTime.Now;
                 string query = "DELETE FROM cra.consumption_per_day WHERE day=@day";
                 using (var ejecutor = new NpgsqlCommand(query, conex))
@@ -407,10 +423,5 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
         #endregion
-
-        //eliminar consumo
-
-
-
     }
 }
