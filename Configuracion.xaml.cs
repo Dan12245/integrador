@@ -55,5 +55,10 @@ namespace C.R.A_Consumo_reducido_de_agua
         {
 
         }
+
+        private void Dominio_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
