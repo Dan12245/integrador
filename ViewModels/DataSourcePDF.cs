@@ -14,7 +14,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
         public InvoiceModel GetInvoiceDetails()
         {
             var items = Enumerable
-                .Range(1, 8)
+                .Range(1, 30)
                 .Select(i => GenerateRandomOrderItem())
                 .ToList();
 
