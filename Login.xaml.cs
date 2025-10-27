@@ -98,7 +98,7 @@ namespace C.R.A_Consumo_reducido_de_agua
             if (Application.Current.MainWindow is MainWindow main)
             {
                 conexion con = new conexion();
-                if (con.sesion(email, password))
+                if (con.iniciar_sesion(email, password))
                 {
                     string nombreUsuario = GlobalData.UserName;
                     main.CambiarEscena(new Inicio());
