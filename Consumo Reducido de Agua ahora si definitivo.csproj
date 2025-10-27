@@ -67,6 +67,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 
     <!-- LiveCharts 2 WPF stack -->
@@ -154,7 +155,7 @@
 
   <ItemGroup>
     <!--setso -->
-    <Resource Remove="Images\LogoOpacidad15.png"/>
+    <Resource Remove="Images\LogoOpacidad15.png" />
     <Content Include="Images\LogoOpacidad15.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
