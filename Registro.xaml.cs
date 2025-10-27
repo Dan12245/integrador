@@ -142,7 +142,7 @@ namespace C.R.A_Consumo_reducido_de_agua
 
                     else
                     {
-                        conexion con = new conexion(); // 👈 crear instancia
+                        conexion con = new conexion();
                         con.registrar_usuario(name, email, contraseña);
                         // Cambiar a la escena Registro
                         main.CambiarEscena(new Preguntas());
