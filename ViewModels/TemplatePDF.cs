@@ -33,11 +33,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                 .Page(page =>
                 {
                     page.Size(PageSizes.A4);
-                    
                     page.Margin(50);
-
-
-                    page.Header().Element(ComposeHeader);
+                    page.Header().PaddingBottom(20).Element(ComposeHeader);
                     page.Content().Element(ComposeContent);
                     page.Footer().AlignCenter().Text(x =>
                     {
@@ -57,7 +54,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                     column.Item()
                         .Text($"Water consumption report #{Model.InvoiceNumber}")
                         .FontSize(20).SemiBold().FontColor(Colors.Blue.Medium);
-
+                        
                     column.Item().Text(text =>
                     {
                         text.Span("Date: ").SemiBold();
@@ -78,54 +75,58 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                         layers.PrimaryLayer()
                         .Column(innerColumn =>
                         {
-                            innerColumn.Spacing(31);
-                            innerColumn.Item().Text("Chart information").FontSize(20).AlignCenter().Bold();
-
-                            //Add chart image if available
-                            if (ChartWeekData != null && ChartWeekData.Length > 0)
-                                innerColumn.Item().Image(ChartWeekData);
-                            if (ChartMonthData != null && ChartMonthData.Length > 0)
-                                innerColumn.Item().Image(ChartMonthData);
-                            if (ChartYearData != null && ChartYearData.Length > 0)
-                                innerColumn.Item().Image(ChartYearData);
-
                             innerColumn.Item().Row(row =>
                             {
                                 row.RelativeItem().Component(new AddressComponent("Building information", Model.SellerAddress)); //Add user address
-                                row.ConstantItem(250);
-                            });
 
+                                //Add chart image if available
+                                if (ChartWeekData != null && ChartWeekData.Length > 0)
+                                    row.RelativeItem() //chart size
+                                       .PaddingLeft(12)
+                                       .AlignRight()
+                                       .Height(160)
+                                       .Width(220)
+                                       .Image(ChartWeekData);
+                            });
                             innerColumn.Item().Element(ComposeTable);
 
                             var totalPrice = Model.Items.Sum(x => x.Price * x.Quantity);
-                            innerColumn.Item().AlignRight().Text($"Grand total: {totalPrice}$").FontSize(14);
+                            innerColumn.Item().AlignRight().Text($"Grand total: {totalPrice}").FontSize(14);
 
-                            if (!string.IsNullOrWhiteSpace(Model.Comments))
-                                innerColumn.Item().PaddingTop(35).Element(ComposeComments);
+
+                            if (ChartMonthData != null && ChartMonthData.Length > 0)
+                                innerColumn
+                                    .Item()
+                                    .TranslateX(98)
+                                    .Width(365)
+                                    .Height(200)
+                                    .Image(ChartMonthData);
+                            if (ChartYearData != null && ChartYearData.Length > 0)
+                                innerColumn
+                                    .Item()
+                                    .TranslateX(98)
+                                    .Width(365)
+                                    .Height(200)
+                                    .Image(ChartYearData);
+
                         });
                     });
             });
         }
         void ComposeTable(IContainer container)
         {
-            container.Table(table =>
+            container.AlignCenter().Table(table =>
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.ConstantColumn(40);
-                    columns.RelativeColumn(3);
-                    columns.RelativeColumn();
-                    columns.RelativeColumn();
-                    columns.RelativeColumn();
+                    columns.ConstantColumn(100);
+                    columns.ConstantColumn(100);
                 });
 
                 table.Header(header =>
                 {
-                    header.Cell().Element(CellStyle).Text("#");
-                    header.Cell().Element(CellStyle).Text("Product");
-                    header.Cell().Element(CellStyle).AlignRight().Text("Unit price");
-                    header.Cell().Element(CellStyle).AlignRight().Text("Quantity");
-                    header.Cell().Element(CellStyle).AlignRight().Text("Total");
+                    header.Cell().Element(CellStyle).Text("Day");
+                    header.Cell().Element(CellStyle).AlignRight().Text("Consumption (litters)");
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -136,26 +137,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                 foreach (var item in Model.Items)
                 {
                     table.Cell().Element(CellStyle).Text(Model.Items.IndexOf(item) + 1);
-                    table.Cell().Element(CellStyle).Text(item.Name);
-                    table.Cell().Element(CellStyle).AlignRight().Text($"{item.Price}$");
-                    table.Cell().Element(CellStyle).AlignRight().Text(item.Quantity);
-                    table.Cell().Element(CellStyle).AlignRight().Text($"{item.Price * item.Quantity}$");
+                    table.Cell().Element(CellStyle).AlignRight().Text($"{item.Price}");
 
                     static IContainer CellStyle(IContainer container)
                     {
-                        return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
+                        return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(0);
                     }
                 }
-            });
-        }
-
-        void ComposeComments(IContainer container)
-        {
-            container.Background(Colors.Grey.Lighten3).Padding(10).Column(column =>
-            {
-                column.Spacing(6);
-                column.Item().Text("Comments").FontSize(14);
-                column.Item().Text(Model.Comments);
             });
         }
     }
