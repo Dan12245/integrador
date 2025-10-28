@@ -48,7 +48,6 @@
             RepeatBehavior="2x"/>
         </Storyboard>
 
-        <vm:PeriodToCheckedConverter x:Key="PeriodToCheckedConverter"/>
 
     </UserControl.Resources>
 
@@ -107,7 +106,7 @@
                 <Image Margin="30,284,730,114" Source="Images/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
                 <Image Margin="28,182,730,212" Source="Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
                 <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-                <Image Margin="110,14,149,374" Source="Images/Texto Inicio.png" Stretch="Uniform"/>
+                <Image Margin="130,14,32,374" Source="Images/Texto Inicio.png" Stretch="Fill"/>
                 <Rectangle HorizontalAlignment="Left" Height="335" Margin="113,89,0,0" VerticalAlignment="Top" Width="677" Fill="#FFCBDAFF" RadiusX="31.5" RadiusY="31.5">
                     <Rectangle.Stroke>
                         <SolidColorBrush Color="Black" Opacity="0"/>
@@ -160,33 +159,23 @@
                     Width="219" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
                 <Run Language="es-mx" Text="Modo sexo :diablo:"/></TextBlock>
                 <Image Margin="12,4,714,364" Source="Images/Logo.png" Height="65"/>
-
-                <Button Margin="730,10,10,370" Cursor="Hand" Click="Inicio_Help_Click" Height="55" Width="55">
-                    <Button.BorderBrush>
-                        <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
-                    </Button.BorderBrush>
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Images/Help.png"/>
-                    </Button.Background>
-                </Button>
             </Grid>
 
-            <Grid x:Name="Graph" Width="430" Height="224" Margin="340,4,0,40">
+            <Grid Width="430" Height="224" Margin="340,4,0,40">
                 <Grid.RowDefinitions>
                     <RowDefinition Height=".1*"/>
                     <RowDefinition Height=".9*"/>
                 </Grid.RowDefinitions>
 
                 <!-- Añade los botones para seleccionar el periodo en el que se muestra los datos -->
-                <StackPanel x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                    <Button x:Name="Day" Margin="0,0,5,0" Command="{Binding GoToPage1Command}" >Day</Button>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                    <Button Margin="0,0,5,0" Command="{Binding GoToPage1Command}" >Day</Button>
                     <Button Margin="0,0,5,0" Command="{Binding GoToPage2Command}">Week</Button>
                     <Button Margin="0,0,5,0" Command="{Binding GoToPage3Command}">Month</Button>
                     <Button Margin="0,0,5,0" Command="{Binding SeeAllCommand}">Year</Button>
                 </StackPanel>
-                <lvc:CartesianChart x:Name="Chart" Background="Transparent" BorderBrush="WhiteSmoke" RenderOptions.BitmapScalingMode="HighQuality" Grid.Row="1" ZoomMode="X" Series="{Binding Values}"
-                XAxes="{Binding XAxes}" YAxes="{Binding YAxes}"/>
             </Grid>
+
         </Grid>
     </Viewbox>
 

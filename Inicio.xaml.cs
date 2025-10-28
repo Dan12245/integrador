@@ -1,48 +1,64 @@
-﻿using C.R.A_Consumo_reducido_de_agua.ViewModels;
-using Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels;
-using QuestPDF.Companion;
-using QuestPDF.Drawing;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
-using System.IO;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using System.Windows.Threading;
-using Windows.System;
 using static C.R.A_Consumo_reducido_de_agua.MainWindow;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
-using C.R.A_Consumo_reducido_de_agua.Controls;
-
-
 
 namespace C.R.A_Consumo_reducido_de_agua
 {
+    /// <summary>
+    /// Lógica de interacción para Inicio.xaml
+    /// </summary>
     public partial class Inicio : UserControl
     {
         string ruta = "UserData.json";
-        private MainViewModel mainViewModel = new MainViewModel();
         public Inicio()
         {
+            
             InitializeComponent();
             UserData.Load();
-            if (GlobalData.UserName == null)
-                GlobalData.UserName = "Usuario";
 
-            if  (UserData.Uso == false)
+            CambiarFondoGradiente(
+                Color.FromRgb(26, 34, 53),  // Rosa claro
+                Color.FromRgb(26, 34, 53),  // Blanco
+                0.5,
+                "Horizontal"
+            );
+            if (GlobalData.UserName == null)
+            {
+                GlobalData.UserName = "Usuario";
+            }
+
+            if  (UserData.Uso == false){
                 texto_modo.Text = "Modo Empresarial";
+            }
+
             else
+            {
                 texto_modo.Text = "Modo Doméstico";
+            }
+
+
 
             Texto_Bienvenida.Text = $"Hola, {GlobalData.UserName}!";
             Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10, 101)}% este mes!";
+            Texto_Fecha.Text = $"Consumo durante el " +  DateTime.Now.ToString("dd 'de' MMMM 'de' yyyy");
 
             // Mostrar primer consejo
             texto_consejo.Text = consejos[indiceActual];
@@ -52,26 +68,6 @@ namespace C.R.A_Consumo_reducido_de_agua
             timer.Interval = TimeSpan.FromSeconds(5);
             timer.Tick += Timer_Tick;
             timer.Start();
-
-            // Generar el documento PDF de ejemplo
-            QuestPDF.Settings.License = LicenseType.Community; // Establecer el tipo de licencia
-
-            var data = new InvoiceDocumentDataSource();
-            var model = data.GetInvoiceDetails();
-
-            //Be sure all the graphs are generated before creating the document
-            mainViewModel.SelectedPeriod = "month";
-            mainViewModel.SelectedPeriod = "year";
-            mainViewModel.SelectedPeriod = "week";
-
-            var document = new InvoiceDocument(
-                model, mainViewModel.ChartWeekData,
-                mainViewModel.ChartMonthData,
-                mainViewModel.ChartYearData);
-
-            document.ShowInCompanionAsync();
-
-
         }
 
         private List<string> consejos = new List<string>
@@ -93,7 +89,13 @@ namespace C.R.A_Consumo_reducido_de_agua
         {
             SiguienteConsejo();
         }
-
+        public static void CambiarFondoGradiente(Color colorInicio, Color colorFin, double offset = 0.5, string direccion = "Horizontal")
+        {
+            if (Application.Current.MainWindow is MainWindow mainWindow)
+            {
+                mainWindow.CambiarFondoGradiente(colorInicio, colorFin, offset, direccion:"Horizontal");
+            }
+        }
         private void btnSiguiente_Click(object sender, RoutedEventArgs e)
         {
             SiguienteConsejo();
@@ -137,23 +139,21 @@ namespace C.R.A_Consumo_reducido_de_agua
             Login_Window.Children.Add(nuevoControl);
         }
         //spam de sofi: “
-        // Hola papus :D
-        //  Gerardwayfan71_"
+       // Hola papus :D
+      //  Gerardwayfan71_"
+
         private void Boton_Usuario_Invitados(object sender, RoutedEventArgs e)
         {
-            CloseAllCallouts();
             CambiarEscena(new Usuario());
         }
 
         private void Boton_Reporte(object sender, RoutedEventArgs e)
         {
-            CloseAllCallouts();
             CambiarEscena(new Reporte());
         }
 
         private void Boton_ir_a_Configuracion(object sender, RoutedEventArgs e)
         {
-            CloseAllCallouts();
             CambiarEscena(new Configuracion());
         }
 
@@ -162,88 +162,9 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         }
 
-        #region InicioCallouts
-        private readonly List<Popup> _calloutPopups = new();
-        private void Inicio_Help_Click(object sender, RoutedEventArgs e)
+        private void Boton_Menu_Click(object sender, RoutedEventArgs e)
         {
-            // Toggle: if any callouts are open, close them all; otherwise show new callouts.
-            if (_calloutPopups.Count > 0)
-            {
-                CloseAllCallouts();
-                return;
-            }
 
-            // ShowCalloutFor(Boton_Menu,
-            //     "Te encuentras aquí"
-            //     );
-            ShowCalloutFor(Boton_Configuracion,
-                "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
-                );
-            ShowCalloutFor(Boton_Usuario,
-                "Presiona aquí para ir a la ventana de usuario e invitados.\nTambien puedes acceder a la ventana presionando '3'."
-                );
-            ShowCalloutFor(Boton_Reportar,
-                "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-                );
-            //ShowCalloutFor(Graph1,
-            //    "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-            //    );
-            //ShowCalloutFor(Chart,
-            //    "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-            //    );
-            ShowCalloutFor(Day,
-                "Presiona los diferentes períodos para observar los diferentes consumos."
-                );
         }
-        private void ShowCalloutFor(FrameworkElement target, string message)
-        {
-            var callout = new CalloutControl
-            {
-                Text = message,
-                // Make the visual non-interactive so underlying controls (like the button)
-                // can still receive clicks when a callout overlaps them.
-                IsHitTestVisible = false
-            };
-
-            var popup = new Popup
-            {
-                Child = callout,
-                PlacementTarget = target,
-                Placement = PlacementMode.Right,   // try Top/Bottom/Left/Right or Custom
-                HorizontalOffset = 10,
-                VerticalOffset = 0,
-                // Keep the popup open until we explicitly close it via the button.
-                StaysOpen = true,
-                AllowsTransparency = true,
-                PopupAnimation = PopupAnimation.Fade
-            };
-
-            // Ensure popup repositions on layout changes (capture `popup` in the handler)
-            EventHandler layoutHandler = (_, __) => popup.HorizontalOffset += 0;
-            target.LayoutUpdated += layoutHandler;
-
-            // Clean up when popup closes
-            popup.Closed += (_, __) =>
-            {
-                target.LayoutUpdated -= layoutHandler;
-                _calloutPopups.Remove(popup);
-                popup.Child = null; // help GC
-            };
-
-            _calloutPopups.Add(popup);
-            popup.IsOpen = true;
-        }
-
-        // Optional helper to close all callouts
-        private void CloseAllCallouts()
-        {
-            foreach (var p in _calloutPopups.ToArray())
-            {
-                p.IsOpen = false;
-            }
-            _calloutPopups.Clear();
-        }
-        #endregion
     }
-
 }

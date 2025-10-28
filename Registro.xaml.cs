@@ -31,10 +31,10 @@ namespace C.R.A_Consumo_reducido_de_agua
         {
             InitializeComponent();
             // MouseEnter → cambio de color
-        
 
 
-        Boton_Login.MouseEnter += (s, e) =>
+
+            Boton_Login.MouseEnter += (s, e) =>
             {
 
                 Boton_Login.Background = new SolidColorBrush(Color.FromRgb(57, 61, 191)); // Azul brillante
@@ -143,7 +143,7 @@ namespace C.R.A_Consumo_reducido_de_agua
                     else
                     {
                         conexion con = new conexion(); // 👈 crear instancia
-                        con.registrar_usuario(name, email, contraseña);
+                        con.Insertar(name, email, contraseña);
                         // Cambiar a la escena Registro
                         main.CambiarEscena(new Preguntas());
                         GlobalData.UserName = name;

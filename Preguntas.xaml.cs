@@ -67,31 +67,30 @@ namespace C.R.A_Consumo_reducido_de_agua
             string imagenBoton2,
             RoutedEventHandler eventoBoton2)
         {
-            const string basePath = "Images/";
+            // Crear los ImageBrush individuales
+            ImageBrush brushEmpresarial = new ImageBrush();
+            brushEmpresarial.ImageSource = new BitmapImage(
+                new Uri($"pack://application:,,,/{imagenBoton2}", UriKind.Absolute)
+            );
+            brushEmpresarial.Stretch = Stretch.UniformToFill;
 
-            var empresarialUri = new Uri($"{basePath}{imagenBoton2}", UriKind.Relative);
-            var domesticoUri   = new Uri($"{basePath}{imagenBoton1}", UriKind.Relative);
+            ImageBrush brushDomestico = new ImageBrush();
+            brushDomestico.ImageSource = new BitmapImage(
+                new Uri($"pack://application:,,,/{imagenBoton1}", UriKind.Absolute)
+            );
+            brushDomestico.Stretch = Stretch.UniformToFill;
 
-            var brushEmpresarial = new ImageBrush
-            {
-                ImageSource = new BitmapImage(empresarialUri),
-                Stretch = Stretch.UniformToFill
-            };
-
-            var brushDomestico = new ImageBrush
-            {
-                ImageSource = new BitmapImage(domesticoUri),
-                Stretch = Stretch.UniformToFill
-            };
-
+            // Aplicar texturas a cada botón
             Boton_Empresarial.Background = brushEmpresarial;
-            Boton_Domestico.Background   = brushDomestico;
+            Boton_Domestico.Background = brushDomestico;
 
+            // Quitar todos los eventos anteriores para evitar duplicaciones
             LimpiarEventos(Boton_Empresarial);
             LimpiarEventos(Boton_Domestico);
 
+            // Asignar los nuevos eventos
             Boton_Empresarial.Click += eventoBoton2;
-            Boton_Domestico.Click   += eventoBoton1;
+            Boton_Domestico.Click += eventoBoton1;
         }
 
         private void LimpiarEventos(Button boton)
@@ -123,7 +122,7 @@ namespace C.R.A_Consumo_reducido_de_agua
                 Boton_Continuar.Visibility = Visibility.Collapsed;
                 Listado.Items.Clear();
                 Listado.Visibility = Visibility.Collapsed;
-                CambiarBoton("Casa.jpeg", Seleccion_Domestica, "Empresa.jpg", Seleccion_Empresarial);
+                CambiarBoton("Images/Casa.jpeg", Seleccion_Domestica, "Images/Empresa.jpg", Seleccion_Empresarial);
                 Listado.SelectionChanged -= Cambiar_Idioma;
                 Listado.SelectionChanged += Gama_PC;
 
@@ -145,12 +144,12 @@ namespace C.R.A_Consumo_reducido_de_agua
 
             else if (pregunta.tipo == 2)
             {
-                CambiarBoton ("Propio.png", Seleccion_Propio, "Renta.png",Seleccion_Rentado);
+                CambiarBoton ("Images/Propio.png", Seleccion_Propio, "Images/Renta.png", Seleccion_Rentado);
             }
 
             else if (pregunta.tipo == 3)
             {
-                CambiarBoton("Propio.png", Seleccion_Propio, "Renta.png", Seleccion_Rentado);
+                CambiarBoton("Images/Propio.png", Seleccion_Propio, "Images/Renta.png", Seleccion_Rentado);
             }
 
             else if (pregunta.tipo == 4)
@@ -159,7 +158,7 @@ namespace C.R.A_Consumo_reducido_de_agua
                 Boton_Domestico.Visibility = Visibility.Visible;
                 Boton_Continuar.Visibility = Visibility.Collapsed;
                 Numero_Domicilios.Visibility = Visibility.Collapsed;
-                CambiarBoton( "Si.png", Seleccion_Mas_Domicilios, "No.png", Seleccion_Sin_Domicilios);
+                CambiarBoton("Images/Si.png", Seleccion_Mas_Domicilios, "Images/No.png", Seleccion_Sin_Domicilios);
             }
 
             else if (pregunta.tipo == 5)
@@ -176,7 +175,7 @@ namespace C.R.A_Consumo_reducido_de_agua
                 Boton_Domestico.Visibility = Visibility.Visible;
                 Boton_Continuar.Visibility = Visibility.Collapsed;
                 Numero_Domicilios.Visibility = Visibility.Collapsed;
-                CambiarBoton("Mes.png", Seleccion_Mes, "Semana.png", Seleccion_Semana);
+                CambiarBoton("Images/Mes.png", Seleccion_Mes, "Images/Semana.png", Seleccion_Semana);
             }
 
             else if (pregunta.tipo == 7)
@@ -184,7 +183,7 @@ namespace C.R.A_Consumo_reducido_de_agua
                 Boton_Empresarial.Visibility = Visibility.Visible;
                 Boton_Domestico.Visibility = Visibility.Visible;
                 Boton_Continuar.Visibility = Visibility.Collapsed;
-                CambiarBoton("Grafica lineas y puntos.png", Seleccion_Mes, "Grafica barras.png", Seleccion_Semana);
+                CambiarBoton("Images/Grafica lineas y puntos.png", Seleccion_Mes, "Images/Grafica barras.png", Seleccion_Semana);
                 Listado.Items.Clear();
             }
 
