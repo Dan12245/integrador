@@ -36,12 +36,7 @@ namespace C.R.A_Consumo_reducido_de_agua
             if (GlobalData.UserName == null)
                 GlobalData.UserName = "Usuario";
 
-<<<<<<< HEAD
             if  (UserData.Uso == false)
-=======
-            if (UserData.Uso == false)
-            {
->>>>>>> Metodo_para_guardar_una_casa
                 texto_modo.Text = "Modo Empresarial";
             else
                 texto_modo.Text = "Modo Doméstico";

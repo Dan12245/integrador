@@ -67,18 +67,10 @@ namespace C.R.A_Consumo_reducido_de_agua
             string imagenBoton2,
             RoutedEventHandler eventoBoton2)
         {
-<<<<<<< HEAD
             const string basePath = "Images/";
 
             var empresarialUri = new Uri($"{basePath}{imagenBoton2}", UriKind.Relative);
             var domesticoUri   = new Uri($"{basePath}{imagenBoton1}", UriKind.Relative);
-=======
-            // Ensure callers pass only filenames; we prepend the folder here
-            string basePath = "Images/";
-
-            var empresarialUri = new Uri($"pack://application:,,,/{basePath}{imagenBoton2}", UriKind.Absolute);
-            var domesticoUri   = new Uri($"pack://application:,,,/{basePath}{imagenBoton1}", UriKind.Absolute);
->>>>>>> Metodo_para_guardar_una_casa
 
             var brushEmpresarial = new ImageBrush
             {
