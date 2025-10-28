@@ -32,6 +32,7 @@ namespace C.R.A_Consumo_reducido_de_agua
         public Inicio()
         {
             InitializeComponent();
+            this.Loaded += Inicio_Loaded;
             UserData.Load();
             if (GlobalData.UserName == null)
                 GlobalData.UserName = "Usuario";
@@ -100,6 +101,57 @@ namespace C.R.A_Consumo_reducido_de_agua
             ReiniciarTimer();
         }
 
+        private void Inicio_Loaded(object sender, RoutedEventArgs e)
+        {
+            // PRUEBA 1: Fant (mejor para la mayoría)
+            ConfigurarChart_Fant();
+
+            // Si no funciona, prueba:
+            // ConfigurarChart_Linear();
+            // ConfigurarChart_HighQuality();
+        }
+
+        // Configuración 1: Fant (Recomendado)
+        private void ConfigurarChart_Fant()
+        {
+            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Fant);
+            RenderOptions.SetEdgeMode(Chart, EdgeMode.Unspecified);
+            Chart.SnapsToDevicePixels = true;
+            Chart.UseLayoutRounding = true;
+            TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Display);
+            TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
+        }
+
+        // Configuración 2: Linear (Más suave)
+        private void ConfigurarChart_Linear()
+        {
+            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Linear);
+            Chart.SnapsToDevicePixels = false;
+            Chart.UseLayoutRounding = false;
+            TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Ideal);
+            TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
+        }
+
+        // Configuración 3: HighQuality (Más suave, posible blur)
+        private void ConfigurarChart_HighQuality()
+        {
+            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.HighQuality);
+            RenderOptions.SetClearTypeHint(Chart, ClearTypeHint.Enabled);
+            Chart.SnapsToDevicePixels = false;
+            Chart.UseLayoutRounding = false;
+            TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Ideal);
+        }
+
+        // Configuración 4: Aumentar resolución base
+        private void ConfigurarChart_AltaResolucion()
+        {
+            // Duplicar el tamaño para mejor calidad
+            Chart.Width = 860;
+            Chart.Height = 448;
+            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.HighQuality);
+            Chart.SnapsToDevicePixels = false;
+            Chart.UseLayoutRounding = false;
+        }
         private void btnAnterior_Click(object sender, RoutedEventArgs e)
         {
             indiceActual--;
