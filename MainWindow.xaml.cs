@@ -1,13 +1,14 @@
-﻿using System;
+﻿using C.R.A_Consumo_reducido_de_agua.ViewModels;
+using System;
 using System.Collections.Generic;
-using System.IO;        
+using System.IO;
 using System.Linq;
-using System.Net.Mail; 
+using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
-using C.R.A_Consumo_reducido_de_agua.ViewModels;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -17,20 +18,22 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Text.Json.Serialization;
-
-using IOPath = System.IO.Path;
 using System.Xml.Linq;
+using IOPath = System.IO.Path;
 
 namespace C.R.A_Consumo_reducido_de_agua
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
     /// Lógica de interacción para MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private const double BaseWidth = 800;
+        private const double BaseHeight = 450;
         public static class UserData
+
+
         {
             private static string folder = IOPath.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -61,6 +64,8 @@ namespace C.R.A_Consumo_reducido_de_agua
             public static int Domicilios { get; set; } = 0;
             public static string Domicilio { get; set; } = "";
             public static bool Propio { get; set; } = false;
+
+
 
             public static void Save()
             {
@@ -122,6 +127,33 @@ namespace C.R.A_Consumo_reducido_de_agua
             UserData.Save();
         }
 
+        public void CambiarFondoGradiente(Color colorInicio, Color colorFin, double offset = 0.5, string direccion = "Horizontal")
+        {
+            LinearGradientBrush gradiente = new LinearGradientBrush();
+
+            // Configurar la dirección del gradiente
+            if (direccion.ToLower() == "Horizontal")
+            {
+                // Horizontal: izquierda a derecha
+                gradiente.StartPoint = new Point(0, 0.5);
+                gradiente.EndPoint = new Point(1, 0.5);
+            }
+            else
+            {
+                // Vertical: arriba a abajo (por defecto)
+                gradiente.StartPoint = new Point(0.5, 0);
+                gradiente.EndPoint = new Point(0.5, 1);
+            }
+
+            gradiente.GradientStops.Add(new GradientStop(colorInicio, offset));
+            gradiente.GradientStops.Add(new GradientStop(colorFin, 1));
+
+            RootContainer.Background = gradiente;
+        }
+
+
+        private const double PORCENTAJE_ANCHO = 0.70;  // 70% del ancho de pantalla
+        private const double PORCENTAJE_ALTO = 0.75;   // 75% del alto de pantalla
         public bool escorreovalido(String email)
         {
             try
@@ -139,15 +171,35 @@ namespace C.R.A_Consumo_reducido_de_agua
             Login_Window.Children.Clear();
             Login_Window.Children.Add(nuevoControl);
         }
-            
+
         // Este evento se ejecuta cuando termina la animación
         private void LogoAnimacion_Completed(object sender, EventArgs e)
         {
-#if DEBUG
-            CambiarEscena(new Inicio());   // Start en modo depuración con la pantalla de inicio
-#else
-            CambiarEscena(new Login());    // Start en modo normal con la pantalla de login
-#endif
+            // Reemplaza "Inicio" con el UserControl que quieras mostrar después
+            CambiarEscena(new Login());
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Obtener el tamaño del área de trabajo (pantalla sin barra de tareas)
+            double anchoDisponible = SystemParameters.WorkArea.Width;
+            double altoDisponible = SystemParameters.WorkArea.Height;
+
+            // Calcular el tamaño según los porcentajes
+            this.Width = anchoDisponible * PORCENTAJE_ANCHO;
+            this.Height = altoDisponible * PORCENTAJE_ALTO;
+
+            // Asegurar que no sea menor que el mínimo
+            if (this.Width < this.MinWidth) this.Width = this.MinWidth;
+            if (this.Height < this.MinHeight) this.Height = this.MinHeight;
+
+            // OPCIONAL: Si quieres un tamaño máximo
+            double maxWidth = anchoDisponible * 0.95;  // Máximo 95% del ancho
+            double maxHeight = altoDisponible * 0.90;  // Máximo 90% del alto
+
+            if (this.Width > maxWidth) this.Width = maxWidth;
+            if (this.Height > maxHeight) this.Height = maxHeight;
+        }
+
     }
 }
