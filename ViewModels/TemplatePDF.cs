@@ -99,6 +99,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                             {
                                 right.Item()
                                      .Height(160)
+                                     .MaxWidth(240)
                                      .Image(ChartWeekData);
                             }
 
@@ -106,6 +107,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                             {
                                 right.Item()
                                      .Height(160)
+                                     .MaxWidth(240)
                                      .Image(ChartMonthData);
                             }
 
@@ -113,6 +115,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                             {
                                 right.Item()
                                         .Height(160)
+                                        .MaxWidth(240)
                                         .Image(ChartYearData);
                             }
                             });

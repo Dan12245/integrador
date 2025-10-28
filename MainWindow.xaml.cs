@@ -176,7 +176,8 @@ namespace C.R.A_Consumo_reducido_de_agua
         private void LogoAnimacion_Completed(object sender, EventArgs e)
         {
             // Reemplaza "Inicio" con el UserControl que quieras mostrar después
-            CambiarEscena(new Login());
+            //CambiarEscena(new Login());
+            CambiarEscena(new Inicio());
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

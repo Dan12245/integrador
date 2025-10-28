@@ -292,7 +292,7 @@ namespace C.R.A_Consumo_reducido_de_agua
             mainViewModel.ChartMonthData,
             mainViewModel.ChartYearData);
 
-            document.GeneratePdfAndShow();
+           document.GeneratePdfAndShow();
             document.ShowInCompanionAsync();
         }
     }
