@@ -1,0 +1,16 @@
+<UserControl x:Class="C.R.A_Consumo_reducido_de_agua.Controls.CalloutControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             MinWidth="140" MinHeight="40">
+    <Grid>
+        <!-- Main bubble -->
+        <Border Background="#FFFFFF" CornerRadius="3" BorderBrush="Black" BorderThickness="0.7" Padding="8" Opacity="0.85">
+            <TextBlock Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                       TextWrapping="Wrap"
+                       FontFamily="Arial"
+                       FontSize="18"
+                       Foreground="Black"
+                       />
+        </Border> 
+    </Grid>
+</UserControl>

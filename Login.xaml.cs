@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -112,7 +113,8 @@ namespace C.R.A_Consumo_reducido_de_agua
        
              }
          }
-                private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
                 {
 
                 }
