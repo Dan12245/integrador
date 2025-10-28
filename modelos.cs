@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Npgsql;
 
-namespace CRA
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 {
     public class modelos
     {
@@ -17,13 +17,7 @@ namespace CRA
         //solamente es una solucion que consegui para que aparezca el nombre cuando haces login
         public string UserName { get; set; }
     }
-    //esta clase guarda el email para usarlo despues en el codigo y sacar el id del usuario
-    public static class mail
-    {
-        public static string email { get; set; }
-    }
     //esto si es importante, es para que no nos tiren la tabla
-    //olvidenlo no es tan importante porque ya tenemos los insert con variables, los @
     public class Usuario
     {
      public int Id { get; set; }

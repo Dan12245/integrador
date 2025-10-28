@@ -102,14 +102,6 @@
             <Button Content="Cerrar sesion" Click="Boton_Cerrar_Sesion" HorizontalAlignment="Left" Margin="496,282,0,0" VerticalAlignment="Top"  Height="54" Width="248"/>
             <Button Content="Descartar" HorizontalAlignment="Left" Margin="137,369,0,0" VerticalAlignment="Top" Click="Button_Click" Height="54" Width="297" Background="#FFFFBEBE" Foreground="#FF752D2D" BorderBrush="#FFFFBEBE"/>
             <Button Content="Aplicar" HorizontalAlignment="Left" Margin="467,369,0,0" VerticalAlignment="Top" Click="Button_Click" Height="54" Width="297" Background="#FF96FFD7" Foreground="#FF276F54" BorderBrush="#FF96FFD7"/>
-            <Button Margin="730,10,10,370" Cursor="Hand" Click="Config_Help_Click" Height="55" Width="55">
-                <Button.BorderBrush>
-                    <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
-                </Button.BorderBrush>
-                <Button.Background>
-                    <ImageBrush ImageSource="/Images/Help.png"/>
-                </Button.Background>
-            </Button>
         </Grid>
     </Viewbox>
 </UserControl>

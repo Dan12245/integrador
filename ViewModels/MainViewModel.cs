@@ -3,37 +3,27 @@ using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
-using LiveChartsCore.SkiaSharpView.SKCharts;
-using LiveChartsCore.SkiaSharpView.WPF;
 using SkiaSharp;
 using System.Globalization;
-using System.IO;
-
 
 namespace C.R.A_Consumo_reducido_de_agua.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        //Simulated data for one year
+        // Année des données (aligne les dates et le tableau)
         private readonly int year = DateTime.Today.Year;
         private readonly int daysInYear;
         private readonly double[] totalConsumption;
 
-        [ObservableProperty] 
+        [ObservableProperty]
         private string selectedPeriod = string.Empty;
 
-        [ObservableProperty] 
+        [ObservableProperty]
         private IEnumerable<ISeries> values = Array.Empty<ISeries>();
 
-        //Culture is used to format date labels according to the selected culture (based on PC's system language and region)
+        // Culture utilisée pour formater les libellés
         [ObservableProperty]
         private CultureInfo culture = CultureInfo.CurrentCulture;
-        [ObservableProperty]
-        private byte[] _chartWeekData;
-        [ObservableProperty]
-        private byte[] _chartMonthData; 
-        [ObservableProperty]
-        private byte[] _chartYearData;
         partial void OnCultureChanged(CultureInfo value) => UpdateValues();
 
         public Axis[] XAxes { get; set; } = new Axis[]
@@ -44,6 +34,7 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
 
             }
         };
+
         public Axis[] YAxes { get; set; } = new Axis[]
         {
             new Axis
@@ -51,14 +42,16 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
             TextSize = 10 // Label Y font size
             }
         };
+
         public MainViewModel()
         {
             daysInYear = DateTime.IsLeapYear(year) ? 366 : 365;
             totalConsumption = GenerateRandomData(daysInYear, 170, 380);
 
-            SelectedPeriod = "week";
+            SelectedPeriod = "day";
             UpdateValues();
         }
+
         private static double[] GenerateRandomData(int count, int min, int max)
         {
             var rnd = new Random();
@@ -66,6 +59,7 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
             for (int i = 0; i < count; i++) data[i] = rnd.Next(min, max);
             return data;
         }
+
         partial void OnSelectedPeriodChanged(string value) => UpdateValues();
 
         private void UpdateValues()
@@ -73,6 +67,7 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
             var startOfYear = new DateTime(year, 1, 1);
             var today = DateTime.Today.Year == year ? DateTime.Today : startOfYear;
             var todayIndex = Math.Clamp((today - startOfYear).Days, 0, daysInYear - 1);
+
             switch (selectedPeriod)
             {
                 case "day":
@@ -87,6 +82,7 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
                     };
                         break;
                     }
+
                 case "week":
                     {
                         // 0 to 6 to represent last 7 days
@@ -96,7 +92,7 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
 
                         Values = new ISeries[]
                         {
-                            new LineSeries<double> { Values = Slice(totalConsumption, start, count) }
+                        new LineSeries<double> { Values = Slice(totalConsumption, start, count) }
                         };
 
                         var startDate = startOfYear.AddDays(start);
@@ -104,21 +100,9 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
                         for (int i = 0; i < count; i++)
                             labels[i] = startDate.AddDays(i).ToString("ddd", Culture);
                         XAxes[0].Labels = labels;
-
-                        // Create chart image
-                        var chart = new SKCartesianChart
-                        {
-                            Series = new ISeries[] { new LineSeries<double> { Values = Slice(totalConsumption, start, count) } },
-                            XAxes = XAxes,
-                            YAxes = YAxes
-                        };
-                        using (var stream = new MemoryStream())
-                        {
-                            chart.SaveImage(stream, SKEncodedImageFormat.Png, 100);
-                            ChartWeekData = stream.ToArray();
-                        }
                         break;
                     }
+
                 case "month":
                     {
                         var monthStart = new DateTime(year, today.Month, 1);
@@ -134,22 +118,9 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
                         for (int i = 0; i < dim; i++)
                             labels[i] = monthStart.AddDays(i).ToString("d MMM", Culture);
                         XAxes[0].Labels = labels;
-
-                        // Create chart image
-                        var chart = new SKCartesianChart
-                        {
-                            Series = new ISeries[] { new LineSeries<double> { Values = Slice(totalConsumption, start, dim) } },
-                            XAxes = XAxes,
-                            YAxes = YAxes
-                        };
-                        using (var stream = new MemoryStream())
-                        {
-                            chart.SaveImage(stream, SKEncodedImageFormat.Png, 100);
-                            ChartMonthData = stream.ToArray();
-                        }
-
                         break;
                     }
+
                 case "year":
                     {
                         // Average per month
@@ -163,27 +134,16 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
                         for (int m = 1; m <= 12; m++)
                             labels[m - 1] = new DateTime(year, m, 1).ToString("MMMM", Culture);
                         XAxes[0].Labels = labels;
-
-                        // Create chart image
-                        var chart = new SKCartesianChart
-                        {
-                            Series = new ISeries[] { new LineSeries<double> { Values = monthAverages } },
-                            XAxes = XAxes,
-                            YAxes = YAxes
-                        };
-                        using (var stream = new MemoryStream())
-                        {
-                            chart.SaveImage(stream, SKEncodedImageFormat.Png, 100);
-                            ChartYearData = stream.ToArray();
-                        }
                         break;
                     }
+
                 default:
                     Values = Array.Empty<ISeries>();
                     XAxes[0].Labels = Array.Empty<string>();
                     break;
             }
         }
+
         private static double[] Slice(double[] source, int start, int count)
         {
             var result = new double[count];

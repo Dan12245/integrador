@@ -35,11 +35,8 @@
     </UserControl.Resources>
 
     <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid x:Name="Login_Window" KeyboardNavigation.TabNavigation="Cycle" Background="#FFB2CFE6" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
-
-            <Image Margin="-187,48,547,-53" Source="Images/descarga.png" Stretch="Fill"/>
-            <Image x:Name="MareaImage" Margin="-76,343,-182,-146" Source="Images/Marea.png" Stretch="Fill"/>
-
+        <Grid x:Name="Login_Window" KeyboardNavigation.TabNavigation="Cycle" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
+        
             <Rectangle Height="426" Width="392" UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Center" RadiusX="26.535" RadiusY="26.535">
                 <Rectangle.Stroke>
                     <SolidColorBrush Color="Black" Opacity="0"/>
@@ -52,7 +49,11 @@
                 </Rectangle.Fill>
             </Rectangle>
             <Button x:Name="Boton_Register" Content="Register" Click="Boton_Register_Click" HorizontalAlignment="Left" TabIndex="1"
-                     Margin="387,87,0,0" VerticalAlignment="Top" Width="155" Height="35" Opacity="0.25"/>
+                     Margin="387,87,0,0" VerticalAlignment="Top" Width="155" Height="35" Opacity="0.6">
+                <Button.Background>
+                    <SolidColorBrush Color="#FF04023E" Opacity="0.985"/>
+                </Button.Background>
+            </Button>
 
             <Image Margin="0,0,0,342" Width="75" Source="Images/Logo.png"/>
             <Button x:Name="Boton_Login" Content="Login" HorizontalAlignment="Left" Margin="258,87,0,0" VerticalAlignment="Top" TabIndex="0"
