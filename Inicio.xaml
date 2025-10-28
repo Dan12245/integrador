@@ -179,10 +179,10 @@
 
                 <!-- Añade los botones para seleccionar el periodo en el que se muestra los datos -->
                 <StackPanel x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                    <Button x:Name="Day" Margin="0,0,5,0" Command="{Binding GoToPage1Command}" >Day</Button>
                     <Button Margin="0,0,5,0" Command="{Binding GoToPage2Command}">Week</Button>
                     <Button Margin="0,0,5,0" Command="{Binding GoToPage3Command}">Month</Button>
                     <Button Margin="0,0,5,0" Command="{Binding SeeAllCommand}">Year</Button>
+                    <Button Margin="0,0,5,0" Width="125" Name="btnDownload" Click="btnDownload_Click">Download report</Button>
                 </StackPanel>
                 <lvc:CartesianChart x:Name="Chart" Background="Transparent" BorderBrush="WhiteSmoke" RenderOptions.BitmapScalingMode="HighQuality" Grid.Row="1" ZoomMode="X" Series="{Binding Values}"
                 XAxes="{Binding XAxes}" YAxes="{Binding YAxes}"/>

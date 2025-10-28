@@ -144,9 +144,9 @@ namespace C.R.A_Consumo_reducido_de_agua
         private void LogoAnimacion_Completed(object sender, EventArgs e)
         {
 #if DEBUG
-            CambiarEscena(new Inicio());   // Démarrer directement sur Inicio en Debug
+            CambiarEscena(new Inicio());   // Start en modo depuración con la pantalla de inicio
 #else
-            CambiarEscena(new Login());    // Comportement normal en Release
+            CambiarEscena(new Login());    // Start en modo normal con la pantalla de login
 #endif
         }
     }

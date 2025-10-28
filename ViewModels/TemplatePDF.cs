@@ -70,57 +70,65 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                 column.Item()
                     .Layers(layers =>
                     {
+                        //Background image
                         layers.Layer().AlignBottom().Image(System.IO.Path.Combine(AppContext.BaseDirectory, "Images", "LogoOpacidad15.png"));
 
+                        //Table + charts
                         layers.PrimaryLayer()
-                        .Column(innerColumn =>
+                        .Row(row =>
                         {
-                            innerColumn.Item().Row(row =>
+                            row.RelativeItem().Column(left =>
                             {
-                                row.RelativeItem().Component(new AddressComponent("Building information", Model.SellerAddress)); //Add user address
+                                left.Item().Row(r =>
+                                {
+                                    r.RelativeItem().Component(new AddressComponent("Building information", Model.SellerAddress));
+                                });
 
-                                //Add chart image if available
-                                if (ChartWeekData != null && ChartWeekData.Length > 0)
-                                    row.RelativeItem() //chart size
-                                       .PaddingLeft(12)
-                                       .AlignRight()
-                                       .Height(160)
-                                       .Width(220)
-                                       .Image(ChartWeekData);
+                                left.Item().TranslateY(15).Element(ComposeTable);
+
+                                var totalPrice = Model.Items.Sum(x => x.Price * x.Quantity);
+                                left.Item().TranslateY(20).TranslateX(50).Text($"Grand total: {totalPrice}").Bold().FontSize(12);
+
                             });
-                            innerColumn.Item().Element(ComposeTable);
 
-                            var totalPrice = Model.Items.Sum(x => x.Price * x.Quantity);
-                            innerColumn.Item().AlignRight().Text($"Grand total: {totalPrice}").FontSize(14);
+                            row.ConstantItem(240).TranslateY(130).Column(right =>
+                            {
+                                right.Spacing(5);
 
+                            if (ChartWeekData != null && ChartWeekData.Length > 0)
+                            {
+                                right.Item()
+                                     .Height(160)
+                                     .Image(ChartWeekData);
+                            }
 
                             if (ChartMonthData != null && ChartMonthData.Length > 0)
-                                innerColumn
-                                    .Item()
-                                    .TranslateX(98)
-                                    .Width(365)
-                                    .Height(200)
-                                    .Image(ChartMonthData);
-                            if (ChartYearData != null && ChartYearData.Length > 0)
-                                innerColumn
-                                    .Item()
-                                    .TranslateX(98)
-                                    .Width(365)
-                                    .Height(200)
-                                    .Image(ChartYearData);
+                            {
+                                right.Item()
+                                     .Height(160)
+                                     .Image(ChartMonthData);
+                            }
 
-                        });
+                            if (ChartYearData != null && ChartYearData.Length > 0)
+                            {
+                                right.Item()
+                                        .Height(160)
+                                        .Image(ChartYearData);
+                            }
+                            });
+                         });
                     });
             });
         }
+
         void ComposeTable(IContainer container)
         {
-            container.AlignCenter().Table(table =>
+            container.AlignLeft().Table(table =>
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.ConstantColumn(100);
-                    columns.ConstantColumn(100);
+                    columns.ConstantColumn(80);
+                    columns.ConstantColumn(80);
                 });
 
                 table.Header(header =>
@@ -165,7 +173,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                 column.Spacing(3);
 
                 column.Item().BorderBottom(1).PaddingBottom(6).Text(Title).SemiBold();
-
                 column.Item().Text(Address.CompanyName);
                 column.Item().Text(Address.Street);
                 column.Item().Text($"{Address.City}, {Address.State}");

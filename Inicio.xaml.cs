@@ -21,8 +21,6 @@ using static C.R.A_Consumo_reducido_de_agua.MainWindow;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
 using C.R.A_Consumo_reducido_de_agua.Controls;
 
-
-
 namespace C.R.A_Consumo_reducido_de_agua
 {
     public partial class Inicio : UserControl
@@ -56,22 +54,12 @@ namespace C.R.A_Consumo_reducido_de_agua
             // Generar el documento PDF de ejemplo
             QuestPDF.Settings.License = LicenseType.Community; // Establecer el tipo de licencia
 
-            var data = new InvoiceDocumentDataSource();
-            var model = data.GetInvoiceDetails();
+
 
             //Be sure all the graphs are generated before creating the document
             mainViewModel.SelectedPeriod = "month";
             mainViewModel.SelectedPeriod = "year";
             mainViewModel.SelectedPeriod = "week";
-
-            var document = new InvoiceDocument(
-                model, mainViewModel.ChartWeekData,
-                mainViewModel.ChartMonthData,
-                mainViewModel.ChartYearData);
-
-            document.ShowInCompanionAsync();
-
-
         }
 
         private List<string> consejos = new List<string>
@@ -191,9 +179,6 @@ namespace C.R.A_Consumo_reducido_de_agua
             //ShowCalloutFor(Chart,
             //    "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
             //    );
-            ShowCalloutFor(Day,
-                "Presiona los diferentes períodos para observar los diferentes consumos."
-                );
         }
         private void ShowCalloutFor(FrameworkElement target, string message)
         {
@@ -244,6 +229,20 @@ namespace C.R.A_Consumo_reducido_de_agua
             _calloutPopups.Clear();
         }
         #endregion
+
+        private void btnDownload_Click(object sender, RoutedEventArgs e)
+        {
+            var data = new InvoiceDocumentDataSource();
+            var model = data.GetInvoiceDetails();
+
+                var document = new InvoiceDocument(
+            model, mainViewModel.ChartWeekData,
+            mainViewModel.ChartMonthData,
+            mainViewModel.ChartYearData);
+
+            document.GeneratePdfAndShow();
+            document.ShowInCompanionAsync();
+        }
     }
 
 }

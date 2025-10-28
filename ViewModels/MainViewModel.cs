@@ -75,18 +75,6 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
             var todayIndex = Math.Clamp((today - startOfYear).Days, 0, daysInYear - 1);
             switch (selectedPeriod)
             {
-                case "day":
-                    {
-                        Values = new ISeries[]
-                        {
-                        new LineSeries<double> { Values = new[] { totalConsumption[todayIndex] } }
-                        };
-                        XAxes[0].Labels = new[]
-                        {
-                        startOfYear.AddDays(todayIndex).ToString("dddd", Culture)
-                    };
-                        break;
-                    }
                 case "week":
                     {
                         // 0 to 6 to represent last 7 days
@@ -219,8 +207,7 @@ namespace C.R.A_Consumo_reducido_de_agua.ViewModels
             return result;
         }
 
-        // Comandos que son activados al hacer click en cada uno de los botones(Day/Week/Month/Year)
-        [RelayCommand] private void GoToPage1() => SelectedPeriod = "day";
+        // Comandos que son activados al hacer click en cada uno de los botones(/Week/Month/Year)
         [RelayCommand] private void GoToPage2() => SelectedPeriod = "week";
         [RelayCommand] private void GoToPage3() => SelectedPeriod = "month";
         [RelayCommand] private void SeeAll() => SelectedPeriod = "year";
