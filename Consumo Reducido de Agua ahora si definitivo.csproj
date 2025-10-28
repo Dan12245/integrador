@@ -42,6 +42,7 @@
     <None Remove="Image2.png" />
     <None Remove="Image3.png" />
     <None Remove="Image4.png" />
+    <None Remove="Images\Help.png" />
     <None Remove="logo programa Pagina.png" />
     <None Remove="logo programa.png" />
     <None Remove="Logo.png" />
@@ -101,6 +102,7 @@
     <Resource Include="Images\fondo preguntas.png" />
     <Resource Include="Images\Grafica barras.png" />
     <Resource Include="Images\Grafica lineas y puntos.png" />
+    <Resource Include="Images\Help.png" />
     <Resource Include="Images\Image1.png" />
     <Resource Include="Images\Image2.png" />
     <Resource Include="Images\Image3.png" />

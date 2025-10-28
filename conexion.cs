@@ -259,7 +259,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 MessageBox.Show("error" + ex.Message);
                 return -1;
             }
-
         }
         public int id_edificio(string email)
         {
@@ -361,6 +360,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 if (existe_invitacion(email))
                 {
                     string query = "UPDATE cra.invited_users SET user_id=@user_id and @read_only=read_only WHERE building_id=@building_id AND day=@day";
+
                     using (var ejecutor = new NpgsqlCommand(query, conex))
                     {
                         ejecutor.Parameters.AddWithValue("@user_id", user_id);
@@ -398,13 +398,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 {
                     MessageBox.Show("invitado no encontrado");
                 }
-
             }
             catch (Exception ex)
             {
                 MessageBox.Show("error" + ex.Message);
             }
-
         }
         #endregion
         //y las funciones relacionadas con el consumo

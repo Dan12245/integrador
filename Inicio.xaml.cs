@@ -9,11 +9,18 @@ using QuestPDF.Previewer;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Windows.System;
 using static C.R.A_Consumo_reducido_de_agua.MainWindow;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
+using C.R.A_Consumo_reducido_de_agua.Controls;
+
 
 
 namespace C.R.A_Consumo_reducido_de_agua
@@ -29,7 +36,12 @@ namespace C.R.A_Consumo_reducido_de_agua
             if (GlobalData.UserName == null)
                 GlobalData.UserName = "Usuario";
 
+<<<<<<< HEAD
             if  (UserData.Uso == false)
+=======
+            if (UserData.Uso == false)
+            {
+>>>>>>> Metodo_para_guardar_una_casa
                 texto_modo.Text = "Modo Empresarial";
             else
                 texto_modo.Text = "Modo Doméstico";
@@ -130,21 +142,23 @@ namespace C.R.A_Consumo_reducido_de_agua
             Login_Window.Children.Add(nuevoControl);
         }
         //spam de sofi: “
-       // Hola papus :D
-      //  Gerardwayfan71_"
-
+        // Hola papus :D
+        //  Gerardwayfan71_"
         private void Boton_Usuario_Invitados(object sender, RoutedEventArgs e)
         {
+            CloseAllCallouts();
             CambiarEscena(new Usuario());
         }
 
         private void Boton_Reporte(object sender, RoutedEventArgs e)
         {
+            CloseAllCallouts();
             CambiarEscena(new Reporte());
         }
 
         private void Boton_ir_a_Configuracion(object sender, RoutedEventArgs e)
         {
+            CloseAllCallouts();
             CambiarEscena(new Configuracion());
         }
 
@@ -153,6 +167,88 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         }
 
+        #region InicioCallouts
+        private readonly List<Popup> _calloutPopups = new();
+        private void Inicio_Help_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle: if any callouts are open, close them all; otherwise show new callouts.
+            if (_calloutPopups.Count > 0)
+            {
+                CloseAllCallouts();
+                return;
+            }
+
+            // ShowCalloutFor(Boton_Menu,
+            //     "Te encuentras aquí"
+            //     );
+            ShowCalloutFor(Boton_Configuracion,
+                "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
+                );
+            ShowCalloutFor(Boton_Usuario,
+                "Presiona aquí para ir a la ventana de usuario e invitados.\nTambien puedes acceder a la ventana presionando '3'."
+                );
+            ShowCalloutFor(Boton_Reportar,
+                "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
+                );
+            //ShowCalloutFor(Graph1,
+            //    "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
+            //    );
+            //ShowCalloutFor(Chart,
+            //    "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
+            //    );
+            ShowCalloutFor(Day,
+                "Presiona los diferentes períodos para observar los diferentes consumos."
+                );
+        }
+        private void ShowCalloutFor(FrameworkElement target, string message)
+        {
+            var callout = new CalloutControl
+            {
+                Text = message,
+                // Make the visual non-interactive so underlying controls (like the button)
+                // can still receive clicks when a callout overlaps them.
+                IsHitTestVisible = false
+            };
+
+            var popup = new Popup
+            {
+                Child = callout,
+                PlacementTarget = target,
+                Placement = PlacementMode.Right,   // try Top/Bottom/Left/Right or Custom
+                HorizontalOffset = 10,
+                VerticalOffset = 0,
+                // Keep the popup open until we explicitly close it via the button.
+                StaysOpen = true,
+                AllowsTransparency = true,
+                PopupAnimation = PopupAnimation.Fade
+            };
+
+            // Ensure popup repositions on layout changes (capture `popup` in the handler)
+            EventHandler layoutHandler = (_, __) => popup.HorizontalOffset += 0;
+            target.LayoutUpdated += layoutHandler;
+
+            // Clean up when popup closes
+            popup.Closed += (_, __) =>
+            {
+                target.LayoutUpdated -= layoutHandler;
+                _calloutPopups.Remove(popup);
+                popup.Child = null; // help GC
+            };
+
+            _calloutPopups.Add(popup);
+            popup.IsOpen = true;
+        }
+
+        // Optional helper to close all callouts
+        private void CloseAllCallouts()
+        {
+            foreach (var p in _calloutPopups.ToArray())
+            {
+                p.IsOpen = false;
+            }
+            _calloutPopups.Clear();
+        }
+        #endregion
     }
 
 }

@@ -118,6 +118,14 @@
             <TextBlock x:Name="Datos_Usuario_Copiar" TextAlignment="Center" HorizontalAlignment="Left" Margin="126,329,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="645" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Meta de reduccion de consumo"/></TextBlock>
             <ProgressBar x:Name="Barra_meta" HorizontalAlignment="Left" Height="38" Margin="144,355,0,0" VerticalAlignment="Top" Width="610" Background="#FFB9D5FF" BorderBrush="#FF0A2D65" Value="50" Foreground="#FF5F89C8"/>
             <TextBlock x:Name="Datos_Usuario_Copiar1" TextAlignment="Center" HorizontalAlignment="Left" Margin="144,397,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="610" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Dias restantes: te te te te teto"/></TextBlock>
+            <Button Margin="730,10,10,370" Cursor="Hand" Click="Report_Help_Click" Height="55" Width="55">
+                <Button.BorderBrush>
+                    <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Help.png"/>
+                </Button.Background>
+            </Button>
         </Grid>
     </Viewbox>
 </UserControl>
