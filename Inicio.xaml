@@ -33,8 +33,7 @@
 
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FF7385E3"/>
-                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="BorderBrush" Value="White"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -53,12 +52,10 @@
     </UserControl.Resources>
 
 
-
-    <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid x:Name="Login_Window" Background="#FF86A5FF" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid>
                 <Rectangle HorizontalAlignment="Left" Height="434" Stroke="#FF394D7E" VerticalAlignment="Center" Width="98" Fill="#FF394D7E"/>
-                <Button x:Name="Boton_Configuracion" Content="" Click="Boton_ir_a_Configuracion" HorizontalAlignment="Left" Margin="20,174,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+                <Button x:Name="Boton_Configuracion" Content="" Click="Boton_ir_a_Configuracion" HorizontalAlignment="Left" Margin="20,174,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="51" RenderTransformOrigin="0,0" Cursor="Hand">
 
                     <Button.Foreground>
                         <SolidColorBrush Color="White" Opacity="0.4"/>
@@ -86,7 +83,7 @@
                         <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                     </Button.Background>
                 </Button>
-                <Button x:Name="Boton_Menu" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF303C73" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Margin="49,69,0,0" BorderThickness="100">
+                <Button x:Name="Boton_Menu" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF303C73" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Margin="49,69,0,0" BorderThickness="100" Click="Boton_Menu_Click">
                     <Button.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -161,7 +158,7 @@
                 <Run Language="es-mx" Text="Modo sexo :diablo:"/></TextBlock>
                 <Image Margin="12,4,714,364" Source="Images/Logo.png" Height="65"/>
 
-                <Button Margin="730,10,10,370" Cursor="Hand" Click="Inicio_Help_Click" Height="55" Width="55">
+                <Button Margin="735,10,10,369" Cursor="Hand" Click="Inicio_Help_Click" Height="55" Width="55">
                     <Button.BorderBrush>
                         <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
                     </Button.BorderBrush>
@@ -188,7 +185,6 @@
                 XAxes="{Binding XAxes}" YAxes="{Binding YAxes}"/>
             </Grid>
         </Grid>
-    </Viewbox>
 
 
 
