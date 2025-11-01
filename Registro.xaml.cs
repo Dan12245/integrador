@@ -147,7 +147,6 @@ namespace C.R.A_Consumo_reducido_de_agua
                     {
                         conexion con = new conexion();
                         con.registrar_usuario(name, email, contraseña);
-                        GlobalData.userid = con.id_usuario(email);
                         // Cambiar a la escena Registro
                         main.CambiarEscena(new Preguntas());
                         GlobalData.UserName = name;

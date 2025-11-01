@@ -70,9 +70,21 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 ejecutor.ExecuteNonQuery();
                 MessageBox.Show("Usuario registrado!");
                 //como ultimo paso cerramos conexion
-                GlobalData.userid = Convert.ToInt32(ejecutor);
-                conex.Close();
-                return true;
+                string query = "SELECT user_id FROM cra.users WHERE email = @email";
+                using (var exe = new NpgsqlCommand(query, conex))
+                {
+                    exe.Parameters.AddWithValue("@email", email);
+
+                    using (var reader = exe.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int userId = reader.GetInt32(0);
+                        }
+                    }
+                    conex.Close();
+                    return true;
+                }
             }
             catch (Exception ex)
             {
