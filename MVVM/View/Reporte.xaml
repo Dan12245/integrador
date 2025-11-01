@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="C.R.A_Consumo_reducido_de_agua.Reporte"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:C.R.A_Consumo_reducido_de_agua"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#FF04023E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderBrush" Value="#FF7385E3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="1" 
+                            CornerRadius="15">
+                            <!-- 🔸 Redondeo de esquinas -->
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF7385E3"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid x:Name="Login_Window" Background="#FFB2CEF6" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Rectangle Stroke="#FF5881E8" Margin="98,0,0,351" Fill="#FF5881E8"/>
+            <Rectangle HorizontalAlignment="Left" Height="434" Stroke="#FF394D7E" VerticalAlignment="Center" Width="98" Fill="#FF394D7E"/>
+            <Button x:Name="Boton_Inicio" Content="" Click="Boton_ir_a_Inicio" HorizontalAlignment="Left" Margin="20,80,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+
+                <Button.Foreground>
+                    <SolidColorBrush Color="White" Opacity="0.4"/>
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_Reportar" Content="" HorizontalAlignment="Left" Margin="20,368,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
+                <Button.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-45.922"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Button.RenderTransform>
+
+                <Button.Foreground>
+                    <SolidColorBrush Color="White" Opacity="0.4"/>
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
+                </Button.Background>
+            </Button>
+            <Image Margin="13,6,713,363" Source="Images/Logo.png" Height="65"/>
+            <Button x:Name="Boton_Usuario" Content="" Click="Boton_Invitados" HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+
+                <Button.Foreground>
+                    <SolidColorBrush Color="White" Opacity="0.4"/>
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_configuracion" Content="" Click="Boton_ir_a_configuracion" HorizontalAlignment="Left" BorderBrush="#FF303C73" FontSize="36" Width="58" RenderTransformOrigin="0.5,0.5" Margin="49,163,0,215" BorderThickness="100" Cursor="Hand">
+                <Button.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="0"/>
+                        <TranslateTransform X="-28.1381" Y="12.3021"/>
+                    </TransformGroup>
+                </Button.RenderTransform>
+
+                <Button.Foreground>
+                    <SolidColorBrush Color="White" Opacity="0.4"/>
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
+                </Button.Background>
+            </Button>
+            <Image Margin="32,378,734,20" Source="Images/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="30,284,730,114" Source="Images/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="29,183,729,211" Source="Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
+            <Button Margin="730,10,10,370" Cursor="Hand" Click="Report_Help_Click" Height="55" Width="55">
+                <Button.BorderBrush>
+                    <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Help.png"/>
+                </Button.Background>
+            </Button>
+        </Grid>
+    </Viewbox>
+</UserControl>
