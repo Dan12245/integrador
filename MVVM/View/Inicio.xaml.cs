@@ -1,63 +1,47 @@
-﻿using C.R.A_Consumo_reducido_de_agua.ViewModels;
+﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels;
 using QuestPDF.Companion;
-using QuestPDF.Drawing;
 using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using Windows.System;
-using static C.R.A_Consumo_reducido_de_agua.MainWindow;
-using static C.R.A_Consumo_reducido_de_agua.Registro;
-using C.R.A_Consumo_reducido_de_agua.Controls;
 
-namespace C.R.A_Consumo_reducido_de_agua
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
     public partial class Inicio : UserControl
     {
         string ruta = "UserData.json";
         private MainViewModel mainViewModel = new MainViewModel();
+        private readonly List<Popup> _calloutPopups = new();
         public Inicio()
         {
             InitializeComponent();
-            this.Loaded += Inicio_Loaded;
-            UserData.Load();
-            if (GlobalData.UserName == null)
-                GlobalData.UserName = "Usuario";
+            Loaded += Inicio_Loaded;
+            MainWindow.UserData.Load();
+            if (Registro.GlobalData.UserName == null)
+                Registro.GlobalData.UserName = "Usuario";
 
-            if  (UserData.Uso == false)
+            if  (MainWindow.UserData.Uso == false)
                 texto_modo.Text = "Modo Empresarial";
             else
                 texto_modo.Text = "Modo Doméstico";
 
-            Texto_Bienvenida.Text = $"Hola, {GlobalData.UserName}!";
+            Texto_Bienvenida.Text = $"Hola, {Registro.GlobalData.UserName}!";
             Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10, 101)}% este mes!";
 
-            // Mostrar primer consejo
             texto_consejo.Text = consejos[indiceActual];
 
-            // Configurar el temporizador
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(5);
             timer.Tick += Timer_Tick;
             timer.Start();
 
-            // Generar el documento PDF de ejemplo
-            QuestPDF.Settings.License = LicenseType.Community; // Establecer el tipo de licencia
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
-
-
-            //Be sure all the graphs are generated before creating the document
             mainViewModel.SelectedPeriod = "month";
             mainViewModel.SelectedPeriod = "year";
             mainViewModel.SelectedPeriod = "week";
@@ -91,15 +75,9 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         private void Inicio_Loaded(object sender, RoutedEventArgs e)
         {
-            // PRUEBA 1: Fant (mejor para la mayoría)
             ConfigurarChart_Fant();
-
-            // Si no funciona, prueba:
-            // ConfigurarChart_Linear();
-            // ConfigurarChart_HighQuality();
         }
 
-        // Configuración 1: Fant (Recomendado)
         private void ConfigurarChart_Fant()
         {
             RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Fant);
@@ -110,7 +88,6 @@ namespace C.R.A_Consumo_reducido_de_agua
             TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
         }
 
-        // Configuración 2: Linear (Más suave)
         private void ConfigurarChart_Linear()
         {
             RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Linear);
@@ -120,7 +97,6 @@ namespace C.R.A_Consumo_reducido_de_agua
             TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
         }
 
-        // Configuración 3: HighQuality (Más suave, posible blur)
         private void ConfigurarChart_HighQuality()
         {
             RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.HighQuality);
@@ -130,10 +106,8 @@ namespace C.R.A_Consumo_reducido_de_agua
             TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Ideal);
         }
 
-        // Configuración 4: Aumentar resolución base
         private void ConfigurarChart_AltaResolucion()
         {
-            // Duplicar el tamaño para mejor calidad
             Chart.Width = 860;
             Chart.Height = 448;
             RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.HighQuality);
@@ -167,7 +141,7 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         private void btnSalto_Click(object sender, RoutedEventArgs e)
         {
-            Storyboard sb = (Storyboard)this.Resources["SaltoStoryboard"];
+            Storyboard sb = (Storyboard)Resources["SaltoStoryboard"];
             sb.Begin();
         }
 
@@ -176,9 +150,7 @@ namespace C.R.A_Consumo_reducido_de_agua
             Login_Window.Children.Clear();
             Login_Window.Children.Add(nuevoControl);
         }
-        //spam de sofi: “
-        // Hola papus :D
-        //  Gerardwayfan71_"
+
         private void Boton_Usuario_Invitados(object sender, RoutedEventArgs e)
         {
             CloseAllCallouts();
@@ -197,25 +169,14 @@ namespace C.R.A_Consumo_reducido_de_agua
             CambiarEscena(new Configuracion());
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        #region InicioCallouts
-        private readonly List<Popup> _calloutPopups = new();
         private void Inicio_Help_Click(object sender, RoutedEventArgs e)
         {
-            // Toggle: if any callouts are open, close them all; otherwise show new callouts.
             if (_calloutPopups.Count > 0)
             {
                 CloseAllCallouts();
                 return;
             }
 
-            // ShowCalloutFor(Boton_Menu,
-            //     "Te encuentras aquí"
-            //     );
             ShowCalloutFor(Boton_Configuracion,
                 "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
                 );
@@ -225,20 +186,12 @@ namespace C.R.A_Consumo_reducido_de_agua
             ShowCalloutFor(Boton_Reportar,
                 "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
                 );
-            //ShowCalloutFor(Graph1,
-            //    "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-            //    );
-            //ShowCalloutFor(Chart,
-            //    "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-            //    );
         }
         private void ShowCalloutFor(FrameworkElement target, string message)
         {
             var callout = new CalloutControl
             {
                 Text = message,
-                // Make the visual non-interactive so underlying controls (like the button)
-                // can still receive clicks when a callout overlaps them.
                 IsHitTestVisible = false
             };
 
@@ -246,32 +199,28 @@ namespace C.R.A_Consumo_reducido_de_agua
             {
                 Child = callout,
                 PlacementTarget = target,
-                Placement = PlacementMode.Right,   // try Top/Bottom/Left/Right or Custom
+                Placement = PlacementMode.Right,
                 HorizontalOffset = 10,
                 VerticalOffset = 0,
-                // Keep the popup open until we explicitly close it via the button.
                 StaysOpen = true,
                 AllowsTransparency = true,
                 PopupAnimation = PopupAnimation.Fade
             };
 
-            // Ensure popup repositions on layout changes (capture `popup` in the handler)
             EventHandler layoutHandler = (_, __) => popup.HorizontalOffset += 0;
             target.LayoutUpdated += layoutHandler;
 
-            // Clean up when popup closes
             popup.Closed += (_, __) =>
             {
                 target.LayoutUpdated -= layoutHandler;
                 _calloutPopups.Remove(popup);
-                popup.Child = null; // help GC
+                popup.Child = null;
             };
 
             _calloutPopups.Add(popup);
             popup.IsOpen = true;
         }
 
-        // Optional helper to close all callouts
         private void CloseAllCallouts()
         {
             foreach (var p in _calloutPopups.ToArray())
@@ -280,14 +229,13 @@ namespace C.R.A_Consumo_reducido_de_agua
             }
             _calloutPopups.Clear();
         }
-        #endregion
 
         private void btnDownload_Click(object sender, RoutedEventArgs e)
         {
-            var data = new InvoiceDocumentDataSource();
+            var data = new ViewModels.InvoiceDocumentDataSource();
             var model = data.GetInvoiceDetails();
 
-                var document = new InvoiceDocument(
+            var document = new ViewModels.InvoiceDocument(
             model, mainViewModel.ChartWeekData,
             mainViewModel.ChartMonthData,
             mainViewModel.ChartYearData);
@@ -296,5 +244,4 @@ namespace C.R.A_Consumo_reducido_de_agua
             document.ShowInCompanionAsync();
         }
     }
-
 }

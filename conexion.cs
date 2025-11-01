@@ -1,8 +1,6 @@
 ﻿using Npgsql;
 using System.Windows;
-using System.Xml.Linq;
-using Windows.System;
-using static C.R.A_Consumo_reducido_de_agua.Registro;
+using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 {

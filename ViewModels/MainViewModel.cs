@@ -4,15 +4,11 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.SKCharts;
-using LiveChartsCore.SkiaSharpView.WPF;
 using SkiaSharp;
-using System;
 using System.Globalization;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace C.R.A_Consumo_reducido_de_agua.ViewModels
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {

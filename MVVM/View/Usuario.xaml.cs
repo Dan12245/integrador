@@ -1,27 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static C.R.A_Consumo_reducido_de_agua.MainWindow;
-using static C.R.A_Consumo_reducido_de_agua.Registro;
-using C.R.A_Consumo_reducido_de_agua.Controls;
+using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
-namespace C.R.A_Consumo_reducido_de_agua
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
-    /// <summary>
-    /// Lógica de interacción para Usuario.xaml
-    /// </summary>
     public partial class Usuario : UserControl
     {
         public Usuario()
@@ -60,15 +44,11 @@ namespace C.R.A_Consumo_reducido_de_agua
             CambiarEscena(new Inicio());
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
+        private void Button_Click(object sender, RoutedEventArgs e) { }
 
-        }
-        #region ReportCallouts
         private readonly List<Popup> _calloutPopups = new();
         private void Report_Help_Click(object sender, RoutedEventArgs e)
         {
-            // Toggle: if any callouts are open, close them all; otherwise show new callouts.
             if (_calloutPopups.Count > 0)
             {
                 CloseAllCallouts();
@@ -81,9 +61,6 @@ namespace C.R.A_Consumo_reducido_de_agua
             ShowCalloutFor(Boton_Menu,
                 "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
                 );
-            // ShowCalloutFor(Boton_Usuario,
-            //     "Presiona aquí para ir a la ventana de usuario e invitados.\nTambien puedes acceder a la ventana presionando '3'."
-            //     );
             ShowCalloutFor(Boton_Reportar,
                 "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
                 );
@@ -93,8 +70,6 @@ namespace C.R.A_Consumo_reducido_de_agua
             var callout = new CalloutControl
             {
                 Text = message,
-                // Make the visual non-interactive so underlying controls (like the button)
-                // can still receive clicks when a callout overlaps them.
                 IsHitTestVisible = false
             };
 
@@ -102,32 +77,28 @@ namespace C.R.A_Consumo_reducido_de_agua
             {
                 Child = callout,
                 PlacementTarget = target,
-                Placement = PlacementMode.Right,   // try Top/Bottom/Left/Right or Custom
+                Placement = PlacementMode.Right,
                 HorizontalOffset = 10,
                 VerticalOffset = 0,
-                // Keep the popup open until we explicitly close it via the button.
                 StaysOpen = true,
                 AllowsTransparency = true,
                 PopupAnimation = PopupAnimation.Fade
             };
 
-            // Ensure popup repositions on layout changes (capture `popup` in the handler)
             EventHandler layoutHandler = (_, __) => popup.HorizontalOffset += 0;
             target.LayoutUpdated += layoutHandler;
 
-            // Clean up when popup closes
             popup.Closed += (_, __) =>
             {
                 target.LayoutUpdated -= layoutHandler;
                 _calloutPopups.Remove(popup);
-                popup.Child = null; // help GC
+                popup.Child = null;
             };
 
             _calloutPopups.Add(popup);
             popup.IsOpen = true;
         }
 
-        // Optional helper to close all callouts
         private void CloseAllCallouts()
         {
             foreach (var p in _calloutPopups.ToArray())
@@ -136,6 +107,5 @@ namespace C.R.A_Consumo_reducido_de_agua
             }
             _calloutPopups.Clear();
         }
-        #endregion
     }
 }

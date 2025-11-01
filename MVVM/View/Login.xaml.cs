@@ -1,48 +1,28 @@
-﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo;
-using CRA;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static C.R.A_Consumo_reducido_de_agua.Registro;
+using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
-namespace C.R.A_Consumo_reducido_de_agua
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
-    /// <summary>
-    /// Lógica de interacción para Login.xaml
-    /// </summary>
     public partial class Login : UserControl
     {
-        private bool mostrandoContraseña = false; // Estado actual
+        private bool mostrandoContraseña = false;
         public Login()
         {
             InitializeComponent();
-            // MouseEnter → cambio de color
 
             Boton_Register.MouseEnter += (s, e) =>
             {
-
-                Boton_Register.Background = new SolidColorBrush(Color.FromRgb(57, 61, 191)); // Azul brillante
+                Boton_Register.Background = new SolidColorBrush(Color.FromRgb(57, 61, 191));
                 Boton_Register.Foreground = new SolidColorBrush(Colors.White);
-
             };
 
-            // MouseLeave → volver a color original
             Boton_Register.MouseLeave += (s, e) =>
             {
-                Boton_Register.Background = new SolidColorBrush(Color.FromArgb(150, 4, 2, 62)); // Fondo original
-                Boton_Register.Foreground = new SolidColorBrush(Color.FromArgb(100, 255, 255, 255)); // Texto original
+                Boton_Register.Background = new SolidColorBrush(Color.FromArgb(150, 4, 2, 62));
+                Boton_Register.Foreground = new SolidColorBrush(Color.FromArgb(100, 255, 255, 255));
             };
             Iniciar_Sesion.MouseEnter += (s, e) =>
             {
@@ -57,32 +37,17 @@ namespace C.R.A_Consumo_reducido_de_agua
             };
         }
 
-
         // --- PLACEHOLDERS ---
-        private void txtEmail_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void txtEmail_TextChanged(object sender, TextChangedEventArgs e)
         {
             string email = txtEmail.Text;
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                txtPlaceholderEmail.Text = "Email";
-            }
-            else
-            {
-                txtPlaceholderEmail.Text = "";
-            }
+            txtPlaceholderEmail.Text = string.IsNullOrWhiteSpace(email) ? "Email" : string.Empty;
         }
 
         private void txtPassword_PasswordChanged(object sender, RoutedEventArgs e)
         {
             string password = txtPassword.Password;
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                txtPlaceholderPass.Text = "Contraseña";
-            }
-            else
-            {
-                txtPlaceholderPass.Text = "";
-            }
+            txtPlaceholderPass.Text = string.IsNullOrWhiteSpace(password) ? "Contraseña" : string.Empty;
         }
 
         // --- LOGIN ---
@@ -99,48 +64,43 @@ namespace C.R.A_Consumo_reducido_de_agua
 
             if (Application.Current.MainWindow is MainWindow main)
             {
-                conexion con = new conexion();
+                var con = new conexion();
                 if (con.iniciar_sesion(email, password))
                 {
-                    string nombreUsuario = GlobalData.UserName;
-                    mail.email= email;
+                    var nombreUsuario = GlobalData.UserName;
+                    mail.email = email;
                     main.CambiarEscena(new Inicio());
-                 }
-                 else
-                 {
-                     MessageBox.Show("Correo o contraseña incorrectos.", "Acceso denegado", MessageBoxButton.OK, MessageBoxImage.Error);
-                 }
-       
-             }
+                }
+                else
+                {
+                    MessageBox.Show("Correo o contraseña incorrectos.", "Acceso denegado", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
          }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-                {
+        private void Boton_Register_Click(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.MainWindow is MainWindow main)
+            {
+                // Cambiar a la escena Registro
+                main.CambiarEscena(new Registro());
+            }
+        }
 
-                }
-                private void Boton_Register_Click(object sender, RoutedEventArgs e)
-                {
-                    if (Application.Current.MainWindow is MainWindow main)
-                    {
-                        // Cambiar a la escena Registro
-                        main.CambiarEscena(new Registro());
-                    }
-                }
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
 
-                private void Button_Click(object sender, RoutedEventArgs e)
-                {
+        }
 
-                }
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
 
-                private void Button_Click_1(object sender, RoutedEventArgs e)
-                {
+        }
 
-                }
-
-                private void Boton_Login_Click(object sender, RoutedEventArgs e)
-                {
-                    if (Application.Current.MainWindow is MainWindow main)
-                    {
+        private void Boton_Login_Click(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.MainWindow is MainWindow main)
+            {
                 // Cambiar a la escena Registro (este mismo control)
                 main.CambiarEscena(new Inicio());
             }

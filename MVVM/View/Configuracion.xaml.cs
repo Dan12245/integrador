@@ -1,23 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static C.R.A_Consumo_reducido_de_agua.MainWindow;
-using C.R.A_Consumo_reducido_de_agua.Controls;
 
-
-namespace C.R.A_Consumo_reducido_de_agua
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
     /// <summary>
     /// Lógica de interacción para Configuracion.xaml
@@ -93,7 +78,7 @@ namespace C.R.A_Consumo_reducido_de_agua
         }
         private void ShowCalloutFor(FrameworkElement target, string message)
         {
-            var callout = new CalloutControl
+            var callout = new Controls.CalloutControl
             {
                 Text = message,
                 // Make the visual non-interactive so underlying controls (like the button)

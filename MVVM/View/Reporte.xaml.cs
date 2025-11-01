@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using C.R.A_Consumo_reducido_de_agua.Controls;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls;
 
-namespace C.R.A_Consumo_reducido_de_agua
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
     /// <summary>
     /// Lógica de interacción para Reporte.xaml

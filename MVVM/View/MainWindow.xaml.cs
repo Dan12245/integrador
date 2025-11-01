@@ -1,27 +1,14 @@
-﻿using C.R.A_Consumo_reducido_de_agua.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels;
 using System.IO;
-using System.Linq;
 using System.Net.Mail;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
 using IOPath = System.IO.Path;
 
-namespace C.R.A_Consumo_reducido_de_agua
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
 {
     /// <summary>
     /// Lógica de interacción para MainWindow.xaml
@@ -154,7 +141,7 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         private const double PORCENTAJE_ANCHO = 0.70;  // 70% del ancho de pantalla
         private const double PORCENTAJE_ALTO = 0.75;   // 75% del alto de pantalla
-        public bool escorreovalido(String email)
+        public bool escorreovalido(string email)
         {
             try
             {
@@ -187,19 +174,19 @@ namespace C.R.A_Consumo_reducido_de_agua
             double altoDisponible = SystemParameters.WorkArea.Height;
 
             // Calcular el tamaño según los porcentajes
-            this.Width = anchoDisponible * PORCENTAJE_ANCHO;
-            this.Height = altoDisponible * PORCENTAJE_ALTO;
+            Width = anchoDisponible * PORCENTAJE_ANCHO;
+            Height = altoDisponible * PORCENTAJE_ALTO;
 
             // Asegurar que no sea menor que el mínimo
-            if (this.Width < this.MinWidth) this.Width = this.MinWidth;
-            if (this.Height < this.MinHeight) this.Height = this.MinHeight;
+            if (Width < MinWidth) Width = MinWidth;
+            if (Height < MinHeight) Height = MinHeight;
 
             // OPCIONAL: Si quieres un tamaño máximo
             double maxWidth = anchoDisponible * 0.95;  // Máximo 95% del ancho
             double maxHeight = altoDisponible * 0.90;  // Máximo 90% del alto
 
-            if (this.Width > maxWidth) this.Width = maxWidth;
-            if (this.Height > maxHeight) this.Height = maxHeight;
+            if (Width > maxWidth) Width = maxWidth;
+            if (Height > maxHeight) Height = maxHeight;
         }
 
     }
