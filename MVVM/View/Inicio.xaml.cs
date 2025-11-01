@@ -145,29 +145,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             sb.Begin();
         }
 
-        public void CambiarEscena(UserControl nuevoControl)
-        {
-            Login_Window.Children.Clear();
-            Login_Window.Children.Add(nuevoControl);
-        }
-
-        private void Boton_Usuario_Invitados(object sender, RoutedEventArgs e)
-        {
-            CloseAllCallouts();
-            CambiarEscena(new Usuario());
-        }
-
-        private void Boton_Reporte(object sender, RoutedEventArgs e)
-        {
-            CloseAllCallouts();
-            CambiarEscena(new Reporte());
-        }
-
-        private void Boton_ir_a_Configuracion(object sender, RoutedEventArgs e)
-        {
-            CloseAllCallouts();
-            CambiarEscena(new Configuracion());
-        }
+      
 
         private void Inicio_Help_Click(object sender, RoutedEventArgs e)
         {
@@ -177,7 +155,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 return;
             }
 
-            ShowCalloutFor(Boton_Configuracion,
+         /*   ShowCalloutFor(Boton_Configuracion,
                 "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
                 );
             ShowCalloutFor(Boton_Usuario,
@@ -185,7 +163,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 );
             ShowCalloutFor(Boton_Reportar,
                 "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-                );
+                ); */
         }
         private void ShowCalloutFor(FrameworkElement target, string message)
         {
