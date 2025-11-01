@@ -107,22 +107,22 @@
                 <Image Margin="30,284,730,114" Source="Images/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
                 <Image Margin="28,182,730,212" Source="Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
                 <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-                <Image Margin="110,14,149,374" Source="Images/Texto Inicio.png" Stretch="Uniform"/>
+                <Image Margin="103,17,232,377" Source="Images/Texto Inicio.png" Stretch="Uniform"/>
                 <Rectangle HorizontalAlignment="Left" Height="335" Margin="113,89,0,0" VerticalAlignment="Top" Width="677" Fill="#FFCBDAFF" RadiusX="31.5" RadiusY="31.5">
                     <Rectangle.Stroke>
                         <SolidColorBrush Color="Black" Opacity="0"/>
                     </Rectangle.Stroke>
                 </Rectangle>
-                <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="321" Margin="121,102,450,0" FontSize="20" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
-                <TextBlock x:Name="Texto_Porcentaje" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="321" Margin="121,216,450,0" FontSize="16" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Text="Texto consumo del mes"/></TextBlock>
+                <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="321" Margin="121,102,450,0" FontSize="20" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center" Foreground="#FF333256"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
+                <TextBlock x:Name="Texto_Porcentaje" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="321" Margin="121,216,450,0" FontSize="16" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center" Foreground="#FF333256"><Run Text="Texto consumo del mes"/></TextBlock>
 
-                <Button HorizontalAlignment="Left" Margin="722,357,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Height="67" Width="61" Click="btnSalto_Click">
+                <Button x:Name="btnTetoGif" HorizontalAlignment="Left" Margin="586,4,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Height="67" Width="61" Click="btnSalto_Click">
                     <Button.RenderTransform>
                         <TranslateTransform x:Name="btnSaltoTransform" Y="0"/>
                     </Button.RenderTransform>
                     <Image gif:ImageBehavior.AnimatedSource="Images/teto-tetoris.gif"/>
                 </Button>
-                <Button Content="Button" Click ="btnSiguiente_Click" HorizontalAlignment="Left" Margin="729,305,0,0" VerticalAlignment="Top" Height="36" Width="54">
+                <Button Content="Button" Click ="btnSiguiente_Click" HorizontalAlignment="Left" Margin="729,355,0,0" VerticalAlignment="Top" Height="36" Width="54">
                     <Button.Foreground>
                         <ImageBrush/>
                     </Button.Foreground>
@@ -133,7 +133,7 @@
                         <ImageBrush ImageSource="Images/flecha.png"/>
                     </Button.Background>
                 </Button>
-                <Button Content="" Click="btnAnterior_Click" HorizontalAlignment="Left" Margin="140,305,0,0" VerticalAlignment="Top" Height="36" Width="54" RenderTransformOrigin="0.5,0.5">
+                <Button Content="" Click="btnAnterior_Click" HorizontalAlignment="Left" Margin="140,355,0,0" VerticalAlignment="Top" Height="36" Width="54" RenderTransformOrigin="0.5,0.5">
                     <Button.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -153,10 +153,10 @@
                     </Button.Background>
                 </Button>
                 <TextBlock x:Name="texto_consejo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="527" Margin="196,311,0,0" FontSize="16" 
-                Width="528" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
+                Width="528" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center" Foreground="#FF333256">
             <Run Language="es-mx" Text="Consejos consejosamente consejosos"/></TextBlock>
-                <Image Margin="428,344,308,29" Source="Images/perrito chivas.png" Stretch="Fill"/>
-                <TextBlock x:Name="texto_modo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="224" Margin="351,405,0,0" FontSize="16" 
+                <Image Margin="428,363,308,10" Source="Images/perrito chivas.png" Stretch="Fill"/>
+                <TextBlock x:Name="texto_modo" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" MaxWidth="224" Margin="547,405,0,0" FontSize="16" 
                     Width="219" LineStackingStrategy="BlockLineHeight" TextTrimming="WordEllipsis" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
                 <Run Language="es-mx" Text="Modo sexo :diablo:"/></TextBlock>
                 <Image Margin="12,4,714,364" Source="Images/Logo.png" Height="65"/>

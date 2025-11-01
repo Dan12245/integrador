@@ -1,4 +1,6 @@
-﻿using Npgsql;
+﻿using C.R.A_Consumo_reducido_de_agua;
+using CRA;
+using Npgsql;
 using System.Windows;
 using System.Xml.Linq;
 using Windows.System;
@@ -129,9 +131,17 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //funcion para eliminar a un usuario
         public void Eliminar_usuario(string email)
         {
+            //En teoria ya deberia de borrar usuarios, y por ende deberian jalar todas las funciones
+            //pq dependian del email, entonces cuando quieran usar una funcion de las que cree solamente
+            //agregan esto para que saque el email y puedan usarla sin pedos pq la mayoria depende del
+            //email y si acaso un dato extra que ocupen como el consumo o esas weas, pero eliminar un
+            //usuario no ocupa tanto. Bno la line que deben agregar es esta:
+            //conexion con = new conexion(); esto es para poder usar las funciones, aca no hay pedo con copiar y pegar
+            //string user_email = GlobalData.email; esta linea es la importante ya que jala el email para poder usarlo
+            //con.Eliminar_usuario(user_email); y ya mandamos llamar a la funcion que hace la chamba de eliminar al usuario
             try
             {
-                email = "d@d.com";
+
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
                 //aca nomas hacemos un DELETE ya que postgress puede borrar todo con una configuracion
@@ -259,6 +269,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 MessageBox.Show("error" + ex.Message);
                 return -1;
             }
+
         }
         public int id_edificio(string email)
         {
@@ -360,7 +371,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 if (existe_invitacion(email))
                 {
                     string query = "UPDATE cra.invited_users SET user_id=@user_id and @read_only=read_only WHERE building_id=@building_id AND day=@day";
-
                     using (var ejecutor = new NpgsqlCommand(query, conex))
                     {
                         ejecutor.Parameters.AddWithValue("@user_id", user_id);
@@ -398,11 +408,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 {
                     MessageBox.Show("invitado no encontrado");
                 }
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("error" + ex.Message);
             }
+
         }
         #endregion
         //y las funciones relacionadas con el consumo
@@ -418,12 +430,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 //esta wea solo es para meter la fecha
                 DateTime fecha = DateTime.Now;
                 //y ya con todo eso lo metemos a la tabla de consumo
-                string query = "INSERT INTO cra.consumption_per_day (building_id,day,liters)VALUES(@building_id,@day,@liters)";
+                string query = "INSERT INTO cra.consumption_per_day (building_id,day,consumption)VALUES(@building_id,@day,@consumption)";
                 using (var ejecutor = new NpgsqlCommand(query, conex))
                 {
                     ejecutor.Parameters.AddWithValue("@building_id", building_id);
                     ejecutor.Parameters.AddWithValue("@day", fecha);
-                    ejecutor.Parameters.AddWithValue("@liters", consumo);
+                    ejecutor.Parameters.AddWithValue("@consumption", consumo);
                     ejecutor.ExecuteNonQuery();
                     MessageBox.Show("Consumo registrado");
                     return true;
@@ -467,12 +479,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
                 int building_id = id_edificio(email);
-                string query = "UPDATE cra.consumption_per_day SET liters=@liters WHERE building_id=@building_id AND day=@day";
+                string query = "UPDATE cra.consumption_per_day SET consumption=@consumption WHERE building_id=@building_id AND day=@day";
                 DateTime fecha = DateTime.Now;
                 int litros = 4;
                 using (var ejecutor = new NpgsqlCommand(query, conex))
                 {
-                    ejecutor.Parameters.AddWithValue("@liters", litros);
+                    ejecutor.Parameters.AddWithValue("@consumption", litros);
                     ejecutor.Parameters.AddWithValue("@building_id", building_id);
                     ejecutor.Parameters.AddWithValue("@day", fecha.Date);
                     ejecutor.ExecuteNonQuery();
@@ -484,6 +496,38 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 MessageBox.Show("error" + ex.Message);
             }
         }
-        #endregion
+        public double[] consumo(string email)
+        {   //esta wea es para obtener la cantidad de dias del año
+            int year = DateTime.Now.Year;
+            //con esto checamos si el año es bisiesto o neh
+            int daysInYear = DateTime.IsLeapYear(year) ? 366 : 365;
+            //un arreglo con la cantidad de dias
+            double[] consumo = new double[daysInYear];
+            conex.ConnectionString = cadena_conexion;
+            conex.Open();
+            int building_id = id_edificio(email);
+            int i = 0;
+            string query = "SELECT day,consumption FROM cra.consumption_per_day WHERE @building_id=building_id";
+            using (var ejecutor = new NpgsqlCommand(query, conex))
+            {
+                ejecutor.Parameters.AddWithValue("@building_id", building_id);
+
+                using (var reader = ejecutor.ExecuteReader())
+                {
+                    //con este ciclo llenamos el arreglo
+                    while (reader.Read() && i < consumo.Length)
+                    {
+                        DateTime dia = reader.GetDateTime(reader.GetOrdinal("day"));
+                        double valor = reader.GetDouble(reader.GetOrdinal("consumption"));
+
+                        int index = dia.DayOfYear - 1; // día 1 → índice 0
+                        if (index >= 0 && index < consumo.Length)
+                            consumo[index] = valor;
+                    }
+                }
+                return consumo;
+            }
+            #endregion
+        }
     }
 }

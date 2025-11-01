@@ -26,15 +26,16 @@ namespace C.R.A_Consumo_reducido_de_agua
         public static class GlobalData
         {
             public static string UserName { get; set; }
+            public static string email { get; set; }
         }
         public Registro()
         {
             InitializeComponent();
             // MouseEnter → cambio de color
-        
 
 
-        Boton_Login.MouseEnter += (s, e) =>
+
+            Boton_Login.MouseEnter += (s, e) =>
             {
 
                 Boton_Login.Background = new SolidColorBrush(Color.FromRgb(57, 61, 191)); // Azul brillante
@@ -139,6 +140,7 @@ namespace C.R.A_Consumo_reducido_de_agua
                         MessageBox.Show("Por favor, ingrese un correo electrónico válido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
+
 
                     else
                     {

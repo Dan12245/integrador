@@ -12,17 +12,57 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static C.R.A_Consumo_reducido_de_agua.MainWindow;
+using static C.R.A_Consumo_reducido_de_agua.Registro;
 
 namespace C.R.A_Consumo_reducido_de_agua
 {
     /// <summary>
     /// Lógica de interacción para Invitados.xaml
     /// </summary>
+    /// 
+
     public partial class Invitados : UserControl
     {
+
         public Invitados()
         {
             InitializeComponent();
+        }
+
+
+        public void CambiarEscena(UserControl nuevoControl)
+        {
+            Login_Window.Children.Clear();
+            Login_Window.Children.Add(nuevoControl);
+        }
+
+
+        private void Boton_Usuario_Click(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.MainWindow is MainWindow main)
+            {
+                main.CambiarEscena(new Usuario());
+            }
+        }
+        private void Boton_ir_a_Configuracion(object sender, RoutedEventArgs e)
+        {
+            CambiarEscena(new Configuracion());
+        }
+
+        private void Boton_ir_a_Invitados(object sender, RoutedEventArgs e)
+        {
+            CambiarEscena(new Invitados());
+        }
+
+        private void Boton_Reporte(object sender, RoutedEventArgs e)
+        {
+            CambiarEscena(new Reporte());
+        }
+
+        private void Boton_ir_a_Inicio(object sender, RoutedEventArgs e)
+        {
+            CambiarEscena(new Inicio());
         }
     }
 }

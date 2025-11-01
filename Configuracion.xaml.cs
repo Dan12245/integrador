@@ -1,4 +1,7 @@
-﻿using System;
+﻿using C.R.A_Consumo_reducido_de_agua.Controls;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo;
+using OpenTK.Windowing.Common.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +16,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Windows.System;
 using static C.R.A_Consumo_reducido_de_agua.MainWindow;
-using C.R.A_Consumo_reducido_de_agua.Controls;
+using static C.R.A_Consumo_reducido_de_agua.Registro;
 
 
 namespace C.R.A_Consumo_reducido_de_agua
@@ -22,6 +26,8 @@ namespace C.R.A_Consumo_reducido_de_agua
     /// <summary>
     /// Lógica de interacción para Configuracion.xaml
     /// </summary>
+
+
     public partial class Configuracion : UserControl
     {
         public Configuracion()
@@ -42,6 +48,16 @@ namespace C.R.A_Consumo_reducido_de_agua
         private void Boton_Cerrar_Sesion(object sender, RoutedEventArgs e)
         {
             CloseAllCallouts();
+            CambiarEscena(new Login());
+        }
+
+        private void Boton_Eliminar_Usuario(object sender, RoutedEventArgs e)
+        {
+
+            Login log = new Login();
+            conexion con = new conexion();
+           string user_email = GlobalData.email; 
+            con.Eliminar_usuario(user_email);
             CambiarEscena(new Login());
         }
 

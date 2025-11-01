@@ -92,13 +92,11 @@
             <Label Content="Tamaño de texto" HorizontalAlignment="Left" Margin="117,100,0,0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="20"/>
             <Label Content="Idioma" HorizontalAlignment="Left" Margin="117,175,0,0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="20"/>
             <Label Content="Talkback" HorizontalAlignment="Left" Margin="117,261,0,0" VerticalAlignment="Top" FontSize="20" FontFamily="Yu Gothic UI Semibold"/>
-            <Label Content="Domicilio Principal" HorizontalAlignment="Left" Margin="474,100,0,0" VerticalAlignment="Top" FontSize="20" FontFamily="Yu Gothic UI Semibold"/>
-            <Label Content="Rendimiento" HorizontalAlignment="Left" Margin="474,175,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.061,-0.405" FontSize="20" FontFamily="Yu Gothic UI Semibold"/>
+            <Label Content="Rendimiento" HorizontalAlignment="Left" Margin="470,102,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.061,-0.405" FontSize="20" FontFamily="Yu Gothic UI Semibold"/>
             <ComboBox x:Name="Tamaño" HorizontalAlignment="Left" Margin="122,133,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
-            <ComboBox x:Name="Dominio" HorizontalAlignment="Left" Margin="481,133,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
             <ComboBox x:Name="Talkback" HorizontalAlignment="Left" Margin="122,292,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
             <ComboBox x:Name="Idioma" HorizontalAlignment="Left" Margin="122,208,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
-            <ComboBox x:Name="Rendimiento" HorizontalAlignment="Left" Margin="481,207,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
+            <ComboBox x:Name="Rendimiento" HorizontalAlignment="Left" Margin="476,134,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
             <Button Content="Cerrar sesion" Click="Boton_Cerrar_Sesion" HorizontalAlignment="Left" Margin="496,282,0,0" VerticalAlignment="Top"  Height="54" Width="248"/>
             <Button Content="Descartar" HorizontalAlignment="Left" Margin="137,369,0,0" VerticalAlignment="Top" Click="Button_Click" Height="54" Width="297" Background="#FFFFBEBE" Foreground="#FF752D2D" BorderBrush="#FFFFBEBE"/>
             <Button Content="Aplicar" HorizontalAlignment="Left" Margin="467,369,0,0" VerticalAlignment="Top" Click="Button_Click" Height="54" Width="297" Background="#FF96FFD7" Foreground="#FF276F54" BorderBrush="#FF96FFD7"/>
@@ -110,6 +108,7 @@
                     <ImageBrush ImageSource="/Images/Help.png"/>
                 </Button.Background>
             </Button>
+            <Button Content="Eliminar Cuenta" Click="Boton_Eliminar_Usuario" HorizontalAlignment="Left" Margin="496,208,0,0" VerticalAlignment="Top"  Height="54" Width="248"/>
         </Grid>
     </Viewbox>
 </UserControl>

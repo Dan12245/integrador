@@ -1,4 +1,5 @@
 ﻿using C.R.A_Consumo_reducido_de_agua.ViewModels;
+using CRA;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +32,9 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         private const double BaseWidth = 800;
         private const double BaseHeight = 450;
+
+
+
         public static class UserData
 
 
@@ -64,6 +68,8 @@ namespace C.R.A_Consumo_reducido_de_agua
             public static int Domicilios { get; set; } = 0;
             public static string Domicilio { get; set; } = "";
             public static bool Propio { get; set; } = false;
+
+
 
 
 
@@ -120,6 +126,8 @@ namespace C.R.A_Consumo_reducido_de_agua
             }
         }
 
+
+        private string usuarioEmail;
         public MainWindow()
         {
             InitializeComponent();

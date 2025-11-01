@@ -20,24 +20,51 @@ using Windows.System;
 using static C.R.A_Consumo_reducido_de_agua.MainWindow;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
 using C.R.A_Consumo_reducido_de_agua.Controls;
-
+using MediaColor = System.Windows.Media.Color;
+using PdfColor = QuestPDF.Infrastructure.Color;
 
 
 namespace C.R.A_Consumo_reducido_de_agua
 {
     public partial class Inicio : UserControl
     {
+
         string ruta = "UserData.json";
         private MainViewModel mainViewModel = new MainViewModel();
+
+        // Lista de mensajes de Teto
+        private List<string> mensajesTeto = new List<string>
+        {
+            "¿Sabías que usar una IA como ChatGPT consume bastante agua? durísimo hermano",
+            "hola",
+            "jaja",
+            "prueba"
+        };
+
+        private Popup tetoPopup;
+        private bool primerMensajeMostrado = false;
+        private DispatcherTimer caminataTimer;
+        private double tetoPosition = 586; // Posición inicial del gif
+        private bool moviendoDerecha = true;
+        private const double POSICION_INICIAL = 586;
+        private const double RANGO_MOVIMIENTO = 70;
+
         public Inicio()
         {
             InitializeComponent();
             this.Loaded += Inicio_Loaded;
             UserData.Load();
+
+            CambiarFondoGradiente(
+               MediaColor.FromRgb(26, 34, 53),
+               MediaColor.FromRgb(26, 34, 53),
+                0.5,
+                "Horizontal"
+            );
             if (GlobalData.UserName == null)
                 GlobalData.UserName = "Usuario";
 
-            if  (UserData.Uso == false)
+            if (UserData.Uso == false)
                 texto_modo.Text = "Modo Empresarial";
             else
                 texto_modo.Text = "Modo Doméstico";
@@ -55,12 +82,11 @@ namespace C.R.A_Consumo_reducido_de_agua
             timer.Start();
 
             // Generar el documento PDF de ejemplo
-            QuestPDF.Settings.License = LicenseType.Community; // Establecer el tipo de licencia
+            QuestPDF.Settings.License = LicenseType.Community;
 
             var data = new InvoiceDocumentDataSource();
             var model = data.GetInvoiceDetails();
 
-            //Be sure all the graphs are generated before creating the document
             mainViewModel.SelectedPeriod = "month";
             mainViewModel.SelectedPeriod = "year";
             mainViewModel.SelectedPeriod = "week";
@@ -72,19 +98,98 @@ namespace C.R.A_Consumo_reducido_de_agua
 
             document.ShowInCompanionAsync();
 
+            // Mostrar mensaje de bienvenida de Teto después de un pequeño delay
+            var bienvenidaTimer = new DispatcherTimer();
+            bienvenidaTimer.Interval = TimeSpan.FromSeconds(1);
+            bienvenidaTimer.Tick += (s, e) =>
+            {
+                MostrarMensajeTeto("Hola, soy Teto, tu asistente virtual");
+                bienvenidaTimer.Stop();
+                primerMensajeMostrado = true;
+            };
+            bienvenidaTimer.Start();
+        }
 
+        // Método para agregar mensajes personalizados
+        public void AgregarMensajeTeto(string mensaje)
+        {
+            if (!string.IsNullOrWhiteSpace(mensaje))
+            {
+                mensajesTeto.Add(mensaje);
+            }
+        }
+
+        private void MostrarMensajeTeto(string mensaje)
+        {
+            // Cerrar popup anterior si existe
+            if (tetoPopup != null && tetoPopup.IsOpen)
+            {
+                tetoPopup.IsOpen = false;
+            }
+
+            // Crear el cuadro de texto
+            var textBlock = new TextBlock
+            {
+                Text = mensaje,
+                Padding = new Thickness(10),
+                Background = new SolidColorBrush(MediaColor.FromRgb(255, 255, 220)),
+                Foreground = new SolidColorBrush(MediaColor.FromRgb(0, 0, 0)),
+                FontSize = 14,
+                FontFamily = new FontFamily("Cascadia Code SemiLight"),
+                MaxWidth = 300,
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            var border = new Border
+            {
+                Child = textBlock,
+                BorderBrush = new SolidColorBrush(MediaColor.FromRgb(100, 100, 100)),
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(10),
+                Background = new SolidColorBrush(MediaColor.FromRgb(255, 255, 220))
+            };
+
+            // Necesitamos encontrar el botón con el gif por su nombre en el XAML
+            // El botón no tiene x:Name, así que lo buscamos por su posición o le agregamos uno
+            // Por ahora, usamos el Grid padre para posicionarlo
+            tetoPopup = new Popup
+            {
+                Child = border,
+                PlacementTarget = Login_Window, // Usar el grid principal
+                Placement = PlacementMode.Absolute,
+                HorizontalOffset = 650, // Ajustar según la posición del gif (586 + ancho)
+                VerticalOffset = 70, // Ajustar según la posición del gif
+                StaysOpen = false,
+                AllowsTransparency = true,
+                PopupAnimation = PopupAnimation.Fade
+            };
+
+            tetoPopup.IsOpen = true;
+
+            // Auto-cerrar después de 8 segundos
+            var closeTimer = new DispatcherTimer();
+            closeTimer.Interval = TimeSpan.FromSeconds(8);
+            closeTimer.Tick += (s, e) =>
+            {
+                if (tetoPopup != null)
+                {
+                    tetoPopup.IsOpen = false;
+                }
+                closeTimer.Stop();
+            };
+            closeTimer.Start();
         }
 
         private List<string> consejos = new List<string>
         {
-        "Dúchate rápido: Intenta reducir el tiempo en la regadera a 5 minutos o menos.",
-         "Cierra la llave cuando no la uses: Al enjabonarte las manos, etc evita dejar correr el agua.",
-         "Usa un vaso para cepillarte los dientes: En vez de usar la llave, llena un vaso y con eso se enjuaga",
-         "Lava los trastes con método: Enjabona todo primero con la llave cerrada y luego enjuágalos de una.",
-         "Carga la lavadora al máximo recomendado: No uses la lavadora con poca ropa.",
-         "Revisa fugas en baños y llaves: Una fuga puede desperdiciar demasiada agua al mes sin que se note.",
-         "Riega de noche o temprano: Así evitas la evaporación por el sol y las plantas no se secan.",
-         "Reutiliza agua cuando se pueda: El agua de lavar frutas o verduras puede servir para regar plantas.",
+            "Dúchate rápido: Intenta reducir el tiempo en la regadera a 5 minutos o menos.",
+            "Cierra la llave cuando no la uses: Al enjabonarte las manos, etc evita dejar correr el agua.",
+            "Usa un vaso para cepillarte los dientes: En vez de usar la llave, llena un vaso y con eso se enjuaga",
+            "Lava los trastes con método: Enjabona todo primero con la llave cerrada y luego enjuágalos de una.",
+            "Carga la lavadora al máximo recomendado: No uses la lavadora con poca ropa.",
+            "Revisa fugas en baños y llaves: Una fuga puede desperdiciar demasiada agua al mes sin que se note.",
+            "Riega de noche o temprano: Así evitas la evaporación por el sol y las plantas no se secan.",
+            "Reutiliza agua cuando se pueda: El agua de lavar frutas o verduras puede servir para regar plantas.",
         };
 
         private int indiceActual = 0;
@@ -103,15 +208,9 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         private void Inicio_Loaded(object sender, RoutedEventArgs e)
         {
-            // PRUEBA 1: Fant (mejor para la mayoría)
             ConfigurarChart_Fant();
-
-            // Si no funciona, prueba:
-            // ConfigurarChart_Linear();
-            // ConfigurarChart_HighQuality();
         }
 
-        // Configuración 1: Fant (Recomendado)
         private void ConfigurarChart_Fant()
         {
             RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Fant);
@@ -122,7 +221,6 @@ namespace C.R.A_Consumo_reducido_de_agua
             TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
         }
 
-        // Configuración 2: Linear (Más suave)
         private void ConfigurarChart_Linear()
         {
             RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Linear);
@@ -132,7 +230,6 @@ namespace C.R.A_Consumo_reducido_de_agua
             TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
         }
 
-        // Configuración 3: HighQuality (Más suave, posible blur)
         private void ConfigurarChart_HighQuality()
         {
             RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.HighQuality);
@@ -142,16 +239,15 @@ namespace C.R.A_Consumo_reducido_de_agua
             TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Ideal);
         }
 
-        // Configuración 4: Aumentar resolución base
         private void ConfigurarChart_AltaResolucion()
         {
-            // Duplicar el tamaño para mejor calidad
             Chart.Width = 860;
             Chart.Height = 448;
             RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.HighQuality);
             Chart.SnapsToDevicePixels = false;
             Chart.UseLayoutRounding = false;
         }
+
         private void btnAnterior_Click(object sender, RoutedEventArgs e)
         {
             indiceActual--;
@@ -181,6 +277,11 @@ namespace C.R.A_Consumo_reducido_de_agua
         {
             Storyboard sb = (Storyboard)this.Resources["SaltoStoryboard"];
             sb.Begin();
+
+            // Mostrar un mensaje aleatorio de la lista
+            var random = new Random();
+            string mensajeAleatorio = mensajesTeto[random.Next(mensajesTeto.Count)];
+            MostrarMensajeTeto(mensajeAleatorio);
         }
 
         public void CambiarEscena(UserControl nuevoControl)
@@ -188,9 +289,7 @@ namespace C.R.A_Consumo_reducido_de_agua
             Login_Window.Children.Clear();
             Login_Window.Children.Add(nuevoControl);
         }
-        //spam de sofi: “
-        // Hola papus :D
-        //  Gerardwayfan71_"
+
         private void Boton_Usuario_Invitados(object sender, RoutedEventArgs e)
         {
             CloseAllCallouts();
@@ -201,6 +300,14 @@ namespace C.R.A_Consumo_reducido_de_agua
         {
             CloseAllCallouts();
             CambiarEscena(new Reporte());
+        }
+
+        public static void CambiarFondoGradiente(MediaColor colorInicio, MediaColor colorFin, double offset = 0.5, string direccion = "Horizontal")
+        {
+            if (Application.Current.MainWindow is MainWindow mainWindow)
+            {
+                mainWindow.CambiarFondoGradiente(colorInicio, colorFin, offset, direccion: "Horizontal");
+            }
         }
 
         private void Boton_ir_a_Configuracion(object sender, RoutedEventArgs e)
@@ -218,16 +325,12 @@ namespace C.R.A_Consumo_reducido_de_agua
         private readonly List<Popup> _calloutPopups = new();
         private void Inicio_Help_Click(object sender, RoutedEventArgs e)
         {
-            // Toggle: if any callouts are open, close them all; otherwise show new callouts.
             if (_calloutPopups.Count > 0)
             {
                 CloseAllCallouts();
                 return;
             }
 
-            // ShowCalloutFor(Boton_Menu,
-            //     "Te encuentras aquí"
-            //     );
             ShowCalloutFor(Boton_Configuracion,
                 "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
                 );
@@ -237,23 +340,16 @@ namespace C.R.A_Consumo_reducido_de_agua
             ShowCalloutFor(Boton_Reportar,
                 "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
                 );
-            //ShowCalloutFor(Graph1,
-            //    "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-            //    );
-            //ShowCalloutFor(Chart,
-            //    "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-            //    );
             ShowCalloutFor(Day,
                 "Presiona los diferentes períodos para observar los diferentes consumos."
                 );
         }
+
         private void ShowCalloutFor(FrameworkElement target, string message)
         {
             var callout = new CalloutControl
             {
                 Text = message,
-                // Make the visual non-interactive so underlying controls (like the button)
-                // can still receive clicks when a callout overlaps them.
                 IsHitTestVisible = false
             };
 
@@ -261,32 +357,28 @@ namespace C.R.A_Consumo_reducido_de_agua
             {
                 Child = callout,
                 PlacementTarget = target,
-                Placement = PlacementMode.Right,   // try Top/Bottom/Left/Right or Custom
+                Placement = PlacementMode.Right,
                 HorizontalOffset = 10,
                 VerticalOffset = 0,
-                // Keep the popup open until we explicitly close it via the button.
                 StaysOpen = true,
                 AllowsTransparency = true,
                 PopupAnimation = PopupAnimation.Fade
             };
 
-            // Ensure popup repositions on layout changes (capture `popup` in the handler)
             EventHandler layoutHandler = (_, __) => popup.HorizontalOffset += 0;
             target.LayoutUpdated += layoutHandler;
 
-            // Clean up when popup closes
             popup.Closed += (_, __) =>
             {
                 target.LayoutUpdated -= layoutHandler;
                 _calloutPopups.Remove(popup);
-                popup.Child = null; // help GC
+                popup.Child = null;
             };
 
             _calloutPopups.Add(popup);
             popup.IsOpen = true;
         }
 
-        // Optional helper to close all callouts
         private void CloseAllCallouts()
         {
             foreach (var p in _calloutPopups.ToArray())
@@ -297,5 +389,4 @@ namespace C.R.A_Consumo_reducido_de_agua
         }
         #endregion
     }
-
 }
