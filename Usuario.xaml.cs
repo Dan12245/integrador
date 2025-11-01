@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using static C.R.A_Consumo_reducido_de_agua.MainWindow;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
 using C.R.A_Consumo_reducido_de_agua.Controls;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo;
+
 
 namespace C.R.A_Consumo_reducido_de_agua
 {
@@ -25,8 +27,7 @@ namespace C.R.A_Consumo_reducido_de_agua
     public partial class Usuario : UserControl
     {
         private TextBox selectedTextBox = null;
-        private int domiciliosActivos = 1; // Solo el principal está visible inicialmente
-
+        private int domiciliosActivos = 1; // Solo el principal está visible inicialmente       
         public Usuario()
         {
             InitializeComponent();
@@ -105,20 +106,28 @@ namespace C.R.A_Consumo_reducido_de_agua
                     "Límite alcanzado", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
+            string user_email = GlobalData.email;
+            var con = new conexion();
+            int id = GlobalData.userid;
             switch (domiciliosActivos)
             {
                 case 1:
                     Domicilio_1.Visibility = Visibility.Visible;
                     domiciliosActivos++;
+                     con = new conexion();                    
+                    con.agregar_domicilio(user_email,"Domicilio 1",id);
                     break;
                 case 2:
                     Domicilio_2.Visibility = Visibility.Visible;
                     domiciliosActivos++;
+                     con = new conexion();                    
+                    con.agregar_domicilio(user_email, "Domicilio 2", id);
                     break;
                 case 3:
                     Domilicio_3.Visibility = Visibility.Visible;
                     domiciliosActivos++;
+                    con = new conexion();
+                    con.agregar_domicilio(user_email, "Domicilio 3", id);
                     break;
             }
 
@@ -127,30 +136,38 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         private void Button_Quitar(object sender, RoutedEventArgs e)
         {
+           
             if (domiciliosActivos <= 1)
             {
                 MessageBox.Show("No puedes eliminar el domicilio principal.",
                     "Acción no permitida", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
+            string user_email = GlobalData.email;
+            var con = new conexion();
+            int id = GlobalData.userid;
             // Eliminar el último domicilio visible
             switch (domiciliosActivos)
             {
                 case 4:
                     Domilicio_3.Visibility = Visibility.Collapsed;
                     Domilicio_3.Text = "Domicilio 3"; // Resetear texto
-                    domiciliosActivos--;
+                    domiciliosActivos--;                    
+                    con.eliminar_domicilio("Domicilio 3",id);
                     break;
                 case 3:
                     Domicilio_2.Visibility = Visibility.Collapsed;
                     Domicilio_2.Text = "Domicilio 2";
                     domiciliosActivos--;
+                    con.eliminar_domicilio("Domicilio 2", id);
+
                     break;
                 case 2:
                     Domicilio_1.Visibility = Visibility.Collapsed;
                     Domicilio_1.Text = "Domicilio 1";
                     domiciliosActivos--;
+                    con.eliminar_domicilio("Domicilio 1", id);
+
                     break;
             }
 
@@ -162,7 +179,7 @@ namespace C.R.A_Consumo_reducido_de_agua
             if (selectedTextBox == null)
             {
                 MessageBox.Show("Por favor, selecciona primero un domicilio para editar.",
-                    "Selección requerida", MessageBoxButton.OK, MessageBoxImage.Information);
+                    "Selección requerida", MessageBoxButton.OK, MessageBoxImage.Information);              
                 return;
             }
 
@@ -178,6 +195,11 @@ namespace C.R.A_Consumo_reducido_de_agua
             selectedTextBox.IsReadOnly = false;
             selectedTextBox.Focus();
             selectedTextBox.SelectAll();
+           /* string user_email = GlobalData.email;
+            var con = new conexion();
+            int id = GlobalData.userid;
+            string mail=GlobalData.email;
+            con.editar_domicilio(mail, selectedTextBox.Text);*/
         }
 
         private void ActualizarBotones()

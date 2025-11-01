@@ -5,6 +5,7 @@ using System.Windows;
 using System.Xml.Linq;
 using Windows.System;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 {
@@ -69,6 +70,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 ejecutor.ExecuteNonQuery();
                 MessageBox.Show("Usuario registrado!");
                 //como ultimo paso cerramos conexion
+                GlobalData.userid = Convert.ToInt32(ejecutor);
                 conex.Close();
                 return true;
             }
@@ -83,51 +85,52 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                //hacemos la conexion
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
-                //hacemos el comando pero con variables para que no nos tumben la tabla
-                string query = "SELECT name, password FROM cra.users WHERE email = @correo";
-                //con el using nos ahorramos tener que cerrar la conexion al final del codigo
-                using (var ejecutor = new NpgsqlCommand(query, conex))
+                using (var conex = new NpgsqlConnection(cadena_conexion))
                 {
-                    ejecutor.Parameters.AddWithValue("@correo", email);
-                    //usamos el using para no tener que estar cerrando la conexion a cada 5 lineas
-                    using (var reader = ejecutor.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            // Sacamos los datos 
-                            string nombre = reader.GetString(0);
-                            string passwordHash = reader.GetString(1);
+                    conex.Open();
 
-                            // como la contraseña esta encriptada le metemos la funcion de BCrypt para que pueda entender la contra
-                            if (BCrypt.Net.BCrypt.Verify(contraseña, passwordHash))
+                    string query = "SELECT user_id, name, password FROM cra.users WHERE email = @correo";
+                    using (var ejecutor = new NpgsqlCommand(query, conex))
+                    {
+                        ejecutor.Parameters.AddWithValue("@correo", email);
+
+                        using (var reader = ejecutor.ExecuteReader())
+                        {
+                            if (reader.Read())
                             {
-                                //si la contraseña es correcta entonces devolvemos true
-                                GlobalData.UserName = nombre;
-                                return true;
+                                int userId = reader.GetInt32(0);
+                                string nombre = reader.GetString(1);
+                                string passwordHash = reader.GetString(2);
+
+                                if (BCrypt.Net.BCrypt.Verify(contraseña, passwordHash))
+                                {
+                                    GlobalData.userid = userId;
+                                    GlobalData.UserName = nombre;
+                                    GlobalData.email = email;
+                                    return true;
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Contraseña incorrecta.");
+                                    return false;
+                                }
                             }
                             else
                             {
-                                //y si es incorrecta entonces devolvemos un false
+                                MessageBox.Show("No existe un usuario con ese correo.");
                                 return false;
                             }
-                        }
-                        else
-                        {
-                            MessageBox.Show("No existe un usuario con ese correo.");
-                            return false;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("no se pudo conectar a la base de datos, error:" + ex.ToString());
+                MessageBox.Show("Error al iniciar sesión: " + ex.Message);
                 return false;
             }
         }
+
         //funcion para eliminar a un usuario
         public void Eliminar_usuario(string email)
         {
@@ -165,17 +168,15 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //aca ponemos funciones relacionadas a los domicilios
         #region domicilio
         //Funcion para agregar domicilio
-        public bool agregar_domicilio(string email)
+        public bool agregar_domicilio(string email, string alias, int userId)
         {
             //hacemos nuestra conexion
             try
             {
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
-                int userId = id_usuario(email);
                 // estos datos estan fijos por mientras, uan vez tengamos el boton para agregar datos
                 //los cambio
-                string alias = "mi casita toda chula";
                 string descripcion = "tiene un colchon que me robé de la calle, un cuarto y no tiene baños";
                 // hacemos el query para ingresar los datos del usuario
                 string query = "INSERT INTO cra.buildings (user_id, alias, description) VALUES (@user_id, @alias, @description)";
@@ -185,7 +186,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     ejecutor.Parameters.AddWithValue("@user_id", userId);
                     ejecutor.Parameters.AddWithValue("@alias", alias);
                     ejecutor.Parameters.AddWithValue("@description", descripcion);
-
                     ejecutor.ExecuteNonQuery();
                 }
                 conex.Close();
@@ -200,24 +200,25 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
         //creo que el nombre explica bien lo que hace la funcion
-        public void eliminar_domicilio(string alias)
+        public void eliminar_domicilio(string alias, int user_id)
         {
             try
             {
                 //este string no importa mucho, solo es para tener algo que borrar, una ves tengamos
                 //la opcion de eliminar lo quito
-                alias = "mi casita toda chula";
                 // hacemos la conexion y la abrimos
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
                 //hacemos nuestro query para buscar alias del domicilio a eliminar
-                string query = "DELETE FROM cra.buildings WHERE alias=@alias";
+                string query = "DELETE FROM cra.buildings WHERE alias=@alias and user_id=@user_id";
                 using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
                 {
                     command.Parameters.AddWithValue("@alias", alias);
+                    command.Parameters.AddWithValue("@user_id", user_id);
                     command.ExecuteNonQuery();
                 }
                 MessageBox.Show("Domicilio eliminado");
+                conex.Close();
             }
             catch (Exception ex)
             {
@@ -227,7 +228,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
         //con esto cambiamos los datos del domicilio que lit nomas es la descripcion y el alias
         //El que quiera cambiar eso nomas es pq le van a checar el fono yo creo
-        public void editar_domicilio(string email)
+        public void editar_domicilio(string email, string alias)
         {
             conex.ConnectionString = cadena_conexion;
             conex.Open();
@@ -235,7 +236,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             //jalamos el id del usuario para poder buscar el edificio correcto
             //hacemos nuestro query para buscar el id y lo almacenamos en nuestra variable
             //estas variables se van a pasar por text box pero como no existen todavia se quedan en variables
-            string alias = "casa fea";
             string descripcion = "tiene una puerta, un cuarto y tiene 3 baños";
             string query = "UPDATE cra.buildings SET (alias=@alias, description=@description) WHERE user_id=@user_id";
             using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
@@ -256,20 +256,24 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                string query = "SELECT user_id FROM cra.users WHERE email=@correo";
-                using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+                using (NpgsqlConnection cone = new NpgsqlConnection())
                 {
-                    command.Parameters.AddWithValue("@correo", email);
-                    object result = command.ExecuteScalar();
-                    return Convert.ToInt32(result);
-                }
+                    cone.ConnectionString = cadena_conexion;
+                    cone.Open();
+                    string query = "SELECT user_id FROM cra.users WHERE email=@correo";
+                    using (NpgsqlCommand command = new NpgsqlCommand(query, cone))
+                    {
+                        command.Parameters.AddWithValue("@correo", email);
+                        object result = command.ExecuteScalar();
+                        cone.Close();
+                        return Convert.ToInt32(result);
+                    }
+                }                    
             }
             catch (Exception ex)
             {
-                MessageBox.Show("error" + ex.Message);
-                return -1;
+                MessageBox.Show("error" + ex.Message); return -1;
             }
-
         }
         public int id_edificio(string email)
         {
@@ -283,6 +287,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 //ejecutamos el query y guardamos el id
                 command.Parameters.AddWithValue("@user_id", userId);
                 object result = command.ExecuteScalar();
+                conex.Close();
                 return Convert.ToInt32(result);
             }
         }
