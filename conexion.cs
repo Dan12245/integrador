@@ -1,11 +1,9 @@
-﻿using C.R.A_Consumo_reducido_de_agua;
-using CRA;
+﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo;
 using Npgsql;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 using Windows.System;
-using static C.R.A_Consumo_reducido_de_agua.Registro;
 using static SkiaSharp.HarfBuzz.SKShaper;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 

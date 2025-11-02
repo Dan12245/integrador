@@ -9,6 +9,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using MediaColor = System.Windows.Media.Color;
+
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
@@ -16,13 +18,38 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
     {
         string ruta = "UserData.json";
         private MainViewModel mainViewModel = new MainViewModel();
-        private readonly List<Popup> _calloutPopups = new();
+
+        // Lista de mensajes de Teto
+        private List<string> mensajesTeto = new List<string>
+        {
+            "¿Sabías que usar una IA como ChatGPT consume bastante agua? durísimo hermano",
+            "hola",
+            "jaja",
+            "prueba"
+        };
+
+        private Popup tetoPopup;
+        private bool primerMensajeMostrado = false;
+        private DispatcherTimer caminataTimer;
+        private double tetoPosition = 586; // Posición inicial del gif
+        private bool moviendoDerecha = true;
+        private const double POSICION_INICIAL = 586;
+        private const double RANGO_MOVIMIENTO = 70;
+
         public Inicio()
         {
             InitializeComponent();
             Loaded += Inicio_Loaded;
             this.DataContext = mainViewModel;
             MainWindow.UserData.Load();
+
+            CambiarFondoGradiente(
+              MediaColor.FromRgb(26, 34, 53),
+              MediaColor.FromRgb(26, 34, 53),
+               0.5,
+               "Horizontal"
+           );
+
             if (Registro.GlobalData.UserName == null)
                 Registro.GlobalData.UserName = "Usuario";
 
@@ -34,20 +61,104 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             Texto_Bienvenida.Text = $"Hola, {Registro.GlobalData.UserName}!";
             Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10, 101)}% este mes!";
 
+            //Mostrar el primer consejo
             texto_consejo.Text = consejos[indiceActual];
 
+            //Temporizador para cambiar consejo cada 5 segundos
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(5);
             timer.Tick += Timer_Tick;
             timer.Start();
 
+            //Generar el documento PDF de ejemplo
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
+            // Obtener datos para el documento
             mainViewModel.SelectedPeriod = "month";
             mainViewModel.SelectedPeriod = "year";
             mainViewModel.SelectedPeriod = "week";
+
+            // Mostrar mensaje de bienvenida de Teto después de un pequeño delay
+            var bienvenidaTimer = new DispatcherTimer();
+            bienvenidaTimer.Interval = TimeSpan.FromSeconds(1);
+            bienvenidaTimer.Tick += (s, e) =>
+            {
+                MostrarMensajeTeto("Hola, soy Teto, tu asistente virtual");
+                bienvenidaTimer.Stop();
+                primerMensajeMostrado = true;
+            };
+            bienvenidaTimer.Start();
         }
 
+        // Método para agregar mensajes personalizados
+        public void AgregarMensajeTeto(string mensaje)
+        {
+            if (!string.IsNullOrWhiteSpace(mensaje))
+            {
+                mensajesTeto.Add(mensaje);
+            }
+        }
+
+        private void MostrarMensajeTeto(string mensaje)
+        {
+            // Cerrar popup anterior si existe
+            if (tetoPopup != null && tetoPopup.IsOpen)
+            {
+                tetoPopup.IsOpen = false;
+            }
+
+            // Crear el cuadro de texto
+            var textBlock = new TextBlock
+            {
+                Text = mensaje,
+                Padding = new Thickness(10),
+                Background = new SolidColorBrush(MediaColor.FromRgb(255, 255, 220)),
+                Foreground = new SolidColorBrush(MediaColor.FromRgb(0, 0, 0)),
+                FontSize = 14,
+                FontFamily = new FontFamily("Cascadia Code SemiLight"),
+                MaxWidth = 300,
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            var border = new Border
+            {
+                Child = textBlock,
+                BorderBrush = new SolidColorBrush(MediaColor.FromRgb(100, 100, 100)),
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(10),
+                Background = new SolidColorBrush(MediaColor.FromRgb(255, 255, 220))
+            };
+
+            // Necesitamos encontrar el botón con el gif por su nombre en el XAML
+            // El botón no tiene x:Name, así que lo buscamos por su posición o le agregamos uno
+            // Por ahora, usamos el Grid padre para posicionarlo
+            tetoPopup = new Popup
+            {
+                Child = border,
+                PlacementTarget = Application.Current.MainWindow, // Colocar relativo a la ventana principal
+                Placement = PlacementMode.Absolute,
+                HorizontalOffset = 650, // Ajustar según la posición del gif (586 + ancho)
+                VerticalOffset = 70, // Ajustar según la posición del gif
+                StaysOpen = false,
+                AllowsTransparency = true,
+                PopupAnimation = PopupAnimation.Fade
+            };
+
+            tetoPopup.IsOpen = true;
+
+            // Auto-cerrar después de 8 segundos
+            var closeTimer = new DispatcherTimer();
+            closeTimer.Interval = TimeSpan.FromSeconds(8);
+            closeTimer.Tick += (s, e) =>
+            {
+                if (tetoPopup != null)
+                {
+                    tetoPopup.IsOpen = false;
+                }
+                closeTimer.Stop();
+            };
+            closeTimer.Start();
+        }
         private List<string> consejos = new List<string>
         {
         "Dúchate rápido: Intenta reducir el tiempo en la regadera a 5 minutos o menos.",
@@ -118,7 +229,29 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             Storyboard sb = (Storyboard)Resources["SaltoStoryboard"];
             sb.Begin();
         }
+        private void btnDownload_Click(object sender, RoutedEventArgs e)
+        {
+            var data = new ViewModels.InvoiceDocumentDataSource();
+            var model = data.GetInvoiceDetails();
 
+            var document = new ViewModels.InvoiceDocument(
+            model, mainViewModel.ChartWeekData,
+            mainViewModel.ChartMonthData,
+            mainViewModel.ChartYearData);
+
+            document.GeneratePdfAndShow();
+            document.ShowInCompanionAsync();
+        }
+        public static void CambiarFondoGradiente(MediaColor colorInicio, MediaColor colorFin, double offset = 0.5, string direccion = "Horizontal")
+        {
+            if (Application.Current.MainWindow is MainWindow mainWindow)
+            {
+                mainWindow.CambiarFondoGradiente(colorInicio, colorFin, offset, direccion: "Horizontal");
+            }
+        }
+
+        #region InicioCallouts
+        private readonly List<Popup> _calloutPopups = new();
         private void Inicio_Help_Click(object sender, RoutedEventArgs e)
         {
             if (_calloutPopups.Count > 0)
@@ -126,7 +259,21 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 CloseAllCallouts();
                 return;
             }
+            /*
+            ShowCalloutFor(Boton_Configuracion,
+                "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
+                );
+            ShowCalloutFor(Boton_Usuario,
+                "Presiona aquí para ir a la ventana de usuario e invitados.\nTambien puedes acceder a la ventana presionando '3'."
+                );
+            ShowCalloutFor(Boton_Reportar,
+                "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
+                );
+            ShowCalloutFor(Day,
+                "Presiona los diferentes períodos para observar los diferentes consumos."
+                ); */
         }
+
         private void ShowCalloutFor(FrameworkElement target, string message)
         {
             var callout = new CalloutControl
@@ -169,19 +316,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
             _calloutPopups.Clear();
         }
+        #endregion
 
-        private void btnDownload_Click(object sender, RoutedEventArgs e)
-        {
-            var data = new ViewModels.InvoiceDocumentDataSource();
-            var model = data.GetInvoiceDetails();
 
-            var document = new ViewModels.InvoiceDocument(
-            model, mainViewModel.ChartWeekData,
-            mainViewModel.ChartMonthData,
-            mainViewModel.ChartYearData);
-
-           document.GeneratePdfAndShow();
-            document.ShowInCompanionAsync();
-        }
     }
 }
