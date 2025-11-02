@@ -52,40 +52,39 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //Con esta funcion registramos a un usuario nuevo en la base de datos
         public bool registrar_usuario(string nombre, string email, string password)
         {
+
             try
             {
-                //hacemos nuestra conexion
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
-                //Aca es donde encriptamos la contraseña usando BCrypt
-                string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
-                //escribimos el comando
-                string cadena = "INSERT INTO cra.users (name, email, password) VALUES (@Name, @correo, @contra)";
-                //hacemos nuestro ejecutor y lo usamos
-                using var ejecutor = new NpgsqlCommand(cadena, conex);
-                //las variables que vamos a insertar a la base de datos
-                ejecutor.Parameters.AddWithValue("@Name", nombre);
-                ejecutor.Parameters.AddWithValue("@correo", email);
-                ejecutor.Parameters.AddWithValue("@contra", passwordHash);
-                ejecutor.ExecuteNonQuery();
-                MessageBox.Show("Usuario registrado!");
-                //como ultimo paso cerramos conexion
-                string query = "SELECT user_id FROM cra.users WHERE email = @email";
-                using (var exe = new NpgsqlCommand(query, conex))
+                using (var con = new NpgsqlConnection(cadena_conexion))
                 {
-                    exe.Parameters.AddWithValue("@email", email);
+                    con.Open();
 
-                    using (var reader = exe.ExecuteReader())
+                    string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
+
+                    string cadena = "INSERT INTO cra.users (name, email, password) VALUES (@Name, @correo, @contra) RETURNING user_id;";
+
+                    using (var ejecutor = new NpgsqlCommand(cadena, con))
                     {
-                        if (reader.Read())
+                        ejecutor.Parameters.AddWithValue("@Name", nombre);
+                        ejecutor.Parameters.AddWithValue("@correo", email);
+                        ejecutor.Parameters.AddWithValue("@contra", passwordHash);
+
+                        object result = ejecutor.ExecuteScalar();
+                        if (result != null)
                         {
-                            int userId = reader.GetInt32(0);
+                            GlobalData.userid = Convert.ToInt32(result);
+                            MessageBox.Show("Usuario registrado!");
+                            return true;
+                        }
+                        else
+                        {
+                            MessageBox.Show("No se pudo registrar el usuario.");
+                            return false;
                         }
                     }
-                    conex.Close();
-                    return true;
                 }
             }
+
             catch (Exception ex)
             {
                 MessageBox.Show("no se pudo conectar a la base de datos, error:" + ex.ToString());
@@ -97,12 +96,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                using (var conex = new NpgsqlConnection(cadena_conexion))
+                using (var con = new NpgsqlConnection(cadena_conexion))
                 {
-                    conex.Open();
+                    con.Open();
 
                     string query = "SELECT user_id, name, password FROM cra.users WHERE email = @correo";
-                    using (var ejecutor = new NpgsqlCommand(query, conex))
+                    using (var ejecutor = new NpgsqlCommand(query, con))
                     {
                         ejecutor.Parameters.AddWithValue("@correo", email);
 
@@ -156,20 +155,20 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             //con.Eliminar_usuario(user_email); y ya mandamos llamar a la funcion que hace la chamba de eliminar al usuario
             try
             {
-
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
+                using (var con=new NpgsqlConnection(cadena_conexion))
+                {
+                    con.Open();
                 //aca nomas hacemos un DELETE ya que postgress puede borrar todo con una configuracion
                 //que ya esta activada para borrar todo lo relacionado con la foreign key, en este caso
                 //el id del usuario, asi que ya no hay que meter mas que este query
                 string query = "DELETE FROM cra.users WHERE email = @email;";
-                using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+                using (NpgsqlCommand command = new NpgsqlCommand(query, con))
                 {
                     command.Parameters.AddWithValue("@email", email);
                     command.ExecuteNonQuery();
                 }
                 MessageBox.Show("usuario eliminado");
-
+                }
             }
             catch (Exception ex)
             {
@@ -180,29 +179,25 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //aca ponemos funciones relacionadas a los domicilios
         #region domicilio
         //Funcion para agregar domicilio
-        public bool agregar_domicilio(string email, string alias, int userId)
+        public async Task<bool> agregar_domicilio_async(string email, string alias, int userId)
         {
-            //hacemos nuestra conexion
             try
             {
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
-                // estos datos estan fijos por mientras, uan vez tengamos el boton para agregar datos
-                //los cambio
-                string descripcion = "tiene un colchon que me robé de la calle, un cuarto y no tiene baños";
-                // hacemos el query para ingresar los datos del usuario
-                string query = "INSERT INTO cra.buildings (user_id, alias, description) VALUES (@user_id, @alias, @description)";
-                using (NpgsqlCommand ejecutor = new NpgsqlCommand(query, conex))
+                await using (var con = new NpgsqlConnection(cadena_conexion))
                 {
-                    //aca nomas los estamos metiendo
-                    ejecutor.Parameters.AddWithValue("@user_id", userId);
-                    ejecutor.Parameters.AddWithValue("@alias", alias);
-                    ejecutor.Parameters.AddWithValue("@description", descripcion);
-                    ejecutor.ExecuteNonQuery();
+                    await con.OpenAsync();
+
+                    string descripcion = "tiene un colchon que me robé de la calle, un cuarto y no tiene baños";
+                    string query = "INSERT INTO cra.buildings (user_id, alias, description) VALUES (@user_id, @alias, @description)";
+
+                    await using (var ejecutor = new NpgsqlCommand(query, con))
+                    {
+                        ejecutor.Parameters.AddWithValue("@user_id", userId);
+                        ejecutor.Parameters.AddWithValue("@alias", alias);
+                        ejecutor.Parameters.AddWithValue("@description", descripcion);
+                        await ejecutor.ExecuteNonQueryAsync();
+                    }
                 }
-                conex.Close();
-                // y le decimos al usuario que ya la registro
-                MessageBox.Show("Domicilio registrado!");
                 return true;
             }
             catch (Exception ex)
@@ -211,54 +206,65 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 return false;
             }
         }
+
         //creo que el nombre explica bien lo que hace la funcion
-        public void eliminar_domicilio(string alias, int user_id)
+        public  async Task<bool> eliminar_domicilio(string alias, int user_id)
         {
             try
-            {
-                //este string no importa mucho, solo es para tener algo que borrar, una ves tengamos
-                //la opcion de eliminar lo quito
+            {             
                 // hacemos la conexion y la abrimos
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
-                //hacemos nuestro query para buscar alias del domicilio a eliminar
-                string query = "DELETE FROM cra.buildings WHERE alias=@alias and user_id=@user_id";
-                using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
-                {
-                    command.Parameters.AddWithValue("@alias", alias);
-                    command.Parameters.AddWithValue("@user_id", user_id);
-                    command.ExecuteNonQuery();
+                await using (var con = new NpgsqlConnection(cadena_conexion)) {
+                //hacemos nuestro query para buscar alias del domicilio a eliminar               
+                    await con.OpenAsync();
+                    string query = "DELETE FROM cra.buildings WHERE alias=@alias and user_id=@user_id";
+                    await using (NpgsqlCommand command = new NpgsqlCommand(query, con))
+                    {
+                        command.Parameters.AddWithValue("@alias", alias);
+                        command.Parameters.AddWithValue("@user_id", user_id);
+                         await command.ExecuteNonQueryAsync();
+                    }
                 }
-                MessageBox.Show("Domicilio eliminado");
-                conex.Close();
+                        return true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
+                return false;
             }
         }
 
         //con esto cambiamos los datos del domicilio que lit nomas es la descripcion y el alias
         //El que quiera cambiar eso nomas es pq le van a checar el fono yo creo
-        public void editar_domicilio(string email, string alias)
+        public async Task<bool> editar_domicilio(string email, string alias, int userId)
         {
-            conex.ConnectionString = cadena_conexion;
-            conex.Open();
-            int userId = id_usuario(email);
-            //jalamos el id del usuario para poder buscar el edificio correcto
-            //hacemos nuestro query para buscar el id y lo almacenamos en nuestra variable
-            //estas variables se van a pasar por text box pero como no existen todavia se quedan en variables
-            string descripcion = "tiene una puerta, un cuarto y tiene 3 baños";
-            string query = "UPDATE cra.buildings SET (alias=@alias, description=@description) WHERE user_id=@user_id";
-            using (NpgsqlCommand command = new NpgsqlCommand(query, conex))
+            try
             {
-                //ejecutamos el query y guardamos el id
-                command.Parameters.AddWithValue("@alias", alias);
-                command.Parameters.AddWithValue("@description", descripcion);
-                object result = command.ExecuteScalar();
-                userId = Convert.ToInt32(result);
+                await using (var con = new NpgsqlConnection(cadena_conexion))
+                {
+                    //hacemos nuestro query para buscar alias del domicilio a eliminar               
+                    await con.OpenAsync();
+                    //jalamos el id del usuario para poder buscar el edificio correcto
+                    //hacemos nuestro query para buscar el id y lo almacenamos en nuestra variable
+                    //estas variables se van a pasar por text box pero como no existen todavia se quedan en variables
+                    string descripcion = "tiene una puerta, un cuarto y tiene 3 baños";
+                    string query = "UPDATE cra.buildings SET alias=@alias, description=@description WHERE user_id=@user_id";
+                    await using (NpgsqlCommand command = new NpgsqlCommand(query, con))
+                    {
+                        //ejecutamos el query y guardamos el id
+                        command.Parameters.AddWithValue("@alias", alias);
+                        command.Parameters.AddWithValue("@description", descripcion);
+                        command.Parameters.AddWithValue("@user_id", userId);
+                        object result = await command.ExecuteNonQueryAsync();
+                    }
+                }
+                return true;
             }
-
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+                return false;
+            }
+         
         }
         #endregion
         //aca son funciones para sacar los ID de usuario, consumo, casa e invitado
@@ -268,17 +274,15 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                using (NpgsqlConnection cone = new NpgsqlConnection())
+                using (var cone = new NpgsqlConnection(cadena_conexion))
                 {
-                    cone.ConnectionString = cadena_conexion;
                     cone.Open();
                     string query = "SELECT user_id FROM cra.users WHERE email=@correo";
                     using (NpgsqlCommand command = new NpgsqlCommand(query, cone))
                     {
                         command.Parameters.AddWithValue("@correo", email);
                         object result = command.ExecuteScalar();
-                        cone.Close();
-                        return Convert.ToInt32(result);
+                        return Convert.ToInt32(result);                       
                     }
                 }                    
             }
@@ -323,24 +327,27 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         public bool existe_invitacion(string email)
         {
             string invitacion = "437208959";
-            conex.ConnectionString = cadena_conexion;
-            conex.Open();
-            int user_id = id_usuario(email);
-            string query = "SELECT COUNT(*) FROM cra.users WHERE inv_code=@inv_code";
-            using (var ejecutor = new NpgsqlCommand(query, conex))
+            using(var con = new NpgsqlConnection(cadena_conexion))
             {
-                ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
-                int existe = Convert.ToInt32(ejecutor.ExecuteScalar());
-                if (existe == 0)
+                con.Open();
+                int user_id = id_usuario(email);
+                string query = "SELECT COUNT(*) FROM cra.users WHERE inv_code=@inv_code";
+                using (var ejecutor = new NpgsqlCommand(query, con))
                 {
-                    MessageBox.Show("Código de invitación no válido.");
-                    return false;
-                }
-                else
-                {
-                    return true;
+                    ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
+                    int existe = Convert.ToInt32(ejecutor.ExecuteScalar());
+                    if (existe == 0)
+                    {
+                        MessageBox.Show("Código de invitación no válido.");
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
             }
+            
         }
         //no se si esta funcion va aca o neh, asi que por mientras se queda aca
         public bool Invitar_usuario(string email, string name, bool y_o_n)
@@ -350,27 +357,28 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 //esta variable tambien se puede borrar sin tanto pedo, nomas ando esperando a que
                 //suelten la version con los botones para lo demas
                 string invitacion = "437208959";
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
-                int user_id = id_usuario(email);
-                if (existe_invitacion(email))
+                using(var con= new NpgsqlConnection(cadena_conexion))
                 {
-                    string query = "INSERT INTO cra.invited_users (user_id,name,read_only) VALUES (@user_id,@name,@read_only)";
-                    using (var ejecutor = new NpgsqlCommand(query, conex))
+                    con.Open();
+                    int user_id = id_usuario(email);
+                    if (existe_invitacion(email))
                     {
-                        ejecutor.Parameters.AddWithValue("@user_id", user_id);
-                        ejecutor.Parameters.AddWithValue("@name", name);
-                        ejecutor.Parameters.AddWithValue("@read_only", y_o_n);
-                        ejecutor.ExecuteNonQuery();
+                        string query = "INSERT INTO cra.invited_users (user_id,name,read_only) VALUES (@user_id,@name,@read_only)";
+                        using (var ejecutor = new NpgsqlCommand(query, con))
+                        {
+                            ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                            ejecutor.Parameters.AddWithValue("@name", name);
+                            ejecutor.Parameters.AddWithValue("@read_only", y_o_n);
+                            ejecutor.ExecuteNonQuery();
 
-                        return true;
+                            return true;
+                        }
                     }
-                }
-                else
-                {
-                    return false;
-                }
-
+                    else
+                    {
+                        return false;
+                    }
+                }                
             }
             catch (Exception ex)
             {
@@ -382,20 +390,22 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
-                int user_id = id_usuario(email);
-                if (existe_invitacion(email))
-                {
-                    string query = "UPDATE cra.invited_users SET user_id=@user_id and @read_only=read_only WHERE building_id=@building_id AND day=@day";
-                    using (var ejecutor = new NpgsqlCommand(query, conex))
+                using (var con = new NpgsqlConnection(cadena_conexion)) {
+                    int user_id = id_usuario(email);
+                    if (existe_invitacion(email))
                     {
-                        ejecutor.Parameters.AddWithValue("@user_id", user_id);
-                        ejecutor.Parameters.AddWithValue("@read_only", read_only);
-                        ejecutor.ExecuteNonQuery();
-                        MessageBox.Show("Consumo cambiado");
+                        con.Open();
+                        string query = "UPDATE cra.invited_users SET user_id=@user_id and @read_only=read_only WHERE building_id=@building_id AND day=@day";
+                        using (var ejecutor = new NpgsqlCommand(query, con))
+                        {
+                            ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                            ejecutor.Parameters.AddWithValue("@read_only", read_only);
+                            ejecutor.ExecuteNonQuery();
+                            MessageBox.Show("Consumo cambiado");
+                        }
                     }
                 }
+                
 
             }
             catch (Exception ex)
@@ -405,25 +415,28 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         }
         public void eliminar_invitado(string email, string name)
         {
-            conex.ConnectionString = cadena_conexion;
-            conex.Open();
             try
             {
-                int user_id = id_usuario(email);
-                if (existe_invitacion(email))
+                using (var con = new NpgsqlConnection(cadena_conexion))
                 {
-                    string query = "DELETE FROM cra.invited_users WHERE user_id = @user_id and name=@name;";
-                    using (var ejecutor = new NpgsqlCommand(query, conex))
+                    con.Open();
+                    int user_id = id_usuario(email);
+                    if (existe_invitacion(email))
                     {
-                        ejecutor.Parameters.AddWithValue("@user_id", user_id);
-                        ejecutor.Parameters.AddWithValue("@name", name);
-                        ejecutor.ExecuteNonQuery();
+                        string query = "DELETE FROM cra.invited_users WHERE user_id = @user_id and name=@name;";
+                        using (var ejecutor = new NpgsqlCommand(query, con))
+                        {
+                            ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                            ejecutor.Parameters.AddWithValue("@name", name);
+                            ejecutor.ExecuteNonQuery();
+                        }
+                        MessageBox.Show("invitado eliminado");
                     }
-                    MessageBox.Show("invitado eliminado");
-                }
-                else
-                {
-                    MessageBox.Show("invitado no encontrado");
+                    else
+                    {
+                        MessageBox.Show("invitado no encontrado");
+                    }
+
                 }
 
             }
@@ -440,23 +453,26 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                int consumo = 20;
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
-                int building_id = id_edificio(email);
-                //esta wea solo es para meter la fecha
-                DateTime fecha = DateTime.Now;
-                //y ya con todo eso lo metemos a la tabla de consumo
-                string query = "INSERT INTO cra.consumption_per_day (building_id,day,consumption)VALUES(@building_id,@day,@consumption)";
-                using (var ejecutor = new NpgsqlCommand(query, conex))
+                using (var con=new NpgsqlConnection(cadena_conexion))
                 {
-                    ejecutor.Parameters.AddWithValue("@building_id", building_id);
-                    ejecutor.Parameters.AddWithValue("@day", fecha);
-                    ejecutor.Parameters.AddWithValue("@consumption", consumo);
-                    ejecutor.ExecuteNonQuery();
-                    MessageBox.Show("Consumo registrado");
-                    return true;
+                    con.Open();
+                    int consumo = 20;                    
+                    int building_id = id_edificio(email);
+                    //esta wea solo es para meter la fecha
+                    DateTime fecha = DateTime.Now;
+                    //y ya con todo eso lo metemos a la tabla de consumo
+                    string query = "INSERT INTO cra.consumption_per_day (building_id,day,consumption)VALUES(@building_id,@day,@consumption)";
+                    using (var ejecutor = new NpgsqlCommand(query, con))
+                    {
+                        ejecutor.Parameters.AddWithValue("@building_id", building_id);
+                        ejecutor.Parameters.AddWithValue("@day", fecha);
+                        ejecutor.Parameters.AddWithValue("@consumption", consumo);
+                        ejecutor.ExecuteNonQuery();
+                        MessageBox.Show("Consumo registrado");
+                        return true;
+                    }
                 }
+               
             }
             catch (Exception ex)
             {
@@ -468,19 +484,21 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
+                using (var con = new NpgsqlConnection(cadena_conexion)) { 
+                    con.Open();
+                    DateTime fecha = DateTime.Now;
+                    string query = "DELETE FROM cra.consumption_per_day WHERE day=@day";
+                    using (var ejecutor = new NpgsqlCommand(query, con))
+                    {
+                        ejecutor.Parameters.AddWithValue("@day", fecha);
+                        ejecutor.ExecuteNonQuery();
+                        MessageBox.Show("Consumo eliminado");
+                        return true;
+                    }
+                }
                 //esta wea despues veo como la cambio para que el usuario no batalle a la hora de eliminar
                 //el consumo pq la neta no tengo una idea de como hacerlo de momento
-                DateTime fecha = DateTime.Now;
-                string query = "DELETE FROM cra.consumption_per_day WHERE day=@day";
-                using (var ejecutor = new NpgsqlCommand(query, conex))
-                {
-                    ejecutor.Parameters.AddWithValue("@day", fecha);
-                    ejecutor.ExecuteNonQuery();
-                    MessageBox.Show("Consumo eliminado");
-                    return true;
-                }
+              
             }
             catch (Exception ex)
             {
@@ -493,20 +511,23 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                conex.ConnectionString = cadena_conexion;
-                conex.Open();
-                int building_id = id_edificio(email);
-                string query = "UPDATE cra.consumption_per_day SET consumption=@consumption WHERE building_id=@building_id AND day=@day";
-                DateTime fecha = DateTime.Now;
-                int litros = 4;
-                using (var ejecutor = new NpgsqlCommand(query, conex))
+                using (var con = new NpgsqlConnection(cadena_conexion))
                 {
-                    ejecutor.Parameters.AddWithValue("@consumption", litros);
-                    ejecutor.Parameters.AddWithValue("@building_id", building_id);
-                    ejecutor.Parameters.AddWithValue("@day", fecha.Date);
-                    ejecutor.ExecuteNonQuery();
-                    MessageBox.Show("Consumo cambiado");
+                    con.Open();
+                    int building_id = id_edificio(email);
+                    string query = "UPDATE cra.consumption_per_day SET consumption=@consumption WHERE building_id=@building_id AND day=@day";
+                    DateTime fecha = DateTime.Now;
+                    int litros = 4;
+                    using (var ejecutor = new NpgsqlCommand(query, con))
+                    {
+                        ejecutor.Parameters.AddWithValue("@consumption", litros);
+                        ejecutor.Parameters.AddWithValue("@building_id", building_id);
+                        ejecutor.Parameters.AddWithValue("@day", fecha.Date);
+                        ejecutor.ExecuteNonQuery();
+                        MessageBox.Show("Consumo cambiado");
+                    }
                 }
+                
             }
             catch (Exception ex)
             {
@@ -520,30 +541,32 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             int daysInYear = DateTime.IsLeapYear(year) ? 366 : 365;
             //un arreglo con la cantidad de dias
             double[] consumo = new double[daysInYear];
-            conex.ConnectionString = cadena_conexion;
-            conex.Open();
-            int building_id = id_edificio(email);
-            int i = 0;
-            string query = "SELECT day,consumption FROM cra.consumption_per_day WHERE @building_id=building_id";
-            using (var ejecutor = new NpgsqlCommand(query, conex))
+            using (var con = new NpgsqlConnection(cadena_conexion))
             {
-                ejecutor.Parameters.AddWithValue("@building_id", building_id);
-
-                using (var reader = ejecutor.ExecuteReader())
+                con.Open();
+                int building_id = id_edificio(email);
+                int i = 0;
+                string query = "SELECT day,consumption FROM cra.consumption_per_day WHERE @building_id=building_id";
+                using (var ejecutor = new NpgsqlCommand(query, con))
                 {
-                    //con este ciclo llenamos el arreglo
-                    while (reader.Read() && i < consumo.Length)
-                    {
-                        DateTime dia = reader.GetDateTime(reader.GetOrdinal("day"));
-                        double valor = reader.GetDouble(reader.GetOrdinal("consumption"));
+                    ejecutor.Parameters.AddWithValue("@building_id", building_id);
 
-                        int index = dia.DayOfYear - 1; // día 1 → índice 0
-                        if (index >= 0 && index < consumo.Length)
-                            consumo[index] = valor;
+                    using (var reader = ejecutor.ExecuteReader())
+                    {
+                        //con este ciclo llenamos el arreglo
+                        while (reader.Read() && i < consumo.Length)
+                        {
+                            DateTime dia = reader.GetDateTime(reader.GetOrdinal("day"));
+                            double valor = reader.GetDouble(reader.GetOrdinal("consumption"));
+
+                            int index = dia.DayOfYear - 1; // día 1 → índice 0
+                            if (index >= 0 && index < consumo.Length)
+                                consumo[index] = valor;
+                        }
                     }
+                    return consumo;
                 }
-                return consumo;
-            }
+            }          
             #endregion
         }
     }
