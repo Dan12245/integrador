@@ -10,6 +10,12 @@
         <DataTemplate DataType="{x:Type viewModel:ConfiguracionViewModel}">
             <view:Configuracion/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:UsuarioViewModel}">
+            <view:Usuario/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:ReporteViewModel}">
+            <view:Reporte/>
+        </DataTemplate>
         <Style TargetType="FrameworkElement">
             <Setter Property="UseLayoutRounding" Value="True"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>

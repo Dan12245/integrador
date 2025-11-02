@@ -3,9 +3,9 @@ using Consumo_Reducido_de_Agua_ahora_si_definitivo.Services;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel
 {
-    internal class MainViewModel : Core.ViewModel
+    public class MainViewModel : Core.ViewModel
     {
-        public INavigationService _navigation;
+        private INavigationService _navigation;
         public INavigationService Navigation
         {
             get => _navigation;
@@ -17,13 +17,18 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel
         }
 
         public RelayCommand NavigateToConfiguracionCommand { get; set; }
-        public RelayCommand NavigateHommeCommand { get; set; }
+        public RelayCommand NavigateToInicioCommand { get; set; }
+        public RelayCommand NavigateToUsuarioCommand { get; set; }
+        public RelayCommand NavigateToReporteCommand { get; set; }
         public MainViewModel(INavigationService navService)
         {
             Navigation = navService;
-            NavigateHommeCommand = new RelayCommand(_ => Navigation.NavigateTo<InicioViewModel>(), _ => true);
-
+            NavigateToInicioCommand = new RelayCommand(_ => Navigation.NavigateTo<InicioViewModel>(), _ => true);
             NavigateToConfiguracionCommand = new RelayCommand(_ => Navigation.NavigateTo<ConfiguracionViewModel>(), _ => true);
+            NavigateToUsuarioCommand = new RelayCommand(_ => Navigation.NavigateTo<UsuarioViewModel>(), _ => true);
+            NavigateToReporteCommand = new RelayCommand(_ => Navigation.NavigateTo<ReporteViewModel>(), _ => true);
+
+            // Do not navigate by default; we will navigate after startup animation completes.
         }
     }
 }

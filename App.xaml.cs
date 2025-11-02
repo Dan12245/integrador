@@ -24,12 +24,25 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             services.AddSingleton<ShellMainViewModel>();
             services.AddSingleton<ChartsMainViewModel>();
 
+            // Register navigable VMs
+            services.AddSingleton<InicioViewModel>();
+            services.AddSingleton<ConfiguracionViewModel>();
+            services.AddSingleton<UsuarioViewModel>();
+            services.AddSingleton<ReporteViewModel>();
+
+            services.AddSingleton<INavigationService, NavigationService>();
+
+            // Fabrique de ViewModel corrigée (cast explicite et nom de paramètre correct)
+            services.AddSingleton<Func<Type, ViewModel>>(serviceProvider =>
+                viewModelType => (ViewModel)serviceProvider.GetRequiredService(viewModelType));
+
             services.AddSingleton<MainWindow>(provider => new MainWindow
             {
-                // DataContext sur la VM des graphiques, qui expose `Values`, `XAxes`, etc.
-                DataContext = provider.GetRequiredService<ChartsMainViewModel>()
+                // DataContext on shell VM
+                DataContext = provider.GetRequiredService<ShellMainViewModel>()
             });
 
+            // Views can be resolved too if needed
             services.AddSingleton<Configuracion>();
             services.AddSingleton<Inicio>();
             services.AddSingleton<Invitados>();
@@ -37,11 +50,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             services.AddSingleton<Registro>();
             services.AddSingleton<Reporte>();
             services.AddSingleton<Usuario>();
-            services.AddSingleton<INavigationService, NavigationService>();
-
-            // Fabrique de ViewModel corrigée (cast explicite et nom de paramètre correct)
-            services.AddSingleton<Func<Type, ViewModel>>(serviceProvider =>
-                viewModelType => (ViewModel)serviceProvider.GetRequiredService(viewModelType));
 
             _serviceProvider = services.BuildServiceProvider();
         }

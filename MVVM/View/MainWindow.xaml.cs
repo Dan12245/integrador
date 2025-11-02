@@ -15,9 +15,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        private const double BaseWidth = 800;
-        private const double BaseHeight = 450;
         public static class UserData
 
 
@@ -110,7 +107,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            // DataContext is set by DI in App.xaml.cs
             UserData.Save();
         }
 
@@ -119,7 +116,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
             LinearGradientBrush gradiente = new LinearGradientBrush();
 
             // Configurar la dirección del gradiente
-            if (direccion.ToLower() == "Horizontal")
+            if (direccion.ToLower() == "horizontal")
             {
                 // Horizontal: izquierda a derecha
                 gradiente.StartPoint = new Point(0, 0.5);
@@ -162,32 +159,26 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
         // Este evento se ejecuta cuando termina la animación
         private void LogoAnimacion_Completed(object sender, EventArgs e)
         {
-            // Reemplaza "Inicio" con el UserControl que quieras mostrar después
-            //CambiarEscena(new Login());
-            CambiarEscena(new Inicio());
+            // navigate to Inicio
+            if (DataContext is Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel.MainViewModel shell)
+            {
+                shell.NavigateToInicioCommand.Execute(null);
+            }
+            // hide startup overlay if present
+            if (FindName("StartupView") is FrameworkElement startup)
+            {
+                startup.Visibility = Visibility.Collapsed;
+            }
+            // show menu and restore column width
+            if (FindName("LeftMenu") is FrameworkElement menu)
+            {
+                menu.Visibility = Visibility.Visible;
+            }
+            if (FindName("MenuColumn") is ColumnDefinition col)
+            {
+                // autosize to Menu DesiredSize (so Menu.xaml controls the width)
+                col.Width = GridLength.Auto;
+            }
         }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Obtener el tamaño del área de trabajo (pantalla sin barra de tareas)
-            double anchoDisponible = SystemParameters.WorkArea.Width;
-            double altoDisponible = SystemParameters.WorkArea.Height;
-
-            // Calcular el tamaño según los porcentajes
-            Width = anchoDisponible * PORCENTAJE_ANCHO;
-            Height = altoDisponible * PORCENTAJE_ALTO;
-
-            // Asegurar que no sea menor que el mínimo
-            if (Width < MinWidth) Width = MinWidth;
-            if (Height < MinHeight) Height = MinHeight;
-
-            // OPCIONAL: Si quieres un tamaño máximo
-            double maxWidth = anchoDisponible * 0.95;  // Máximo 95% del ancho
-            double maxHeight = altoDisponible * 0.90;  // Máximo 90% del alto
-
-            if (Width > maxWidth) Width = maxWidth;
-            if (Height > maxHeight) Height = maxHeight;
-        }
-
     }
 }

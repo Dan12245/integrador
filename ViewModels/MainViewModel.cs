@@ -38,7 +38,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
         {
             new Axis
             {
-            TextSize = 10 // Label X font size
+            TextSize = 18 // Label X font size
 
             }
         };
@@ -46,7 +46,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
         {
             new Axis
             {
-            TextSize = 10 // Label Y font size
+            TextSize = 18 // Label Y font size
             }
         };
         public MainViewModel()

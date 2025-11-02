@@ -21,11 +21,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             InitializeComponent();
             Loaded += Inicio_Loaded;
+            this.DataContext = mainViewModel;
             MainWindow.UserData.Load();
             if (Registro.GlobalData.UserName == null)
                 Registro.GlobalData.UserName = "Usuario";
 
-            if  (MainWindow.UserData.Uso == false)
+            if (MainWindow.UserData.Uso == false)
                 texto_modo.Text = "Modo Empresarial";
             else
                 texto_modo.Text = "Modo Doméstico";
@@ -87,33 +88,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Display);
             TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
         }
-
-        private void ConfigurarChart_Linear()
-        {
-            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Linear);
-            Chart.SnapsToDevicePixels = false;
-            Chart.UseLayoutRounding = false;
-            TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Ideal);
-            TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
-        }
-
-        private void ConfigurarChart_HighQuality()
-        {
-            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.HighQuality);
-            RenderOptions.SetClearTypeHint(Chart, ClearTypeHint.Enabled);
-            Chart.SnapsToDevicePixels = false;
-            Chart.UseLayoutRounding = false;
-            TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Ideal);
-        }
-
-        private void ConfigurarChart_AltaResolucion()
-        {
-            Chart.Width = 860;
-            Chart.Height = 448;
-            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.HighQuality);
-            Chart.SnapsToDevicePixels = false;
-            Chart.UseLayoutRounding = false;
-        }
         private void btnAnterior_Click(object sender, RoutedEventArgs e)
         {
             indiceActual--;
@@ -145,8 +119,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             sb.Begin();
         }
 
-      
-
         private void Inicio_Help_Click(object sender, RoutedEventArgs e)
         {
             if (_calloutPopups.Count > 0)
@@ -154,16 +126,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 CloseAllCallouts();
                 return;
             }
-
-         /*   ShowCalloutFor(Boton_Configuracion,
-                "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
-                );
-            ShowCalloutFor(Boton_Usuario,
-                "Presiona aquí para ir a la ventana de usuario e invitados.\nTambien puedes acceder a la ventana presionando '3'."
-                );
-            ShowCalloutFor(Boton_Reportar,
-                "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-                ); */
         }
         private void ShowCalloutFor(FrameworkElement target, string message)
         {
