@@ -29,7 +29,7 @@ namespace C.R.A_Consumo_reducido_de_agua
     public partial class Usuario : UserControl
     {
         private TextBox selectedTextBox = null;
-        private int domiciliosActivos = 1; // Solo el principal está visible inicialmente       
+        private int domiciliosActivos = 1; // Solo el principal está visible inicialmente  
         public Usuario()
         {
             InitializeComponent();
@@ -100,7 +100,7 @@ namespace C.R.A_Consumo_reducido_de_agua
             }
         }
 
-        private async void Button_Agregar(object sender, RoutedEventArgs e)
+        private void Button_Agregar(object sender, RoutedEventArgs e)
         {
             if (domiciliosActivos >= 4)
             {
@@ -118,35 +118,26 @@ namespace C.R.A_Consumo_reducido_de_agua
                     domiciliosActivos++;
                      con = new conexion();
                     //con.agregar_domicilio(user_email,"Domicilio 1",id);
-                    if(await con.agregar_domicilio_async(user_email, Domicilio_1.Text, id))
-                    {
-                        MessageBox.Show("Domicilio agregado");
-                    }
+                    con.agregar_domicilio_async(user_email, Domicilio_1.Text, id);
                     break;
                 case 2:
                     Domicilio_2.Visibility = Visibility.Visible;
                     domiciliosActivos++;
                      con = new conexion();
-                    if (await con.agregar_domicilio_async(user_email, Domicilio_2.Text, id))
-                    {
-                        MessageBox.Show("Domicilio agregado");
-                    }
+                    con.agregar_domicilio_async(user_email, Domicilio_2.Text, id);
                     break;
                 case 3:
                     Domilicio_3.Visibility = Visibility.Visible;
                     domiciliosActivos++;
                     con = new conexion();
-                    if (await con.agregar_domicilio_async(user_email,Domilicio_3.Text, id))
-                    {
-                        MessageBox.Show("Domicilio agregado");
-                    }
+                    con.agregar_domicilio_async(user_email, Domilicio_3.Text, id);
                     break;
             }
 
             ActualizarBotones();
         }
 
-        private async void Button_Quitar(object sender, RoutedEventArgs e)
+        private void Button_Quitar(object sender, RoutedEventArgs e)
         {
            
             if (domiciliosActivos <= 1)
@@ -165,30 +156,20 @@ namespace C.R.A_Consumo_reducido_de_agua
                     Domilicio_3.Visibility = Visibility.Collapsed;
                     Domilicio_3.Text = "Domicilio 3"; // Resetear texto
                     domiciliosActivos--;
-                    if (await con.eliminar_domicilio(Domilicio_3.Text, id))
-                    {
-                        MessageBox.Show("Domicilio eliminado");
-                    }
-                    
+                    con.eliminar_domicilio(Domilicio_3.Text, id);
                     break;
                 case 3:
                     Domicilio_2.Visibility = Visibility.Collapsed;
                     Domicilio_2.Text = "Domicilio 2";
                     domiciliosActivos--;
-                    if (await con.eliminar_domicilio(Domicilio_2.Text, id))
-                    {
-                        MessageBox.Show("Domicilio eliminado");
-                    }
-
+                    con.eliminar_domicilio(Domicilio_2.Text, id) ;
                     break;
                 case 2:
                     Domicilio_1.Visibility = Visibility.Collapsed;
                     Domicilio_1.Text = "Domicilio 1";
                     domiciliosActivos--;
-                    if (await con.eliminar_domicilio(Domicilio_1.Text, id))
-                    {
-                        MessageBox.Show("Domicilio eliminado");
-                    }
+                     con.eliminar_domicilio(Domicilio_1.Text, id);
+                   
 
                     break;
             }
@@ -214,16 +195,26 @@ namespace C.R.A_Consumo_reducido_de_agua
             }
 
             // Habilitar edición
-            selectedTextBox.IsReadOnly = false;
-            selectedTextBox.Focus();
-            selectedTextBox.SelectAll();
-           string user_email = GlobalData.email;
-            var con = new conexion();
-            int id = GlobalData.userid;
-            string mail=GlobalData.email;
-            if(await con.editar_domicilio(mail, selectedTextBox.Text, id))
+            if (selectedTextBox.IsReadOnly)
             {
-                MessageBox.Show("Domicilio editado");
+                selectedTextBox.IsReadOnly = false;
+                selectedTextBox.Focus();
+                selectedTextBox.SelectAll();
+                return;
+            }
+
+            conexion con = new conexion();
+            string mail = GlobalData.email;
+            int iduser = await con.id_usuario(mail);
+            int idedificio = await con.id_edificio(iduser);
+
+            // Si ya no está en modo lectura, significa que el usuario terminó de editar
+            selectedTextBox.IsReadOnly = true;
+
+
+            if (await con.editar_domicilio(selectedTextBox.Text, idedificio))
+            {
+                MessageBox.Show("Domicilio editado correctamente.");
             }
         }
 
