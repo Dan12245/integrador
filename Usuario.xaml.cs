@@ -21,6 +21,7 @@ using static C.R.A_Consumo_reducido_de_agua.MainWindow;
 using static C.R.A_Consumo_reducido_de_agua.Registro;
 
 
+
 namespace C.R.A_Consumo_reducido_de_agua
 {
     /// <summary>
@@ -30,6 +31,7 @@ namespace C.R.A_Consumo_reducido_de_agua
     {
         private TextBox selectedTextBox = null;
         private int domiciliosActivos = 1; // Solo el principal está visible inicialmente  
+        private bool estaEditando = false;
         public Usuario()
         {
             InitializeComponent();
@@ -93,11 +95,11 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            TextBox tb = sender as TextBox;
-            if (tb != null && !tb.IsReadOnly)
-            {
-                tb.IsReadOnly = true;
-            }
+            //TextBox tb = sender as TextBox;
+            //if (tb != null && !tb.IsReadOnly)
+            //{
+            //    tb.IsReadOnly = true;
+           // }
         }
 
         private void Button_Agregar(object sender, RoutedEventArgs e)
@@ -179,6 +181,10 @@ namespace C.R.A_Consumo_reducido_de_agua
 
         private async void Button_Editar(object sender, RoutedEventArgs e)
         {
+            //bien, la explicacion de como jala (a medias) esta cosa es que habia una parte del codigo
+            //que hacia que el IsReadOnly se leyera como false aunque ya fuera considerado un true esto hacia
+            //que el codigo se confundiera y lo tomara como que no hacia nadota y ps tronaba, tmbn por eso
+            //ahora esta en un if para separar los casos y que no se confundan de neuvo
             if (selectedTextBox == null)
             {
                 MessageBox.Show("Por favor, selecciona primero un domicilio para editar.",
@@ -193,28 +199,41 @@ namespace C.R.A_Consumo_reducido_de_agua
                     "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
+            //a partir de aca no jala
             // Habilitar edición
             if (selectedTextBox.IsReadOnly)
             {
+                // 1️⃣ Primer click → habilitar edición
                 selectedTextBox.IsReadOnly = false;
                 selectedTextBox.Focus();
                 selectedTextBox.SelectAll();
-                return;
+                MessageBox.Show("Modo edición activado");
             }
-
-            conexion con = new conexion();
-            string mail = GlobalData.email;
-            int iduser = await con.id_usuario(mail);
-            int idedificio = await con.id_edificio(iduser);
-
-            // Si ya no está en modo lectura, significa que el usuario terminó de editar
-            selectedTextBox.IsReadOnly = true;
-
-
-            if (await con.editar_domicilio(selectedTextBox.Text, idedificio))
+            else
             {
-                MessageBox.Show("Domicilio editado correctamente.");
+                // 2️⃣ Segundo click → guardar cambios
+                MessageBox.Show("Guardando cambios...");
+
+                selectedTextBox.IsReadOnly = true;
+
+                conexion con = new conexion();
+                string mail = GlobalData.email;
+                int iduser = GlobalData.userid;
+
+                try
+                {
+                    int idedificio = await con.id_edificio(iduser);
+                    MessageBox.Show($"Resultado idedificio = {idedificio}");
+
+                    if (await con.editar_domicilio(selectedTextBox.Text, idedificio))
+                    {
+                        MessageBox.Show("Domicilio editado correctamente.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error dentro del botón: {ex.Message}");
+                }
             }
         }
 

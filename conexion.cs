@@ -259,7 +259,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show("Error al editar: " + ex.Message);
                 return false;
             }
          
@@ -270,11 +270,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         #region id
         public async Task<int> id_usuario(string email)
         {
+            NpgsqlConnection.ClearAllPools();
+            MessageBox.Show("si entró");
             try
             {
                 await using var cone = new NpgsqlConnection(cadena_conexion);
                 await cone.OpenAsync();
-
+                MessageBox.Show("Conexión abierta correctamente.");
                 string query = "SELECT user_id FROM cra.users WHERE email = @correo";
                 await using var command = new NpgsqlCommand(query, cone);
                 command.Parameters.AddWithValue("@correo", email);
