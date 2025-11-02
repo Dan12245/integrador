@@ -6,7 +6,7 @@
         Background="#FFB2CFE6"
         MinWidth="400"
         MinHeight="300"
-        Icon="/Images/logo programa.png"
+        Icon="/Images/Logo.png"
         Loaded="Window_Loaded">
 
     <Grid x:Name="RootContainer">

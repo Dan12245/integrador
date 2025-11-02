@@ -6,7 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              xmlns:vm="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels"
-             xmlns:UserControls="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls"
+             xmlns:UserControls="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls" 
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -50,7 +50,7 @@
 
     </UserControl.Resources>
 
-    <Grid x:Name="Login_Window" Background="White" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <Grid x:Name="Login_Window" Background="#FFCBDAFF" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50"/>
             <ColumnDefinition Width="*"/>
@@ -65,7 +65,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Background="#FF5881E8">
+            <Grid Grid.Row="0">
                 <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="20" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
                 <TextBlock x:Name="Texto_Porcentaje" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="16" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Text="Texto consumo del mes"/></TextBlock>
             </Grid>
@@ -84,7 +84,7 @@
                     <Button Margin="0,0,5,0" Width="125" Name="btnDownload" Click="btnDownload_Click">Download report</Button>
                 </StackPanel>
                 <lvc:CartesianChart x:Name="Chart" Background="Transparent" BorderBrush="WhiteSmoke" Grid.Row="1" ZoomMode="X" Series="{Binding Values}"
-                XAxes="{Binding XAxes}" YAxes="{Binding YAxes}" Width="700"/>
+                XAxes="{Binding XAxes}" YAxes="{Binding YAxes}"/>
             </Grid>
 
             <Grid Grid.Row="2" Background="#FFCBDAFF">

@@ -6,6 +6,9 @@ using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using Windows.Devices.I2c.Provider;
+// Alias pour lever l'ambiguïté entre deux MainViewModel distincts
+using ShellMainViewModel = Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel.MainViewModel;
+using ChartsMainViewModel = Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels.MainViewModel;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 {
@@ -17,11 +20,16 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             IServiceCollection services = new ServiceCollection();
 
+            // Enregistre les 2 VM ayant le même nom mais des espaces de noms différents
+            services.AddSingleton<ShellMainViewModel>();
+            services.AddSingleton<ChartsMainViewModel>();
+
             services.AddSingleton<MainWindow>(provider => new MainWindow
             {
-                DataContext = provider.GetRequiredService<MainViewModel>()
+                // DataContext sur la VM des graphiques, qui expose `Values`, `XAxes`, etc.
+                DataContext = provider.GetRequiredService<ChartsMainViewModel>()
             });
-            services.AddSingleton<MainViewModel>();
+
             services.AddSingleton<Configuracion>();
             services.AddSingleton<Inicio>();
             services.AddSingleton<Invitados>();
@@ -31,7 +39,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             services.AddSingleton<Usuario>();
             services.AddSingleton<INavigationService, NavigationService>();
 
-            services.AddSingleton<Func<Type, ViewModel>>(serviceProvider => viewModelType => (ViewModel)serviceProvider.GetRequiredService(viewModelType));
+            // Fabrique de ViewModel corrigée (cast explicite et nom de paramètre correct)
+            services.AddSingleton<Func<Type, ViewModel>>(serviceProvider =>
+                viewModelType => (ViewModel)serviceProvider.GetRequiredService(viewModelType));
 
             _serviceProvider = services.BuildServiceProvider();
         }
