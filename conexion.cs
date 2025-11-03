@@ -155,19 +155,19 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             //con.Eliminar_usuario(user_email); y ya mandamos llamar a la funcion que hace la chamba de eliminar al usuario
             try
             {
-                using (var con=new NpgsqlConnection(cadena_conexion))
+                using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     con.Open();
-                //aca nomas hacemos un DELETE ya que postgress puede borrar todo con una configuracion
-                //que ya esta activada para borrar todo lo relacionado con la foreign key, en este caso
-                //el id del usuario, asi que ya no hay que meter mas que este query
-                string query = "DELETE FROM cra.users WHERE email = @email;";
-                using (NpgsqlCommand command = new NpgsqlCommand(query, con))
-                {
-                    command.Parameters.AddWithValue("@email", email);
-                    command.ExecuteNonQuery();
-                }
-                MessageBox.Show("usuario eliminado");
+                    //aca nomas hacemos un DELETE ya que postgress puede borrar todo con una configuracion
+                    //que ya esta activada para borrar todo lo relacionado con la foreign key, en este caso
+                    //el id del usuario, asi que ya no hay que meter mas que este query
+                    string query = "DELETE FROM cra.users WHERE email = @email;";
+                    using (NpgsqlCommand command = new NpgsqlCommand(query, con))
+                    {
+                        command.Parameters.AddWithValue("@email", email);
+                        command.ExecuteNonQuery();
+                    }
+                    MessageBox.Show("usuario eliminado");
                 }
             }
             catch (Exception ex)
@@ -206,20 +206,21 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         }
 
         //creo que el nombre explica bien lo que hace la funcion
-        public  async void eliminar_domicilio(string alias, int user_id)
+        public async void eliminar_domicilio(string alias, int user_id)
         {
             try
-            {             
+            {
                 // hacemos la conexion y la abrimos
-                await using (var con = new NpgsqlConnection(cadena_conexion)) {
-                //hacemos nuestro query para buscar alias del domicilio a eliminar               
+                await using (var con = new NpgsqlConnection(cadena_conexion))
+                {
+                    //hacemos nuestro query para buscar alias del domicilio a eliminar               
                     await con.OpenAsync();
                     string query = "DELETE FROM cra.buildings WHERE alias=@alias and user_id=@user_id";
                     await using (NpgsqlCommand command = new NpgsqlCommand(query, con))
                     {
                         command.Parameters.AddWithValue("@alias", alias);
                         command.Parameters.AddWithValue("@user_id", user_id);
-                         await command.ExecuteNonQueryAsync();
+                        await command.ExecuteNonQueryAsync();
                     }
                 }
             }
@@ -233,7 +234,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //El que quiera cambiar eso nomas es pq le van a checar el fono yo creo
         public async Task<bool> editar_domicilio(string alias, int buildingId)
         {
-                    NpgsqlConnection.ClearAllPools();
+            NpgsqlConnection.ClearAllPools();
             try
             {
                 await using (var con = new NpgsqlConnection(cadena_conexion))
@@ -256,12 +257,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 }
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Error al editar: " + ex.Message);
                 return false;
             }
-         
+
         }
         #endregion
         //aca son funciones para sacar los ID de usuario, consumo, casa e invitado
@@ -347,7 +348,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         public async Task<bool> existe_invitacion(string email)
         {
             string invitacion = "437208959";
-            using(var con = new NpgsqlConnection(cadena_conexion))
+            using (var con = new NpgsqlConnection(cadena_conexion))
             {
                 con.OpenAsync();
                 int user_id = await id_usuario(email);
@@ -367,7 +368,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     }
                 }
             }
-            
+
         }
         //no se si esta funcion va aca o neh, asi que por mientras se queda aca
         public async Task<bool> Invitar_usuario(string email, string name, bool y_o_n)
@@ -377,7 +378,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 //esta variable tambien se puede borrar sin tanto pedo, nomas ando esperando a que
                 //suelten la version con los botones para lo demas
                 string invitacion = "437208959";
-                using(var con= new NpgsqlConnection(cadena_conexion))
+                using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     con.Open();
                     int user_id = await id_usuario(email);
@@ -398,7 +399,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     {
                         return false;
                     }
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -410,7 +411,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                using (var con = new NpgsqlConnection(cadena_conexion)) {
+                using (var con = new NpgsqlConnection(cadena_conexion))
+                {
                     int user_id = await id_usuario(email);
                     if (await existe_invitacion(email))
                     {
@@ -425,7 +427,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                         }
                     }
                 }
-                
+
 
             }
             catch (Exception ex)
@@ -469,14 +471,14 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         #endregion
         //y las funciones relacionadas con el consumo
         #region consumo
-        public async Task <bool> agregar_consumo(int buildingId)
+        public async Task<bool> agregar_consumo(int buildingId)
         {
             try
             {
-                using (var con=new NpgsqlConnection(cadena_conexion))
+                using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     con.Open();
-                    int consumo = 20;                    
+                    int consumo = 20;
                     int building_id = await id_edificio(buildingId);
                     //esta wea solo es para meter la fecha
                     DateTime fecha = DateTime.Now;
@@ -492,7 +494,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                         return true;
                     }
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -504,7 +506,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         {
             try
             {
-                using (var con = new NpgsqlConnection(cadena_conexion)) { 
+                using (var con = new NpgsqlConnection(cadena_conexion))
+                {
                     con.Open();
                     DateTime fecha = DateTime.Now;
                     string query = "DELETE FROM cra.consumption_per_day WHERE day=@day";
@@ -518,7 +521,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 }
                 //esta wea despues veo como la cambio para que el usuario no batalle a la hora de eliminar
                 //el consumo pq la neta no tengo una idea de como hacerlo de momento
-              
+
             }
             catch (Exception ex)
             {
@@ -547,7 +550,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                         MessageBox.Show("Consumo cambiado");
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -586,7 +589,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     }
                     return consumo;
                 }
-            }          
+            }
             #endregion
         }
     }
