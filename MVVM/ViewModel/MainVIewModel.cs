@@ -20,6 +20,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel
         public RelayCommand NavigateToInicioCommand { get; set; }
         public RelayCommand NavigateToUsuarioCommand { get; set; }
         public RelayCommand NavigateToReporteCommand { get; set; }
+        public RelayCommand NavigateToInvitadosCommand { get; set; }
         public MainViewModel(INavigationService navService)
         {
             Navigation = navService;
@@ -27,6 +28,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel
             NavigateToConfiguracionCommand = new RelayCommand(_ => Navigation.NavigateTo<ConfiguracionViewModel>(), _ => true);
             NavigateToUsuarioCommand = new RelayCommand(_ => Navigation.NavigateTo<UsuarioViewModel>(), _ => true);
             NavigateToReporteCommand = new RelayCommand(_ => Navigation.NavigateTo<ReporteViewModel>(), _ => true);
+            NavigateToInvitadosCommand = new RelayCommand(_ => Navigation.NavigateTo<InvitadosViewModel>(), _ => true);
 
             // Do not navigate by default; we will navigate after startup animation completes.
         }

@@ -37,7 +37,7 @@
         <Grid x:Name="Login_Window" Background="#FF86A5FF" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Rectangle Stroke="White" Margin="111,56,10,10" Fill="White" RadiusX="17.5" RadiusY="17.5"/>
             <Rectangle HorizontalAlignment="Left" Height="434" Stroke="#FF394D7E" VerticalAlignment="Center" Width="98" Fill="#FF394D7E"/>
-            <Button x:Name="Boton_Configuracion" Content="" Click="Boton_ir_a_Inicio" HorizontalAlignment="Left" Margin="20,80,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+            <Button x:Name="Boton_Configuracion" HorizontalAlignment="Left" Margin="20,80,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
 
                 <Button.Foreground>
                     <SolidColorBrush Color="White" Opacity="0.4"/>
@@ -46,7 +46,7 @@
                     <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Reportar" Content="" Click="Boton_Reporte" HorizontalAlignment="Left" Margin="20,368,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+            <Button x:Name="Boton_Reportar" HorizontalAlignment="Left" Margin="20,368,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
 
                 <Button.Foreground>
                     <SolidColorBrush Color="White" Opacity="0.4"/>
@@ -57,7 +57,7 @@
             </Button>
             <Image Margin="12,5,712,364" Source="Images/Logo.png" Height="65"/>
 
-            <Button x:Name="Boton_Usuario" Content=""  HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
+            <Button x:Name="Boton_Usuario" HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
                 <Button.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -74,7 +74,7 @@
                     <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Menu" Content="" Click="Boton_ir_a_Configuracion" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF303C73" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0.5,0.5" Margin="49,163,0,0" BorderThickness="100">
+            <Button x:Name="Boton_Menu" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF303C73" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0.5,0.5" Margin="49,163,0,0" BorderThickness="100">
                 <Button.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -96,7 +96,7 @@
             <Image Margin="29,183,729,211" Source=" Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
             <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
             <Image Margin="-796,-7,813,0" Source="Images/Captura de pantalla 2025-10-17 101012.png" Stretch="Fill"/>
-            <Button x:Name="Boton_Register" Content="Invitados" Click="Boton_ir_a_Invitados" HorizontalAlignment="Left" Margin="301,8,0,0" VerticalAlignment="Top" FontSize="16" Width="229" Height="35" RenderTransformOrigin="0,0">
+            <Button x:Name="Boton_Register" Content="Invitados" Command="{Binding NavigateToInvitadosCommand}" HorizontalAlignment="Left" Margin="301,8,0,0" VerticalAlignment="Top" FontSize="16" Width="229" Height="35" RenderTransformOrigin="0,0">
                 <Button.BorderBrush>
                     <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
                 </Button.BorderBrush>
@@ -117,7 +117,7 @@
             <TextBlock x:Name="Datos_Usuario_Copiar" TextAlignment="Center" HorizontalAlignment="Left" Margin="126,329,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="645" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Meta de reduccion de consumo"/></TextBlock>
             <ProgressBar x:Name="Barra_meta" HorizontalAlignment="Left" Height="38" Margin="144,355,0,0" VerticalAlignment="Top" Width="610" Background="#FFB9D5FF" BorderBrush="#FF0A2D65" Value="50" Foreground="#FF5F89C8"/>
             <TextBlock x:Name="Datos_Usuario_Copiar1" TextAlignment="Center" HorizontalAlignment="Left" Margin="144,397,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="610" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Dias restantes: te te te te teto"/></TextBlock>
-            <Button Margin="752,0,6,392" Cursor="Hand" Click="Report_Help_Click">
+            <Button Margin="752,0,6,392" Cursor="Hand">
                 <Button.BorderBrush>
                     <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
                 </Button.BorderBrush>

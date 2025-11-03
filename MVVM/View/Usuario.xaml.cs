@@ -84,7 +84,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             //if (tb != null && !tb.IsReadOnly)
             //{
             //    tb.IsReadOnly = true;
-           // }
+            // }
         }
 
         private void Button_Agregar(object sender, RoutedEventArgs e)
@@ -103,14 +103,14 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 case 1:
                     Domicilio_1.Visibility = Visibility.Visible;
                     domiciliosActivos++;
-                     con = new conexion();
+                    con = new conexion();
                     //con.agregar_domicilio(user_email,"Domicilio 1",id);
                     con.agregar_domicilio_async(user_email, Domicilio_1.Text, id);
                     break;
                 case 2:
                     Domicilio_2.Visibility = Visibility.Visible;
                     domiciliosActivos++;
-                     con = new conexion();
+                    con = new conexion();
                     con.agregar_domicilio_async(user_email, Domicilio_2.Text, id);
                     break;
                 case 3:
@@ -126,7 +126,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
         private void Button_Quitar(object sender, RoutedEventArgs e)
         {
-           
+
             if (domiciliosActivos <= 1)
             {
                 MessageBox.Show("No puedes eliminar el domicilio principal.",
@@ -149,14 +149,14 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                     Domicilio_2.Visibility = Visibility.Collapsed;
                     Domicilio_2.Text = "Domicilio 2";
                     domiciliosActivos--;
-                    con.eliminar_domicilio(Domicilio_2.Text, id) ;
+                    con.eliminar_domicilio(Domicilio_2.Text, id);
                     break;
                 case 2:
                     Domicilio_1.Visibility = Visibility.Collapsed;
                     Domicilio_1.Text = "Domicilio 1";
                     domiciliosActivos--;
-                     con.eliminar_domicilio(Domicilio_1.Text, id);
-                   
+                    con.eliminar_domicilio(Domicilio_1.Text, id);
+
 
                     break;
             }
@@ -173,7 +173,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             if (selectedTextBox == null)
             {
                 MessageBox.Show("Por favor, selecciona primero un domicilio para editar.",
-                    "Selección requerida", MessageBoxButton.OK, MessageBoxImage.Information);              
+                    "Selección requerida", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -307,101 +307,5 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 }
             }
         }
-
-        public void CambiarEscena(UserControl nuevoControl)
-        {
-            Login_Window.Children.Clear();
-            Login_Window.Children.Add(nuevoControl);
-        }
-
-        private void Boton_ir_a_Configuracion(object sender, RoutedEventArgs e)
-        {
-            CloseAllCallouts();
-            CambiarEscena(new Configuracion());
-        }
-
-        private void Boton_ir_a_Invitados(object sender, RoutedEventArgs e)
-        {
-            CloseAllCallouts();
-            CambiarEscena(new Invitados());
-        }
-
-        private void Boton_Reporte(object sender, RoutedEventArgs e)
-        {
-            CloseAllCallouts();
-            CambiarEscena(new Reporte());
-        }
-
-        private void Boton_ir_a_Inicio(object sender, RoutedEventArgs e)
-        {
-            CloseAllCallouts();
-            CambiarEscena(new Inicio());
-        }
-
-        #region ReportCallouts
-        private readonly List<Popup> _calloutPopups = new();
-
-        private void Report_Help_Click(object sender, RoutedEventArgs e)
-        {
-            if (_calloutPopups.Count > 0)
-            {
-                CloseAllCallouts();
-                return;
-            }
-
-            ShowCalloutFor(Boton_Configuracion,
-                "Presiona aquí para ir a la ventana principal.\nTambien puedes acceder a la ventana presionando '1'."
-                );
-            ShowCalloutFor(Boton_Menu,
-                "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
-                );
-            ShowCalloutFor(Boton_Reportar,
-                "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-                );
-        }
-
-        private void ShowCalloutFor(FrameworkElement target, string message)
-        {
-            var callout = new CalloutControl
-            {
-                Text = message,
-                IsHitTestVisible = false
-            };
-
-            var popup = new Popup
-            {
-                Child = callout,
-                PlacementTarget = target,
-                Placement = PlacementMode.Right,
-                HorizontalOffset = 10,
-                VerticalOffset = 0,
-                StaysOpen = true,
-                AllowsTransparency = true,
-                PopupAnimation = PopupAnimation.Fade
-            };
-
-            EventHandler layoutHandler = (_, __) => popup.HorizontalOffset += 0;
-            target.LayoutUpdated += layoutHandler;
-
-            popup.Closed += (_, __) =>
-            {
-                target.LayoutUpdated -= layoutHandler;
-                _calloutPopups.Remove(popup);
-                popup.Child = null;
-            };
-
-            _calloutPopups.Add(popup);
-            popup.IsOpen = true;
-        }
-
-        private void CloseAllCallouts()
-        {
-            foreach (var p in _calloutPopups.ToArray())
-            {
-                p.IsOpen = false;
-            }
-            _calloutPopups.Clear();
-        }
-        #endregion
     }
 }

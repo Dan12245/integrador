@@ -9,17 +9,17 @@ using Consumo_Reducido_de_Agua_ahora_si_definitivo.Services;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel
 {
-    public class UsuarioViewModel : Core.ViewModel
+    public class InvitadosViewModel : Core.ViewModel
     {
         private readonly INavigationService _navigationService;
 
-        // Comando para navegar a Invitados (usado por Boton_Register en Usuario.xaml)
-        public RelayCommand NavigateToInvitadosCommand { get; }
+        // Comando para volver a Usuario (usado por Boton_Usuarios en Invitados.xaml)
+        public RelayCommand NavigateToUsuariosCommand { get; }
 
-        public UsuarioViewModel(INavigationService navigationService)
+        public InvitadosViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            NavigateToInvitadosCommand = new RelayCommand(_ => _navigationService.NavigateTo<InvitadosViewModel>(), _ => true);
+            NavigateToUsuariosCommand = new RelayCommand(_ => _navigationService.NavigateTo<UsuarioViewModel>(), _ => true);
         }
     }
 }

@@ -57,7 +57,7 @@
             <RowDefinition Height="75"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="28" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
+            <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="28" FontFamily="Cascadia Code" TextAlignment="Center"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
             <TextBlock x:Name="Texto_Porcentaje" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="24" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Text="Texto consumo del mes"/></TextBlock>
         </Grid>
 
@@ -121,8 +121,6 @@
 
             </Grid>
 
-
-
             <Button Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{x:Null}" BorderBrush="{x:Null}" Click="btnSalto_Click">
                 <Button.RenderTransform>
                     <TranslateTransform x:Name="btnSaltoTransform" Y="0"/>
@@ -151,6 +149,5 @@
                 </Button.Background>
             </Button>
         </Grid>
-
     </Grid>
 </UserControl>

@@ -98,7 +98,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 mensajesTeto.Add(mensaje);
             }
         }
-
         private void MostrarMensajeTeto(string mensaje)
         {
             // Cerrar popup anterior si existe
@@ -189,7 +188,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             ConfigurarChart_Fant();
         }
-
         private void ConfigurarChart_Fant()
         {
             RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Fant);
@@ -249,75 +247,5 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 mainWindow.CambiarFondoGradiente(colorInicio, colorFin, offset, direccion: "Horizontal");
             }
         }
-
-        #region InicioCallouts
-        private readonly List<Popup> _calloutPopups = new();
-        private void Inicio_Help_Click(object sender, RoutedEventArgs e)
-        {
-            if (_calloutPopups.Count > 0)
-            {
-                CloseAllCallouts();
-                return;
-            }
-            /*
-            ShowCalloutFor(Boton_Configuracion,
-                "Presiona aquí para ir a la ventana de configuración.\nTambien puedes acceder a la ventana presionando '2'."
-                );
-            ShowCalloutFor(Boton_Usuario,
-                "Presiona aquí para ir a la ventana de usuario e invitados.\nTambien puedes acceder a la ventana presionando '3'."
-                );
-            ShowCalloutFor(Boton_Reportar,
-                "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
-                );
-            ShowCalloutFor(Day,
-                "Presiona los diferentes períodos para observar los diferentes consumos."
-                ); */
-        }
-
-        private void ShowCalloutFor(FrameworkElement target, string message)
-        {
-            var callout = new CalloutControl
-            {
-                Text = message,
-                IsHitTestVisible = false
-            };
-
-            var popup = new Popup
-            {
-                Child = callout,
-                PlacementTarget = target,
-                Placement = PlacementMode.Right,
-                HorizontalOffset = 10,
-                VerticalOffset = 0,
-                StaysOpen = true,
-                AllowsTransparency = true,
-                PopupAnimation = PopupAnimation.Fade
-            };
-
-            EventHandler layoutHandler = (_, __) => popup.HorizontalOffset += 0;
-            target.LayoutUpdated += layoutHandler;
-
-            popup.Closed += (_, __) =>
-            {
-                target.LayoutUpdated -= layoutHandler;
-                _calloutPopups.Remove(popup);
-                popup.Child = null;
-            };
-
-            _calloutPopups.Add(popup);
-            popup.IsOpen = true;
-        }
-
-        private void CloseAllCallouts()
-        {
-            foreach (var p in _calloutPopups.ToArray())
-            {
-                p.IsOpen = false;
-            }
-            _calloutPopups.Clear();
-        }
-        #endregion
-
-
     }
 }
