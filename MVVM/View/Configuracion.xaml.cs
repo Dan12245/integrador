@@ -24,11 +24,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             CambiarEscena(new Usuario());
         }
 
-        private void Boton_Cerrar_Sesion(object sender, RoutedEventArgs e)
-        {
-            CambiarEscena(new Login());
-        }
-
         private void Boton_Eliminar_Usuario(object sender, RoutedEventArgs e)
         {
             Login log = new Login();

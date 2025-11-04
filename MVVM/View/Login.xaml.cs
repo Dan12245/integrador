@@ -2,6 +2,7 @@ using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
@@ -87,47 +88,20 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 return;
             }
 
-            if (Application.Current.MainWindow is MainWindow main)
+            conexion con = new conexion();
+            if (con.iniciar_sesion(email, password))
             {
-                conexion con = new conexion();
-                if (con.iniciar_sesion(email, password))
+                // Navegar a Inicio tras validar credenciales
+                if (Application.Current.MainWindow?.DataContext is MainViewModel shell)
                 {
-                    string nombreUsuario = GlobalData.UserName;
-                    GlobalData.email = txtEmail.Text;
-                    main.CambiarEscena(new Inicio());
-
+                    shell.NavigateToInicioCommand.Execute(null);
                 }
-                else
-                {
-                    MessageBox.Show("Correo o contraseña incorrectos.", "Acceso denegado", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-
+            }
+            else
+            {
+                MessageBox.Show("Correo o contraseña incorrectos.", "Acceso denegado", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-        private void Boton_Register_Click(object sender, RoutedEventArgs e)
-        {
-            if (Application.Current.MainWindow is MainWindow main)
-            {
-                // Cambiar a la escena Registro
-                main.CambiarEscena(new Registro());
-            }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void Boton_Login_Click(object sender, RoutedEventArgs e)
         {
             if (Application.Current.MainWindow is MainWindow main)
@@ -136,7 +110,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 main.CambiarEscena(new Inicio());
             }
         }
-
         private void Icono_Contraseña_Click(object sender, RoutedEventArgs e)
         {
             // No hacer nada si no hay contraseña escrita

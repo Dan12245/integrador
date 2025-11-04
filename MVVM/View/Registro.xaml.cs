@@ -2,6 +2,7 @@ using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
@@ -19,13 +20,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         public Registro()
         {
             InitializeComponent();
-            // MouseEnter → cambio de color
-
-
 
             Boton_Login.MouseEnter += (s, e) =>
             {
-
                 Boton_Login.Background = new SolidColorBrush(Color.FromRgb(57, 61, 191)); // Azul brillante
                 Boton_Login.Foreground = new SolidColorBrush(Colors.White);
 
@@ -41,10 +38,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
         private void Boton_Login_Click(object sender, RoutedEventArgs e)
         {
-            if (Application.Current.MainWindow is MainWindow main)
+            if (Application.Current.MainWindow?.DataContext is MainViewModel shell)
             {
-                // Cambiar a la escena Registro
-                main.CambiarEscena(new Login());
+                shell.NavigateToLoginCommand.Execute(null);
             }
         }
         private void PlaceHolderTexto(object sender, System.Windows.Controls.TextChangedEventArgs e)
@@ -52,23 +48,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             string name = Campo_Nombre.Text;
             string email = Campo_Email.Text;
 
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                email_place_holder.Text = "Email";
-            }
-            else
-            {
-                email_place_holder.Text = "";
-            }
-
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                nombre_place_holder.Text = "Nombre";
-            }
-            else
-            {
-                nombre_place_holder.Text = "";
-            }
+            email_place_holder.Text = string.IsNullOrWhiteSpace(email) ? "Email" : string.Empty;
+            nombre_place_holder.Text = string.IsNullOrWhiteSpace(name) ? "Nombre" : string.Empty;
         }
 
         private void PasswordPlaceHolder(object sender, RoutedEventArgs e)
@@ -76,23 +57,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             string contraseña = Campo_Contraseña.Password;
             string repetir_contraseña = Campo_Repetir_Contraseña.Password;
 
-            if (string.IsNullOrWhiteSpace(contraseña))
-            {
-                contraseña_place_holder.Text = "Contraseña";
-            }
-            else
-            {
-                contraseña_place_holder.Text = "";
-            }
-
-            if (string.IsNullOrWhiteSpace(repetir_contraseña))
-            {
-                repetir_contraseña_place_holder.Text = "Repetir Contraseña";
-            }
-            else
-            {
-                repetir_contraseña_place_holder.Text = "";
-            }
+            contraseña_place_holder.Text = string.IsNullOrWhiteSpace(contraseña) ? "Contraseña" : string.Empty;
+            repetir_contraseña_place_holder.Text = string.IsNullOrWhiteSpace(repetir_contraseña) ? "Repetir Contraseña" : string.Empty;
         }
         private void Boton_Registrarse(object sender, RoutedEventArgs e)
         {
@@ -103,44 +69,38 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
 
 
-            if (Application.Current.MainWindow is MainWindow main)
+            if (Application.Current.MainWindow?.DataContext is not MainViewModel shell)
+                return;
+
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(contraseña) || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(repetir_contraseña))
             {
-                if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(contraseña) || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(repetir_contraseña))
-                {
-                    MessageBox.Show("Por favor, complete todos los campos.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                else
-                {
-                    if (repetir_contraseña != contraseña)
-                    {
-                        MessageBox.Show("Las contraseñas no coinciden.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    else if (contraseña.Length < 3)
-                    {
-                        MessageBox.Show("La contraseña debe tener al menos 6 caracteres.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-                    else if (!main.escorreovalido(email))
-                    {
-                        MessageBox.Show("Por favor, ingrese un correo electrónico válido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-
-                    else
-                    {
-                        conexion con = new conexion();
-                        con.registrar_usuario(name, email, contraseña);
-                        // Cambiar a la escena Registro
-                        main.CambiarEscena(new Inicio());
-                        GlobalData.UserName = name;
-                    }
-
-                }
+                MessageBox.Show("Por favor, complete todos los campos.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
+            if (repetir_contraseña != contraseña)
+            {
+                MessageBox.Show("Las contraseñas no coinciden.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (contraseña.Length < 6)
+            {
+                MessageBox.Show("La contraseña debe tener al menos 6 caracteres.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (!(Application.Current.MainWindow is MainWindow main) || !main.escorreovalido(email))
+            {
+                MessageBox.Show("Por favor, ingrese un correo electrónico válido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Registrar usuario
+            conexion con = new conexion();
+            con.registrar_usuario(name, email, contraseña);
+            GlobalData.UserName = name;
+            GlobalData.email = email;
+
+            // Navegar a Inicio tras registro exitoso
+            shell.NavigateToInicioCommand.Execute(null);
         }
     }
 }

@@ -95,7 +95,7 @@
             <ComboBox x:Name="Talkback" HorizontalAlignment="Left" Margin="122,292,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
             <ComboBox x:Name="Idioma" HorizontalAlignment="Left" Margin="122,208,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
             <ComboBox x:Name="Rendimiento" HorizontalAlignment="Left" Margin="476,134,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
-            <Button Content="Cerrar sesion" Click="Boton_Cerrar_Sesion" HorizontalAlignment="Left" Margin="496,282,0,0" VerticalAlignment="Top"  Height="54" Width="248"/>
+            <Button Content="Cerrar sesion" Command="{Binding NavigateToLoginCommand}" HorizontalAlignment="Left" Margin="496,282,0,0" VerticalAlignment="Top"  Height="54" Width="248"/>
             <Button Content="Descartar" HorizontalAlignment="Left" Margin="137,369,0,0" VerticalAlignment="Top" Click="Button_Click" Height="54" Width="297" Background="#FFFFBEBE" Foreground="#FF752D2D" BorderBrush="#FFFFBEBE"/>
             <Button Content="Aplicar" HorizontalAlignment="Left" Margin="467,369,0,0" VerticalAlignment="Top" Click="Button_Click" Height="54" Width="297" Background="#FF96FFD7" Foreground="#FF276F54" BorderBrush="#FF96FFD7"/>
             <Button Margin="730,10,10,370" Cursor="Hand" Height="55" Width="55">
