@@ -36,58 +36,8 @@
 
     <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid x:Name="Login_Window" Background="#FFB2CEF6" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Rectangle Stroke="#FF5881E8" Margin="98,0,0,351" Fill="#FF5881E8"/>
-            <Rectangle HorizontalAlignment="Left" Height="434" Stroke="#FF394D7E" VerticalAlignment="Center" Width="98" Fill="#FF394D7E"/>
-            <Button x:Name="Boton_Configuracion" Content="" HorizontalAlignment="Left" Margin="20,80,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+            <Rectangle Stroke="#FF5881E8" Margin="0,0,0,351" Fill="#FF5881E8"/>
 
-                <Button.Foreground>
-                    <SolidColorBrush Color="White" Opacity="0.4"/>
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
-                </Button.Background>
-            </Button>
-            <Button x:Name="Boton_Reportar"  HorizontalAlignment="Left" Margin="20,368,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
-
-                <Button.Foreground>
-                    <SolidColorBrush Color="White" Opacity="0.4"/>
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
-                </Button.Background>
-            </Button>
-            <Image Margin="12,4,714,365" Source="Images/Logo.png" Height="65"/>
-            <Button x:Name="Boton_Usuario" Content="" HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
-
-                <Button.Foreground>
-                    <SolidColorBrush Color="White" Opacity="0.4"/>
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
-                </Button.Background>
-            </Button>
-            <Button x:Name="Boton_Menu" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF303C73" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Margin="49,163,0,0" BorderThickness="100">
-                <Button.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="44.78"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Button.RenderTransform>
-
-                <Button.Foreground>
-                    <SolidColorBrush Color="White" Opacity="0.4"/>
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
-                </Button.Background>
-            </Button>
-            <Image Margin="32,378,734,20" Source="Images/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="30,284,730,114" Source="Images/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="29,183,729,211" Source="Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="109,21,332,365" Source="Images/Configuracion texto.png" Stretch="Fill"/>
             <Label Content="Tamaño de texto" HorizontalAlignment="Left" Margin="117,100,0,0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="20"/>
             <Label Content="Idioma" HorizontalAlignment="Left" Margin="117,175,0,0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="20"/>
             <Label Content="Talkback" HorizontalAlignment="Left" Margin="117,261,0,0" VerticalAlignment="Top" FontSize="20" FontFamily="Yu Gothic UI Semibold"/>
@@ -103,14 +53,6 @@
                     HorizontalAlignment="Left" Margin="496,282,0,0" VerticalAlignment="Top" Height="54" Width="248"/>
             <Button Content="Descartar" HorizontalAlignment="Left" Margin="137,369,0,0" VerticalAlignment="Top" Height="54" Width="297" Background="#FFFFBEBE" Foreground="#FF752D2D" BorderBrush="#FFFFBEBE"/>
             <Button Content="Aplicar" HorizontalAlignment="Left" Margin="467,369,0,0" VerticalAlignment="Top" Height="54" Width="297" Background="#FF96FFD7" Foreground="#FF276F54" BorderBrush="#FF96FFD7"/>
-            <Button Margin="730,10,10,370" Cursor="Hand" Height="55" Width="55">
-                <Button.BorderBrush>
-                    <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
-                </Button.BorderBrush>
-                <Button.Background>
-                    <ImageBrush ImageSource="/Images/Help.png"/>
-                </Button.Background>
-            </Button>
             <Button Content="Eliminar Cuenta" Click="Boton_Eliminar_Usuario" HorizontalAlignment="Left" Margin="496,208,0,0" VerticalAlignment="Top"  Height="54" Width="248"/>
         </Grid>
     </Viewbox>

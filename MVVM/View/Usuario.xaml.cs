@@ -72,8 +72,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 if (tb != null && !tb.IsReadOnly)
                 {
                     tb.IsReadOnly = true;
-                    // Mover el foco a otro elemento para que se dispare LostFocus
-                    Boton_Menu.Focus();
                 }
             }
         }
