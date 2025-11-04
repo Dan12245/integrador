@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls"
+             xmlns:viewModel="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="80" MinWidth="80">
 
@@ -58,16 +59,24 @@
             <Grid Grid.Row="0">
 
                 <StackPanel VerticalAlignment="Center">
-                    <Button Grid.Row="0" x:Name="Boton_Menu" Command="{Binding NavigateToInicioCommand}">
+                    <Button Grid.Row="0" x:Name="Boton_Menu"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="{x:Type viewModel:InicioViewModel}">
                         <Image Source="/Images/Menu Principal seleccionado.png"/>
                     </Button>
-                    <Button Grid.Row="1" x:Name="Boton_Configuracion" Command="{Binding NavigateToConfiguracionCommand}">
+                    <Button Grid.Row="1" x:Name="Boton_Configuracion"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="{x:Type viewModel:ConfiguracionViewModel}">
                         <Image Source="/Images/Configuracion.png"/>
                     </Button>
-                    <Button Grid.Row="2" x:Name="Boton_Usuario" Command="{Binding NavigateToUsuarioCommand}">
+                    <Button Grid.Row="2" x:Name="Boton_Usuario"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="{x:Type viewModel:UsuarioViewModel}">
                         <Image Source="/Images/Usuario e invitados.png"/>
                     </Button>
-                    <Button Grid.Row="3" x:Name="Boton_Reportar" Command="{Binding NavigateToReporteCommand}">
+                    <Button Grid.Row="3" x:Name="Boton_Reportar"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="{x:Type viewModel:ReporteViewModel}">
                         <Image Source="/Images/Reportar.png"/>
                     </Button>
                     <Button Grid.Row="4" x:Name="Inicio_Help" Click="Inicio_Help_Click">

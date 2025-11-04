@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModel="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -37,7 +38,7 @@
         <Grid x:Name="Login_Window" Background="#FFB2CEF6" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Rectangle Stroke="#FF5881E8" Margin="98,0,0,351" Fill="#FF5881E8"/>
             <Rectangle HorizontalAlignment="Left" Height="434" Stroke="#FF394D7E" VerticalAlignment="Center" Width="98" Fill="#FF394D7E"/>
-            <Button x:Name="Boton_Configuracion" Content="" Click="Boton_ir_a_Inicio" HorizontalAlignment="Left" Margin="20,80,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+            <Button x:Name="Boton_Configuracion" Content="" HorizontalAlignment="Left" Margin="20,80,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
 
                 <Button.Foreground>
                     <SolidColorBrush Color="White" Opacity="0.4"/>
@@ -46,7 +47,7 @@
                     <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Reportar" Content="" Click="Boton_Reporte" HorizontalAlignment="Left" Margin="20,368,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+            <Button x:Name="Boton_Reportar"  HorizontalAlignment="Left" Margin="20,368,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
 
                 <Button.Foreground>
                     <SolidColorBrush Color="White" Opacity="0.4"/>
@@ -56,7 +57,7 @@
                 </Button.Background>
             </Button>
             <Image Margin="12,4,714,365" Source="Images/Logo.png" Height="65"/>
-            <Button x:Name="Boton_Usuario" Content="" Click="Boton_Usuario_Invitados" HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+            <Button x:Name="Boton_Usuario" Content="" HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
 
                 <Button.Foreground>
                     <SolidColorBrush Color="White" Opacity="0.4"/>
@@ -95,9 +96,13 @@
             <ComboBox x:Name="Talkback" HorizontalAlignment="Left" Margin="122,292,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
             <ComboBox x:Name="Idioma" HorizontalAlignment="Left" Margin="122,208,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
             <ComboBox x:Name="Rendimiento" HorizontalAlignment="Left" Margin="476,134,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
-            <Button Content="Cerrar sesion" Command="{Binding NavigateToLoginCommand}" HorizontalAlignment="Left" Margin="496,282,0,0" VerticalAlignment="Top"  Height="54" Width="248"/>
-            <Button Content="Descartar" HorizontalAlignment="Left" Margin="137,369,0,0" VerticalAlignment="Top" Click="Button_Click" Height="54" Width="297" Background="#FFFFBEBE" Foreground="#FF752D2D" BorderBrush="#FFFFBEBE"/>
-            <Button Content="Aplicar" HorizontalAlignment="Left" Margin="467,369,0,0" VerticalAlignment="Top" Click="Button_Click" Height="54" Width="297" Background="#FF96FFD7" Foreground="#FF276F54" BorderBrush="#FF96FFD7"/>
+            <!-- Centralized navigation: go to Login using the shell's NavigateToCommand -->
+            <Button Content="Cerrar sesion"
+                    Command="{Binding DataContext.NavigateToCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    CommandParameter="{x:Type viewModel:LoginViewModel}"
+                    HorizontalAlignment="Left" Margin="496,282,0,0" VerticalAlignment="Top" Height="54" Width="248"/>
+            <Button Content="Descartar" HorizontalAlignment="Left" Margin="137,369,0,0" VerticalAlignment="Top" Height="54" Width="297" Background="#FFFFBEBE" Foreground="#FF752D2D" BorderBrush="#FFFFBEBE"/>
+            <Button Content="Aplicar" HorizontalAlignment="Left" Margin="467,369,0,0" VerticalAlignment="Top" Height="54" Width="297" Background="#FF96FFD7" Foreground="#FF276F54" BorderBrush="#FF96FFD7"/>
             <Button Margin="730,10,10,370" Cursor="Hand" Height="55" Width="55">
                 <Button.BorderBrush>
                     <SolidColorBrush Color="#FF7385E3" Opacity="0"/>

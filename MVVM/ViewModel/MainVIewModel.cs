@@ -1,4 +1,6 @@
-﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo.Core;
+﻿using System;
+using System.Collections.Generic;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.Core;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.Services;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel
@@ -15,7 +17,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel
                 OnPropertyChanged();
             }
         }
+        
+        // Single parameterized navigation command (Type or string alias)
+        public RelayCommand NavigateToCommand { get; }
 
+        // Keep existing commands for now to avoid touching existing XAML
         public RelayCommand NavigateToConfiguracionCommand { get; set; }
         public RelayCommand NavigateToInicioCommand { get; set; }
         public RelayCommand NavigateToUsuarioCommand { get; set; }
@@ -23,9 +29,35 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel
         public RelayCommand NavigateToInvitadosCommand { get; set; }
         public RelayCommand NavigateToLoginCommand { get; set; }
         public RelayCommand NavigateToRegistroCommand { get; set; }
+
+        private readonly Dictionary<string, Type> _routes = new()
+        {
+            ["Inicio"] = typeof(InicioViewModel),
+            ["Configuracion"] = typeof(ConfiguracionViewModel),
+            ["Usuario"] = typeof(UsuarioViewModel),
+            ["Reporte"] = typeof(ReporteViewModel),
+            ["Invitados"] = typeof(InvitadosViewModel),
+            ["Login"] = typeof(LoginViewModel),
+            ["Registro"] = typeof(RegistroViewModel),
+        };
+
         public MainViewModel(INavigationService navService)
         {
             Navigation = navService;
+
+            NavigateToCommand = new RelayCommand(p =>
+            {
+                if (p is Type t && typeof(Core.ViewModel).IsAssignableFrom(t))
+                {
+                    Navigation.NavigateTo(t);
+                }
+                else if (p is string key && _routes.TryGetValue(key, out var vmType))
+                {
+                    Navigation.NavigateTo(vmType);
+                }
+            }, _ => true);
+
+            // Existing commands (optional to keep)
             NavigateToInicioCommand = new RelayCommand(_ => Navigation.NavigateTo<InicioViewModel>(), _ => true);
             NavigateToConfiguracionCommand = new RelayCommand(_ => Navigation.NavigateTo<ConfiguracionViewModel>(), _ => true);
             NavigateToUsuarioCommand = new RelayCommand(_ => Navigation.NavigateTo<UsuarioViewModel>(), _ => true);

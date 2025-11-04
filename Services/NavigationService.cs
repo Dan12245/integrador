@@ -6,6 +6,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.Services
     {
         ViewModel CurrentView { get; }
         void NavigateTo<T>() where T : ViewModel;
+        void NavigateTo(Type viewModelType);
     }
     public class NavigationService : ObservableObject, INavigationService
     {
@@ -27,7 +28,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.Services
         }
         public void NavigateTo<TViewModel>() where TViewModel : ViewModel
         {
-            ViewModel viewModel = _viewModelFactory.Invoke(typeof(TViewModel));
+            NavigateTo(typeof(TViewModel));
+        }
+
+        public void NavigateTo(Type viewModelType)
+        {
+            ViewModel viewModel = _viewModelFactory.Invoke(viewModelType);
             CurrentView = viewModel;
         }
     }

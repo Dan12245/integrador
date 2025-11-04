@@ -67,8 +67,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             string contraseña = Campo_Contraseña.Password;
             string repetir_contraseña = Campo_Repetir_Contraseña.Password;
 
-
-
             if (Application.Current.MainWindow?.DataContext is not MainViewModel shell)
                 return;
 
