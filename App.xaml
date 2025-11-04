@@ -19,6 +19,12 @@
         <DataTemplate DataType="{x:Type viewModel:InvitadosViewModel}">
             <view:Invitados/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:RegistroViewModel}">
+            <view:Registro/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:LoginViewModel}">
+            <view:Login/>
+        </DataTemplate>
         <Style TargetType="FrameworkElement">
             <Setter Property="UseLayoutRounding" Value="True"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>

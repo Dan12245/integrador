@@ -50,7 +50,7 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
-            <Button x:Name="Boton_Login" Content="Login" Click ="Boton_Login_Click"  HorizontalAlignment="Left" Margin="258,87,0,0" TabIndex="5"
+            <Button x:Name="Boton_Login" Content="Login" Command="{Binding NavigateToLoginCommand}" HorizontalAlignment="Left" Margin="258,87,0,0" TabIndex="5"
                     VerticalAlignment="Top" FontSize="16" Width="156" Height="35" RenderTransformOrigin="0,0">
                 <Button.BorderBrush>
                     <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>

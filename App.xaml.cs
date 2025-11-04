@@ -29,7 +29,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             services.AddSingleton<ConfiguracionViewModel>();
             services.AddSingleton<UsuarioViewModel>();
             services.AddSingleton<ReporteViewModel>();
+            services.AddSingleton<RegistroViewModel>();
             services.AddSingleton<InvitadosViewModel>();
+            services.AddSingleton<LoginViewModel>();
 
             services.AddSingleton<INavigationService, NavigationService>();
 

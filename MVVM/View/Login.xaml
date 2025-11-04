@@ -49,7 +49,7 @@
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
-            <Button x:Name="Boton_Register" Content="Register" Click="Boton_Register_Click" HorizontalAlignment="Left" TabIndex="1"
+            <Button x:Name="Boton_Register" Content="Register" Command="{Binding NavigateToRegistroCommand}" HorizontalAlignment="Left" TabIndex="1"
                      Margin="387,87,0,0" VerticalAlignment="Top" Width="155" Height="35" Opacity="0.25"/>
 
             <Image Margin="0,0,0,342" Width="75" Source="/Images/Logo.png"/>
