@@ -15,7 +15,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             InitializeComponent();
         }
-        private void Boton_Eliminar_Usuario(object sender, RoutedEventArgs e)
+        private async void Boton_Eliminar_Usuario(object sender, RoutedEventArgs e)
         {
             Login log = new Login();
             conexion con = new conexion();
