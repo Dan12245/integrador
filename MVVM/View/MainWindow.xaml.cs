@@ -7,6 +7,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using IOPath = System.IO.Path;
+using System.ComponentModel;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.Services;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
 {
@@ -32,7 +35,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
 
             // Configuraciones
             public static string Nota { get; private set; } =
-    "ATENCION! en caso de modificarse este archivo, su cuenta sera automaticamente baneada de la aplicacion, proceda con precaucion";
+             "ATENCION! en caso de modificarse este archivo, su cuenta sera automaticamente baneada de la aplicacion, proceda con precaucion";
 
             public static bool Grafica { get; set; } = false;
             public static bool Frecuencia { get; set; } = false;
@@ -41,11 +44,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
             public static bool Notificaciones { get; set; } = true;
             public static bool Invitados { get; set; } = false;
             public static string Idioma { get; set; } = "";
-            public static int Tamaño { get; set; } = 0;
+            public static int Tamaño { get; set; } =0;
 
-            public static int Meta { get; set; } = 0;
+            public static int Meta { get; set; } =0;
 
-            public static int Domicilios { get; set; } = 0;
+            public static int Domicilios { get; set; } =0;
             public static string Domicilio { get; set; } = "";
             public static bool Propio { get; set; } = false;
 
@@ -104,14 +107,87 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
             }
         }
 
+        private INotifyPropertyChanged? _navigationInpc;
+        private bool _isStartupAnimating = true; // fuerza ocultar menú durante animación
+
         public MainWindow()
         {
             InitializeComponent();
             // DataContext is set by DI in App.xaml.cs
             UserData.Save();
+
+            Loaded += MainWindow_Loaded;
+            DataContextChanged += MainWindow_DataContextChanged;
         }
 
-        public void CambiarFondoGradiente(Color colorInicio, Color colorFin, double offset = 0.5, string direccion = "Horizontal")
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            AttachNavigationListener();
+            UpdateMenuVisibilityForCurrentView();
+        }
+
+        private void MainWindow_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            DetachNavigationListener();
+            AttachNavigationListener();
+            UpdateMenuVisibilityForCurrentView();
+        }
+
+        private void AttachNavigationListener()
+        {
+            if (DataContext is Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel.MainViewModel shell && shell.Navigation is INotifyPropertyChanged inpc)
+            {
+                _navigationInpc = inpc;
+                _navigationInpc.PropertyChanged += Navigation_PropertyChanged;
+            }
+        }
+
+        private void DetachNavigationListener()
+        {
+            if (_navigationInpc != null)
+            {
+                _navigationInpc.PropertyChanged -= Navigation_PropertyChanged;
+                _navigationInpc = null;
+            }
+        }
+
+        private void Navigation_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(INavigationService.CurrentView))
+            {
+                Dispatcher.Invoke(UpdateMenuVisibilityForCurrentView);
+            }
+        }
+
+        private object? GetCurrentViewModel()
+        {
+            if (DataContext is Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel.MainViewModel shell)
+            {
+                return shell.Navigation?.CurrentView;
+            }
+            return null;
+        }
+
+        private void UpdateMenuVisibilityForCurrentView()
+        {
+            var vm = GetCurrentViewModel();
+            // ocultar siempre durante la animación; luego según la vista
+            bool hide = _isStartupAnimating || vm is LoginViewModel || vm is RegistroViewModel;
+
+            if (FindName("LeftMenu") is FrameworkElement menu)
+            {
+                menu.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
+                menu.IsEnabled = !hide;
+                menu.IsHitTestVisible = !hide;
+            }
+
+            if (FindName("MenuColumn") is ColumnDefinition col)
+            {
+                col.Width = hide ? new GridLength(0) : GridLength.Auto;
+            }
+        }
+
+        public void CambiarFondoGradiente(Color colorInicio, Color colorFin, double offset =0.5, string direccion = "Horizontal")
         {
             LinearGradientBrush gradiente = new LinearGradientBrush();
 
@@ -119,25 +195,21 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
             if (direccion.ToLower() == "horizontal")
             {
                 // Horizontal: izquierda a derecha
-                gradiente.StartPoint = new Point(0, 0.5);
-                gradiente.EndPoint = new Point(1, 0.5);
+                gradiente.StartPoint = new Point(0,0.5);
+                gradiente.EndPoint = new Point(1,0.5);
             }
             else
             {
                 // Vertical: arriba a abajo (por defecto)
-                gradiente.StartPoint = new Point(0.5, 0);
-                gradiente.EndPoint = new Point(0.5, 1);
+                gradiente.StartPoint = new Point(0.5,0);
+                gradiente.EndPoint = new Point(0.5,1);
             }
 
             gradiente.GradientStops.Add(new GradientStop(colorInicio, offset));
-            gradiente.GradientStops.Add(new GradientStop(colorFin, 1));
+            gradiente.GradientStops.Add(new GradientStop(colorFin,1));
 
             RootContainer.Background = gradiente;
         }
-
-
-        private const double PORCENTAJE_ANCHO = 0.70;  // 70% del ancho de pantalla
-        private const double PORCENTAJE_ALTO = 0.75;   // 75% del alto de pantalla
         public bool escorreovalido(string email)
         {
             try
@@ -170,16 +242,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
             {
                 startup.Visibility = Visibility.Collapsed;
             }
-            // show menu and restore column width
-            if (FindName("LeftMenu") is FrameworkElement menu)
-            {
-                menu.Visibility = Visibility.Visible;
-            }
-            if (FindName("MenuColumn") is ColumnDefinition col)
-            {
-                // autosize to Menu DesiredSize (so Menu.xaml controls the width)
-                col.Width = GridLength.Auto;
-            }
+            // fin de animación: habilitar lógica normal de visibilidad
+            _isStartupAnimating = false;
+            UpdateMenuVisibilityForCurrentView();
         }
     }
 }

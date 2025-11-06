@@ -14,17 +14,18 @@
         <Style TargetType="Button">
             <Setter Property="Background" Value="#FF04023E"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="BorderBrush" Value="#FF7385E3"/>
-            <Setter Property="Width" Value="60"/>
+            <Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="40"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
                          BorderBrush="{TemplateBinding BorderBrush}"
                          BorderThickness="1"
-                         CornerRadius="15">     
-                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                         CornerRadius="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -68,11 +69,11 @@
             </Grid.RowDefinitions>
 
             <!-- Controles del gráfico -->
-            <StackPanel x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Margin="0,10,0,0" x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Margin="0,0,5,0" Command="{Binding GoToPage2Command}">Week</Button>
                 <Button Margin="0,0,5,0" Command="{Binding GoToPage3Command}">Month</Button>
                 <Button Margin="0,0,5,0" Command="{Binding SeeAllCommand}">Year</Button>
-                <Button Margin="0,0,5,0" Width="145" Name="btnDownload" Click="btnDownload_Click">Download report</Button>
+                <Button Margin="0,0,5,0" Width="150" Name="btnDownload" Click="btnDownload_Click">Download report</Button>
             </StackPanel>
 
             <!-- Gráfico bonito -->
@@ -121,20 +122,21 @@
 
             </Grid>
 
-            <Button Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{x:Null}" BorderBrush="{x:Null}" Click="btnSalto_Click">
+            <Button Grid.Column="4" Background="{x:Null}" BorderBrush="{x:Null}" Click="btnSalto_Click" Height="75">
                 <Button.RenderTransform>
-                    <TranslateTransform x:Name="btnSaltoTransform" Y="0"/>
+                    <TranslateTransform x:Name="btnSaltoTransform"/>
                 </Button.RenderTransform>
-                <Image Stretch="Fill" gif:ImageBehavior.AnimatedSource="/Images/teto-tetoris.gif"/>
+                <Image Stretch="Fill" MaxHeight="75" gif:ImageBehavior.AnimatedSource="/Images/teto-tetoris.gif"/>
             </Button>
+            
             <Button Grid.Column="3" Click="btnSiguiente_Click" Height="36" Width="54" BorderBrush="Transparent">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/flecha.png"/>
                 </Button.Background>
             </Button>
-            
+
             <Image Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stretch="Fill" MaxWidth="75" Source="/Images/perrito chivas.png" />
-            
+
             <Button Grid.Column="1" Click="btnAnterior_Click" Height="36" Width="54" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" >
                 <Button.RenderTransform>
                     <TransformGroup>
