@@ -80,8 +80,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                             return true;
                         }
                         else
-                        {
-                            MessageBox.Show("No se pudo registrar el usuario.");
+                        {                            
                             return false;
                         }
                     }
@@ -90,8 +89,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
             catch (Exception ex)
             {
-                MessageBox.Show("no se pudo conectar a la base de datos, error:" + ex.ToString());
-                return false;
+                Console.WriteLine("Error:" + ex); return false;
             }
         }
         //esta funcion es para iniciar sesion 
