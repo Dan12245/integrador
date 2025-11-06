@@ -140,7 +140,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al iniciar sesión: " + ex.Message);
+                Console.WriteLine("error:"+ex);
                 return false;
             }
         }
@@ -175,7 +175,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error" + ex.Message);
+                Console.WriteLine("error:" + ex);
             }
         }
         #endregion
@@ -204,7 +204,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                Console.WriteLine("error:" + ex);
             }
         }
 
@@ -229,7 +229,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                Console.WriteLine("error:" + ex);
             }
         }
 
@@ -262,7 +262,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al editar: " + ex.Message);
+                Console.WriteLine("error:" + ex);
                 return false;
             }
 
@@ -292,7 +292,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error (id_usuario): " + ex.Message);
+                Console.WriteLine("error:" + ex);
                 return -1;
             }
         }
@@ -316,7 +316,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error (id_edificio): " + ex.Message);
+                Console.WriteLine("error:" + ex);
                 return -1;
             }
         }
@@ -340,7 +340,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error (consumo_id): " + ex.Message);
+                Console.WriteLine("error:" + ex);
                 return -1;
             }
         }
@@ -406,7 +406,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                Console.WriteLine("error:" + ex);
                 return false;
             }
         }
@@ -430,12 +430,10 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                         }
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
-                MessageBox.Show("error" + ex.Message);
+                Console.WriteLine("error:" + ex);
             }
         }
         public async Task eliminar_invitado(string email, string name)
@@ -463,11 +461,10 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     }
 
                 }
-
             }
             catch (Exception ex)
             {
-                MessageBox.Show("error" + ex.Message);
+                Console.WriteLine("error:" + ex);
             }
 
         }
@@ -500,7 +497,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error" + ex.Message);
+                Console.WriteLine("error:" + ex);
                 return false;
             }
         }
@@ -527,7 +524,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error" + ex.Message);
+                Console.WriteLine("error:" + ex);
                 return false;
             }
         }
@@ -556,7 +553,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("error" + ex.Message);
+                Console.WriteLine("error:" + ex);
             }
         }
             #endregion
@@ -568,6 +565,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             int daysInYear = DateTime.IsLeapYear(year) ? 366 : 365;
             //un arreglo con la cantidad de dias
             double[] consumo = new double[daysInYear];
+            try
+            {
             using (var con = new NpgsqlConnection(cadena_conexion))
             {
                 con.Open();
@@ -593,6 +592,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     }
                     return consumo;
                 }
+            }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("error:" + ex);
+                return new double[0];
             }
         }
         #endregion
