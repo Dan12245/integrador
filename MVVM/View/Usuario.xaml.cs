@@ -1,5 +1,6 @@
 using Consumo_Reducido_de_Agua_ahora_si_definitivo;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -122,7 +123,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             ActualizarBotones();
         }
 
-        private void Button_Quitar(object sender, RoutedEventArgs e)
+        private async void Button_Quitar(object sender, RoutedEventArgs e)
         {
 
             if (domiciliosActivos <= 1)
@@ -134,29 +135,50 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             string user_email = GlobalData.email;
             var con = new conexion();
             int id = GlobalData.userid;
+            int buildingid;
             // Eliminar el último domicilio visible
             switch (domiciliosActivos)
             {
                 case 4:
                     Domilicio_3.Visibility = Visibility.Collapsed;
-                    Domilicio_3.Text = "Domicilio 3"; // Resetear texto
-                    domiciliosActivos--;
-                    con.eliminar_domicilio(Domilicio_3.Text, id);
-                    break;
+                     buildingid = await con.id_edificio(id,Domilicio_3.Text);
+                    if(await con.eliminar_domicilio(Domilicio_3.Text, buildingid))
+                    {
+                        MessageBox.Show("Domicilio eliminado");
+                        domiciliosActivos--;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Domicilio no encontrado");
+                    }
+                        break;
                 case 3:
                     Domicilio_2.Visibility = Visibility.Collapsed;
-                    Domicilio_2.Text = "Domicilio 2";
-                    domiciliosActivos--;
-                    con.eliminar_domicilio(Domicilio_2.Text, id);
+                     buildingid = await con.id_edificio(id,Domicilio_2.Text);
+                    if(await con.eliminar_domicilio(Domicilio_2.Text, buildingid)){
+
+                        MessageBox.Show("Domicilio eliminado");
+                        domiciliosActivos--;
+
+                    }else{
+                        MessageBox.Show("domicilio no encontrado");
+                    }
                     break;
                 case 2:
                     Domicilio_1.Visibility = Visibility.Collapsed;
-                    Domicilio_1.Text = "Domicilio 1";
-                    domiciliosActivos--;
-                    con.eliminar_domicilio(Domicilio_1.Text, id);
+                     buildingid = await con.id_edificio(id,Domicilio_1.Text);
+                    if (await con.eliminar_domicilio(Domicilio_1.Text, buildingid))
+                    {
+
+                        MessageBox.Show("Domicilio eliminado");
+                        domiciliosActivos--;
+
+                    }else{
+                        MessageBox.Show("domicilio no encontrado");
+                    }
 
 
-                    break;
+                        break;
             }
 
             ActualizarBotones();
@@ -205,7 +227,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
                 try
                 {
-                    int idedificio = await con.id_edificio(iduser);
+                    int idedificio = await con.id_edificio(iduser, selectedTextBox.Text);
                     MessageBox.Show($"Resultado idedificio = {idedificio}");
 
                     if (await con.editar_domicilio(selectedTextBox.Text, idedificio))

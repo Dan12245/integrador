@@ -207,29 +207,29 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         }
 
         //creo que el nombre explica bien lo que hace la funcion
-        public async void eliminar_domicilio(string alias, int user_id)
+        public async Task<bool> eliminar_domicilio(string alias, int building_id)
         {
             try
             {
-                // hacemos la conexion y la abrimos
-                await using (var con = new NpgsqlConnection(cadena_conexion))
-                {
-                    //hacemos nuestro query para buscar alias del domicilio a eliminar               
-                    await con.OpenAsync();
-                    string query = "DELETE FROM cra.buildings WHERE alias=@alias and user_id=@user_id";
-                    await using (NpgsqlCommand command = new NpgsqlCommand(query, con))
-                    {
-                        command.Parameters.AddWithValue("@alias", alias);
-                        command.Parameters.AddWithValue("@user_id", user_id);
-                        await command.ExecuteNonQueryAsync();
-                    }
-                }
+                await using var con = new NpgsqlConnection(cadena_conexion);
+                await con.OpenAsync();
+
+                string query = "DELETE FROM cra.buildings WHERE alias = @alias AND building_id = @building_id";
+                await using var command = new NpgsqlCommand(query, con);
+                command.Parameters.AddWithValue("@alias", alias);
+                command.Parameters.AddWithValue("@building_id", building_id);
+
+                int filasAfectadas = await command.ExecuteNonQueryAsync();
+
+                return filasAfectadas > 0; // true si eliminó algo
             }
             catch (Exception ex)
             {
-                Console.WriteLine("error:" + ex);
+                MessageBox.Show("Error al eliminar domicilio:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
         }
+
 
         //con esto cambiamos los datos del domicilio que lit nomas es la descripcion y el alias
         //El que quiera cambiar eso nomas es pq le van a checar el fono yo creo
@@ -295,17 +295,17 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
 
-        public async Task<int> id_edificio(int userId)
+        public async Task<int> id_edificio(int userId, string alias)
         {
             try
             {
                 await using var con = new NpgsqlConnection(cadena_conexion);
                 await con.OpenAsync();
 
-                string query = "SELECT building_id FROM cra.buildings WHERE user_id = @user_id";
+                string query = "SELECT building_id FROM cra.buildings WHERE user_id = @user_id AND alias=@alias";
                 await using var command = new NpgsqlCommand(query, con);
                 command.Parameters.AddWithValue("@user_id", userId);
-
+                command.Parameters.AddWithValue("@alias", alias);
                 object result = await command.ExecuteScalarAsync();
                 if (result == null || result == DBNull.Value)
                     return -1;
@@ -469,14 +469,14 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         #endregion
         //y las funciones relacionadas con el consumo
         #region consumo
-        public async Task<bool> agregar_consumo(int buildingId, int consumo)
+        public async Task<bool> agregar_consumo(int buildingId, int consumo, string alias)
         {
             try
             {
                 using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     con.Open();              
-                    int building_id = await id_edificio(buildingId);
+                    int building_id = await id_edificio(buildingId, alias);
                     //esta wea solo es para meter la fecha
                     DateTime fecha = DateTime.Now;
                     //y ya con todo eso lo metemos a la tabla de consumo
@@ -527,14 +527,14 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
         //cambiar un consumo
-        public async void cambiar_consumo(int buildingId)
+        public async void cambiar_consumo(int buildingId,string alias)
         {
             try
             {
                 using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     con.Open();
-                    int building_id = await id_edificio(buildingId);
+                    int building_id = await id_edificio(buildingId, alias);
                     string query = "UPDATE cra.consumption_per_day SET consumption=@consumption WHERE building_id=@building_id AND day=@day";
                     DateTime fecha = DateTime.Now;
                     int litros = 4;
@@ -556,7 +556,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         }
             #endregion
         #region meter_el_consumo_a_la_grsfica
-        public async Task<double[]> consumo(int buildingId)
+        public async Task<double[]> consumo(int buildingId, string alias)
         {   //esta wea es para obtener la cantidad de dias del año
             int year = DateTime.Now.Year;
             //con esto checamos si el año es bisiesto o neh
@@ -568,7 +568,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             using (var con = new NpgsqlConnection(cadena_conexion))
             {
                 con.Open();
-                int building_id = await id_edificio(buildingId);
+                int building_id = await id_edificio(buildingId, alias);
                 int i = 0;
                 string query = "SELECT day,consumption FROM cra.consumption_per_day WHERE @building_id=building_id";
                 using (var ejecutor = new NpgsqlCommand(query, con))
