@@ -1,15 +1,8 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
-using QuestPDF.Infrastructure;
 using SkiaSharp;
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 {

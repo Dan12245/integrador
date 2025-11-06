@@ -1,0 +1,153 @@
+﻿<UserControl x:Class="Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Inicio"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+     xmlns:gif="http://wpfanimatedgif.codeplex.com"
+     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+     xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+     xmlns:vm="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels"
+     xmlns:UserControl="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls"
+     mc:Ignorable="d"
+     d:DesignHeight="500" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#FF04023E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderBrush" Value="#FF7385E3"/>
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                         BorderBrush="{TemplateBinding BorderBrush}"
+                         BorderThickness="1"
+                         CornerRadius="15">     
+                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Storyboard x:Key="SaltoStoryboard">
+            <DoubleAnimation
+         Storyboard.TargetName="btnSaltoTransform"
+         Storyboard.TargetProperty="Y"
+         From="0" To="-10" Duration="0:0:0.1"
+         AutoReverse="True"
+         RepeatBehavior="2x"/>
+        </Storyboard>
+
+        <vm:PeriodToCheckedConverter x:Key="PeriodToCheckedConverter"/>
+
+    </UserControl.Resources>
+
+    <Grid Background="#FFCBDAFF">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="75"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="28" FontFamily="Cascadia Code" TextAlignment="Center"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
+            <TextBlock x:Name="Texto_Porcentaje" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="24" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Text="Texto consumo del mes"/></TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="1" Background="#FFCBDAFF">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Controles del gráfico -->
+            <StackPanel x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Margin="0,0,5,0" Command="{Binding GoToPage2Command}">Week</Button>
+                <Button Margin="0,0,5,0" Command="{Binding GoToPage3Command}">Month</Button>
+                <Button Margin="0,0,5,0" Command="{Binding SeeAllCommand}">Year</Button>
+                <Button Margin="0,0,5,0" Width="145" Name="btnDownload" Click="btnDownload_Click">Download report</Button>
+            </StackPanel>
+
+            <!-- Gráfico bonito -->
+            <Grid Grid.Row="1">
+                <lvc:CartesianChart x:Name="Chart" Background="Transparent" BorderBrush="WhiteSmoke" ZoomMode="X"
+                 Series="{Binding Values}"
+                 XAxes="{Binding XAxes}"
+                 YAxes="{Binding YAxes}"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="Both">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="texto_consejo" TextWrapping="Wrap" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
+                        <Run Language="es-mx" Text="Consejos consejosamente consejosos"/>
+                        </TextBlock>
+
+                    </Grid>
+                </Viewbox>
+
+                <Viewbox Grid.Row="1">
+                    <TextBlock VerticalAlignment="Bottom" x:Name="texto_modo" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
+                         <Run Language="es-mx" Text="Modo :diablo:"/>
+                    </TextBlock>
+                </Viewbox>
+
+            </Grid>
+
+            <Button Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{x:Null}" BorderBrush="{x:Null}" Click="btnSalto_Click">
+                <Button.RenderTransform>
+                    <TranslateTransform x:Name="btnSaltoTransform" Y="0"/>
+                </Button.RenderTransform>
+                <Image Stretch="Fill" gif:ImageBehavior.AnimatedSource="/Images/teto-tetoris.gif"/>
+            </Button>
+            <Button Grid.Column="3" Click="btnSiguiente_Click" Height="36" Width="54" BorderBrush="Transparent">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/flecha.png"/>
+                </Button.Background>
+            </Button>
+            
+            <Image Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stretch="Fill" MaxWidth="75" Source="/Images/perrito chivas.png" />
+            
+            <Button Grid.Column="1" Click="btnAnterior_Click" Height="36" Width="54" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" >
+                <Button.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-179.517"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Button.RenderTransform>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/flecha.png"/>
+                </Button.Background>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

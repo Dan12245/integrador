@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace C.R.A_Consumo_reducido_de_agua.Controls
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls
 {
     public partial class CalloutControl : UserControl
     {

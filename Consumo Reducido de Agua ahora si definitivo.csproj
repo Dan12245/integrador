@@ -38,11 +38,11 @@
     <None Remove="fondo preguntas.png" />
     <None Remove="Grafica barras.png" />
     <None Remove="Grafica lineas y puntos.png" />
-    <None Remove="Image1.png" />
     <None Remove="Image2.png" />
     <None Remove="Image3.png" />
     <None Remove="Image4.png" />
     <None Remove="Images\Help.png" />
+    <None Remove="Images\logotilin2-blanco.png" />
     <None Remove="logo programa Pagina.png" />
     <None Remove="logo programa.png" />
     <None Remove="Logo.png" />
@@ -75,6 +75,7 @@
     <PackageReference Include="LiveChartsCore" Version="2.0.0-rc6.1" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView" Version="2.0.0-rc6.1" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc6.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-rc.2.25502.107" />
     <PackageReference Include="Npgsql" Version="10.0.0-rc.1" />
     <PackageReference Include="QuestPDF" Version="2025.12.0-alpha2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0-rc.2.25502.107" />
@@ -82,17 +83,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\Captura de pantalla 2025-09-29 082544 - Copier.png" />
-    <Resource Include="Images\Captura de pantalla 2025-10-08 132404 - Copier.png" />
     <Resource Include="Images\Casa2 - Copier.png" />
     <Resource Include="Images\Casa2.png" />
     <Resource Include="Images\Correo.png" />
     <Resource Include="Images\Empresa.jpg" />
     <Resource Include="Images\Boton Iniciar sesion.png" />
     <Resource Include="Images\Boton Registrarse.png" />
-    <Resource Include="Images\Captura de pantalla 2025-09-29 082544.png" />
-    <Resource Include="Images\Captura de pantalla 2025-10-08 132404.png" />
-    <Resource Include="Images\Captura de pantalla 2025-10-10 073526.png" />
     <Resource Include="Images\Casa.jpeg" />
     <Resource Include="Images\Configuracion texto.png" />
     <Resource Include="Images\Configuracion.png" />
@@ -100,16 +96,15 @@
     <Resource Include="Images\flecha.png" />
     <Resource Include="Images\Fondo Preguntas %282%29.png" />
     <Resource Include="Images\fondo preguntas.png" />
-    <Resource Include="Images\Grafica barras.png" />
-    <Resource Include="Images\Grafica lineas y puntos.png" />
     <Resource Include="Images\Help.png" />
     <Resource Include="Images\Image1.png" />
     <Resource Include="Images\Image2.png" />
     <Resource Include="Images\Image3.png" />
     <Resource Include="Images\Image4.png" />
-    <Resource Include="Images\logo programa Pagina.png" />
-    <Resource Include="Images\logo programa.png" />
     <Resource Include="Images\Logo.png" />
+    <Resource Include="Images\logotilin2-blanco.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\Marea.png" />
     <Resource Include="Images\Menu Principal seleccionado.png" />
     <Resource Include="Images\Menu Principal.png" />
@@ -118,10 +113,6 @@
     <Resource Include="Images\Ojo.png" />
     <Resource Include="Images\perrito chivas.png" />
     <Resource Include="Images\Place Holder Foto.jpg" />
-    <Resource Include="Images\Propio.jpg" />
-    <Resource Include="Images\Propio.png" />
-    <Resource Include="Images\Renta.jpeg" />
-    <Resource Include="Images\Renta.png" />
     <Resource Include="Images\Reportar.png" />
     <Resource Include="Images\Semana.png" />
     <Resource Include="Images\Si.png" />
@@ -161,6 +152,10 @@
     <Content Include="Images\LogoOpacidad15.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MVVM\Model\" />
   </ItemGroup>
 
 </Project>

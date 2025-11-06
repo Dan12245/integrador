@@ -1,0 +1,93 @@
+﻿<UserControl x:Class="Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls.Menu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls"
+             xmlns:viewModel="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="80" MinWidth="80">
+
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#FFBBD3F8"/>
+            <Setter Property="BorderBrush" Value="#FF7385E3"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Margin" Value="6"/>
+
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="12"/>
+                </Style>
+            </Style.Resources>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="Image">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#FF394D7E">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height=".2*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Image Source="/Images/logotilin2-blanco.png" Height="60" Width="60"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height=".25*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+
+                <StackPanel VerticalAlignment="Center">
+                    <Button Grid.Row="0" x:Name="Boton_Menu"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="{x:Type viewModel:InicioViewModel}">
+                        <Image Source="/Images/Menu Principal seleccionado.png"/>
+                    </Button>
+                    <Button Grid.Row="1" x:Name="Boton_Configuracion"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="{x:Type viewModel:ConfiguracionViewModel}">
+                        <Image Source="/Images/Configuracion.png"/>
+                    </Button>
+                    <Button Grid.Row="2" x:Name="Boton_Usuario"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="{x:Type viewModel:UsuarioViewModel}">
+                        <Image Source="/Images/Usuario e invitados.png"/>
+                    </Button>
+                    <Button Grid.Row="3" x:Name="Boton_Reportar"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="{x:Type viewModel:ReporteViewModel}">
+                        <Image Source="/Images/Reportar.png"/>
+                    </Button>
+                    <Button Grid.Row="4" x:Name="Inicio_Help" Click="Inicio_Help_Click">
+                        <Image Source="/Images/Help.png"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+
+        </Grid>
+
+
+    </Grid>
+</UserControl>

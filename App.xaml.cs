@@ -1,17 +1,67 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo.Core;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.Services;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
-using QuestPDF.Infrastructure;
+using Windows.Devices.I2c.Provider;
+// Alias to distinguish between Shell and Charts MainViewModel
+using ShellMainViewModel = Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel.MainViewModel;
+using ChartsMainViewModel = Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels.MainViewModel;
 
-namespace C.R.A_Consumo_reducido_de_agua
+namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        private readonly ServiceProvider _serviceProvider;
 
-        // Optionnel: override OnStartup si besoin, sinon laissez StartupUri dans App.xaml
-        // protected override void OnStartup(StartupEventArgs e) { base.OnStartup(e); }
+        public App()
+        {
+            IServiceCollection services = new ServiceCollection();
+
+            // Register main VMs
+            services.AddSingleton<ShellMainViewModel>();
+            services.AddSingleton<ChartsMainViewModel>();
+
+            // Register navigable VMs
+            services.AddSingleton<InicioViewModel>();
+            services.AddSingleton<ConfiguracionViewModel>();
+            services.AddSingleton<UsuarioViewModel>();
+            services.AddSingleton<ReporteViewModel>();
+            services.AddSingleton<LoginViewModel>();
+            services.AddSingleton<RegistroViewModel>();
+            services.AddSingleton<InvitadosViewModel>();
+
+            services.AddSingleton<INavigationService, NavigationService>();
+
+            // Register factory for ViewModels
+            services.AddSingleton<Func<Type, ViewModel>>(serviceProvider =>
+                viewModelType => (ViewModel)serviceProvider.GetRequiredService(viewModelType));
+
+            services.AddSingleton<MainWindow>(provider => new MainWindow
+            {
+                // DataContext on shell VM
+                DataContext = provider.GetRequiredService<ShellMainViewModel>()
+            });
+
+            // Views can be resolved too if needed
+            services.AddSingleton<Configuracion>();
+            services.AddSingleton<Inicio>();
+            services.AddSingleton<Invitados>();
+            services.AddSingleton<Login>();
+            services.AddSingleton<Registro>();
+            services.AddSingleton<Reporte>();
+            services.AddSingleton<Usuario>();
+
+            _serviceProvider = services.BuildServiceProvider();
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+            base.OnStartup(e);
+        }
     }
 }
