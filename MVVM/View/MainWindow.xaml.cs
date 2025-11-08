@@ -234,8 +234,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
             // navigate to Inicio
             if (DataContext is Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel.MainViewModel shell)
             {
-                //shell.NavigateToInicioCommand.Execute(null);
-                shell.NavigateToLoginCommand.Execute(null);
+                shell.NavigateToInicioCommand.Execute(null);
+                //shell.NavigateToLoginCommand.Execute(null);
             }
             // hide startup overlay if present
             if (FindName("StartupView") is FrameworkElement startup)

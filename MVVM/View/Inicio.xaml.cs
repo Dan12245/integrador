@@ -28,13 +28,16 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             "prueba"
         };
 
+        // Índice actual para recorrer mensajes de Teto
+        private int indiceMensajeTeto =0;
+
         private Popup tetoPopup;
         private bool primerMensajeMostrado = false;
         private DispatcherTimer caminataTimer;
-        private double tetoPosition = 586; // Posición inicial del gif
+        private double tetoPosition =586; // Posición inicial del gif
         private bool moviendoDerecha = true;
-        private const double POSICION_INICIAL = 586;
-        private const double RANGO_MOVIMIENTO = 70;
+        private const double POSICION_INICIAL =586;
+        private const double RANGO_MOVIMIENTO =70;
 
         public Inicio()
         {
@@ -44,8 +47,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             MainWindow.UserData.Load();
 
             CambiarFondoGradiente(
-              MediaColor.FromRgb(26, 34, 53),
-              MediaColor.FromRgb(26, 34, 53),
+              MediaColor.FromRgb(26,34,53),
+              MediaColor.FromRgb(26,34,53),
                0.5,
                "Horizontal"
            );
@@ -59,12 +62,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 texto_modo.Text = "Modo Doméstico";
 
             Texto_Bienvenida.Text = $"Hola, {Registro.GlobalData.UserName}!";
-            Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10, 101)}% este mes!";
+            Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10,101)}% este mes!";
 
             //Mostrar el primer consejo
             texto_consejo.Text = $"Consejo: " + consejos[indiceActual];
 
-            //Temporizador para cambiar consejo cada 5 segundos
+            //Temporizador para cambiar consejo cada5 segundos
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(5);
             timer.Tick += Timer_Tick;
@@ -80,7 +83,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
             // Mostrar mensaje de bienvenida de Teto después de un pequeño delay
             var bienvenidaTimer = new DispatcherTimer();
-            bienvenidaTimer.Interval = TimeSpan.FromSeconds(1);
+            bienvenidaTimer.Interval = TimeSpan.FromSeconds(2);
             bienvenidaTimer.Tick += (s, e) =>
             {
                 MostrarMensajeTeto("Hola, soy Teto, tu asistente virtual");
@@ -98,7 +101,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 mensajesTeto.Add(mensaje);
             }
         }
-        private void MostrarMensajeTeto(string mensaje)
+
+        // Mostrar mensaje en un popup anclado al botón de Teto (o al ancla pasada)
+        private void MostrarMensajeTeto(string mensaje, FrameworkElement? anchor = null)
         {
             // Cerrar popup anterior si existe
             if (tetoPopup != null && tetoPopup.IsOpen)
@@ -111,33 +116,34 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             {
                 Text = mensaje,
                 Padding = new Thickness(10),
-                Background = new SolidColorBrush(MediaColor.FromRgb(255, 255, 220)),
-                Foreground = new SolidColorBrush(MediaColor.FromRgb(0, 0, 0)),
-                FontSize = 14,
+                Background = new SolidColorBrush(MediaColor.FromRgb(255,255,220)),
+                Foreground = new SolidColorBrush(MediaColor.FromRgb(0,0,0)),
+                FontSize =14,
                 FontFamily = new FontFamily("Cascadia Code SemiLight"),
-                MaxWidth = 300,
+                MaxWidth =300,
                 TextWrapping = TextWrapping.Wrap
             };
 
             var border = new Border
             {
                 Child = textBlock,
-                BorderBrush = new SolidColorBrush(MediaColor.FromRgb(100, 100, 100)),
+                BorderBrush = new SolidColorBrush(MediaColor.FromRgb(100,100,100)),
                 BorderThickness = new Thickness(2),
                 CornerRadius = new CornerRadius(10),
-                Background = new SolidColorBrush(MediaColor.FromRgb(255, 255, 220))
+                Background = new SolidColorBrush(MediaColor.FromRgb(255,255,220))
             };
 
-            // Necesitamos encontrar el botón con el gif por su nombre en el XAML
-            // El botón no tiene x:Name, así que lo buscamos por su posición o le agregamos uno
-            // Por ahora, usamos el Grid padre para posicionarlo
+            // Resolver ancla: intentar por parámetro, luego por nombre en el árbol, si no, usar ventana principal
+            var target = anchor ?? (FindName("btnSalto") as FrameworkElement) ?? Application.Current.MainWindow as FrameworkElement;
+
+            // Posicionar relativo al target disponible
             tetoPopup = new Popup
             {
                 Child = border,
-                PlacementTarget = Application.Current.MainWindow, // Colocar relativo a la ventana principal
-                Placement = PlacementMode.Absolute,
-                HorizontalOffset = 650, // Ajustar según la posición del gif (586 + ancho)
-                VerticalOffset = 70, // Ajustar según la posición del gif
+                PlacementTarget = target,
+                Placement = PlacementMode.Top,
+                HorizontalOffset =0,
+                VerticalOffset = -10,
                 StaysOpen = false,
                 AllowsTransparency = true,
                 PopupAnimation = PopupAnimation.Fade
@@ -145,7 +151,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
             tetoPopup.IsOpen = true;
 
-            // Auto-cerrar después de 8 segundos
+            // Auto-cerrar después de8 segundos
             var closeTimer = new DispatcherTimer();
             closeTimer.Interval = TimeSpan.FromSeconds(8);
             closeTimer.Tick += (s, e) =>
@@ -158,9 +164,22 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             };
             closeTimer.Start();
         }
+
+        // Avanza al siguiente mensaje del listado y lo muestra
+        private void MostrarSiguienteMensajeTeto(FrameworkElement? anchor = null)
+        {
+            if (mensajesTeto.Count ==0)
+                return;
+
+            var mensaje = mensajesTeto[indiceMensajeTeto];
+            MostrarMensajeTeto(mensaje, anchor);
+
+            indiceMensajeTeto = (indiceMensajeTeto +1) % mensajesTeto.Count;
+        }
+
         private List<string> consejos = new List<string>
         {
-        "Dúchate rápido: Intenta reducir el tiempo en la regadera a 5 minutos o menos.",
+        "Dúchate rápido: Intenta reducir el tiempo en la regadera a5 minutos o menos.",
          "Cierra la llave cuando no la uses: Al enjabonarte las manos, etc evita dejar correr el agua.",
          "Usa un vaso para cepillarte los dientes: En vez de usar la llave, llena un vaso y con eso se enjuaga",
          "Lava los trastes con método: Enjabona todo primero con la llave cerrada y luego enjuágalos de una.",
@@ -170,7 +189,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
          "Reutiliza agua cuando se pueda: El agua de lavar frutas o verduras puede servir para regar plantas.",
         };
 
-        private int indiceActual = 0;
+        private int indiceActual =0;
         private DispatcherTimer timer;
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -200,8 +219,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         private void btnAnterior_Click(object sender, RoutedEventArgs e)
         {
             indiceActual--;
-            if (indiceActual < 0)
-                indiceActual = consejos.Count - 1;
+            if (indiceActual <0)
+                indiceActual = consejos.Count -1;
 
             texto_consejo.Text = $"Consejo: " + $"Consejo: " + consejos[indiceActual];
             ReiniciarTimer();
@@ -211,7 +230,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             indiceActual++;
             if (indiceActual >= consejos.Count)
-                indiceActual = 0;
+                indiceActual =0;
 
             texto_consejo.Text = $"Consejo: " + consejos[indiceActual];
         }
@@ -226,6 +245,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             Storyboard sb = (Storyboard)Resources["SaltoStoryboard"];
             sb.Begin();
+
+            // Mostrar siguiente mensaje del listado cada vez que se hace clic, anclado al botón presionado
+            MostrarSiguienteMensajeTeto(sender as FrameworkElement);
         }
         private void btnDownload_Click(object sender, RoutedEventArgs e)
         {
@@ -240,7 +262,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             document.GeneratePdfAndShow();
             document.ShowInCompanionAsync();
         }
-        public static void CambiarFondoGradiente(MediaColor colorInicio, MediaColor colorFin, double offset = 0.5, string direccion = "Horizontal")
+        public static void CambiarFondoGradiente(MediaColor colorInicio, MediaColor colorFin, double offset =0.5, string direccion = "Horizontal")
         {
             if (Application.Current.MainWindow is MainWindow mainWindow)
             {
