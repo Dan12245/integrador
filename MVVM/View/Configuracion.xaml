@@ -33,84 +33,86 @@
             </Style.Triggers>
         </Style>
 
-    <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid x:Name="Login_Window" Background="#FFB2CEF6" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Rectangle Stroke="#FF5881E8" Margin="98,0,0,351" Fill="#FF5881E8"/>
-            <Rectangle HorizontalAlignment="Left" Height="434" Stroke="#FF394D7E" VerticalAlignment="Center" Width="98" Fill="#FF394D7E"/>
-            <Button x:Name="Boton_Configuracion" Content="" HorizontalAlignment="Left" Margin="20,80,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+        <Storyboard x:Key="SaltoStoryboard">
+            <DoubleAnimation
+         Storyboard.TargetName="btnSaltoTransform"
+         Storyboard.TargetProperty="Y"
+         From="0" To="-10" Duration="0:0:0.1"
+         AutoReverse="True"
+         RepeatBehavior="2x"/>
+        </Storyboard>
 
-                <Button.Foreground>
-                    <SolidColorBrush Color="White" Opacity="0.4"/>
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
-                </Button.Background>
-            </Button>
-            <Button x:Name="Boton_Reportar"  HorizontalAlignment="Left" Margin="20,368,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+    </UserControl.Resources>
 
-                <Button.Foreground>
-                    <SolidColorBrush Color="White" Opacity="0.4"/>
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
-                </Button.Background>
-            </Button>
-            <Image Margin="12,4,714,365" Source="Images/Logo.png" Height="65"/>
-            <Button x:Name="Boton_Usuario" Content="" HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
+    <Grid>
 
-                <Button.Foreground>
-                    <SolidColorBrush Color="White" Opacity="0.4"/>
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
-                </Button.Background>
-            </Button>
-            <Button x:Name="Boton_Menu" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF303C73" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Margin="49,163,0,0" BorderThickness="100">
-                <Button.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="44.78"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Button.RenderTransform>
-
-                <Button.Foreground>
-                    <SolidColorBrush Color="White" Opacity="0.4"/>
-                </Button.Foreground>
-                <Button.Background>
-                    <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
-                </Button.Background>
-            </Button>
-            <Image Margin="32,378,734,20" Source="Images/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="30,284,730,114" Source="Images/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="29,183,729,211" Source="Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
-            <Image Margin="109,21,332,365" Source="Images/Configuracion texto.png" Stretch="Fill"/>
-            <Label Content="Tamaño de texto" HorizontalAlignment="Left" Margin="117,100,0,0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="20"/>
-            <Label Content="Idioma" HorizontalAlignment="Left" Margin="117,175,0,0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="20"/>
-            <Label Content="Talkback" HorizontalAlignment="Left" Margin="117,261,0,0" VerticalAlignment="Top" FontSize="20" FontFamily="Yu Gothic UI Semibold"/>
-            <Label Content="Rendimiento" HorizontalAlignment="Left" Margin="470,102,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.061,-0.405" FontSize="20" FontFamily="Yu Gothic UI Semibold"/>
-            <ComboBox x:Name="Tamaño" HorizontalAlignment="Left" Margin="122,133,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
-            <ComboBox x:Name="Talkback" HorizontalAlignment="Left" Margin="122,292,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
-            <ComboBox x:Name="Idioma" HorizontalAlignment="Left" Margin="122,208,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
-            <ComboBox x:Name="Rendimiento" HorizontalAlignment="Left" Margin="476,134,0,0" VerticalAlignment="Top" Width="278" Height="33"/>
-            <!-- Centralized navigation: go to Login using the shell's NavigateToCommand -->
-            <Button Content="Cerrar sesion"
-                    Command="{Binding DataContext.NavigateToCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                    CommandParameter="{x:Type viewModel:LoginViewModel}"
-                    HorizontalAlignment="Left" Margin="496,282,0,0" VerticalAlignment="Top" Height="54" Width="248"/>
-            <Button Content="Descartar" HorizontalAlignment="Left" Margin="137,369,0,0" VerticalAlignment="Top" Height="54" Width="297" Background="#FFFFBEBE" Foreground="#FF752D2D" BorderBrush="#FFFFBEBE"/>
-            <Button Content="Aplicar" HorizontalAlignment="Left" Margin="467,369,0,0" VerticalAlignment="Top" Height="54" Width="297" Background="#FF96FFD7" Foreground="#FF276F54" BorderBrush="#FF96FFD7"/>
-            <Button Margin="730,10,10,370" Cursor="Hand" Height="55" Width="55">
-                <Button.BorderBrush>
-                    <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
-                </Button.BorderBrush>
-                <Button.Background>
-                    <ImageBrush ImageSource="/Images/Help.png"/>
-                </Button.Background>
-            </Button>
-            <Button Content="Eliminar Cuenta" Click="Boton_Eliminar_Usuario" HorizontalAlignment="Left" Margin="496,208,0,0" VerticalAlignment="Top"  Height="54" Width="248"/>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF92AAE3" Offset="0.32"/>
+                <GradientStop Color="#FFCBDAFF" Offset="0.601"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="101*"/>
+                <ColumnDefinition Width="99*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="90*"/>
+                <RowDefinition Height="117*"/>
+                <RowDefinition Height="97*"/>
+                <RowDefinition Height="145*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.ColumnSpan="2">
+                <Rectangle HorizontalAlignment="Center" Height="87" VerticalAlignment="Top" Width="8426">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="Black"/>
+                            <GradientStop Color="#FF262E75" Offset="1"/>
+                            <GradientStop Color="#FE222271"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="48" FontFamily="Yu Gothic Medium" TextAlignment="Center" Margin="26,5,0,0" Foreground="#FF8FA2DC" HorizontalAlignment="Left"><Run Language="es-mx" Text="Configuracion"/></TextBlock>
+            </Grid>
+            <Viewbox Grid.Row="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="0,3,0,0"/>
+            <TextBlock x:Name="Texto_Bienvenida_Copiar" TextWrapping="Wrap" FontSize="28" FontFamily="Yu Gothic Medium" TextAlignment="Center" Margin="10,0,0,83" Foreground="#FF11245F" Grid.RowSpan="2" HorizontalAlignment="Left" Width="220" Height="34" VerticalAlignment="Bottom"><Run Language="es-mx" Text="Tamaño de Texto"/></TextBlock>
+            <ComboBox x:Name="Tamaño_Texto" HorizontalAlignment="Left" Margin="10,0,0,31" Width="296" BorderBrush="#FF121482" Grid.Row="1" Height="36" VerticalAlignment="Bottom">
+                <ComboBoxItem Content="Chico" FontSize="20"/>
+                <ComboBoxItem Content="Mediano" FontSize="24"/>
+                <ComboBoxItem Content="Grande" FontSize="36"/>
+            </ComboBox>
+            <TextBlock x:Name="Texto_Bienvenida_Copiar1" TextWrapping="Wrap" FontSize="28" FontFamily="Yu Gothic Medium" TextAlignment="Center" Margin="24,4,152,79" Foreground="#FF11245F" Grid.Column="1" Grid.Row="1"><Run Language="es-mx" Text=":v"/></TextBlock>
+            <ComboBox x:Name="Tamaño_Texto_Copiar" HorizontalAlignment="Right" Margin="0,50,76,0" VerticalAlignment="Top" Width="296" BorderBrush="#FF121482" Height="36" Grid.Row="1" Grid.Column="1">
+                <ComboBoxItem Content="Chico" FontSize="20"/>
+                <ComboBoxItem Content="Mediano" FontSize="24"/>
+                <ComboBoxItem Content="Grande" FontSize="36"/>
+            </ComboBox>
+            <TextBlock x:Name="Texto_Bienvenida_Copiar2" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="28" FontFamily="Yu Gothic Medium" TextAlignment="Center" Margin="10,8,0,0" Foreground="#FF11245F" HorizontalAlignment="Left" Height="44" Width="90" Grid.Row="3"><Run Language="es-mx" Text="Idioma"/><LineBreak/><Run Language="es-mx"/></TextBlock>
+            <ComboBox x:Name="Tamaño_Texto_Copiar1" HorizontalAlignment="Left" Margin="10,56,0,0" VerticalAlignment="Top" Width="296" BorderBrush="#FF121482" Height="36" Grid.Row="3">
+                <ComboBoxItem Content="Chico" FontSize="20"/>
+                <ComboBoxItem Content="Mediano" FontSize="24"/>
+                <ComboBoxItem Content="Grande" FontSize="36"/>
+            </ComboBox>
+            <TextBlock x:Name="Texto_Bienvenida_Copiar3" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="28" FontFamily="Yu Gothic Medium" TextAlignment="Center" Margin="24,14,0,0" Foreground="#FF11245F" HorizontalAlignment="Left" Height="44" Width="220" Grid.Row="3" Grid.Column="1"><Run Language="es-mx" Text="Color Grafica"/></TextBlock>
+            <ComboBox x:Name="Tamaño_Texto_Copiar2" HorizontalAlignment="Left" Margin="24,64,0,0" VerticalAlignment="Top" Width="296" BorderBrush="#FF121482" Height="36" Grid.Row="3" Grid.Column="1">
+                <ComboBoxItem Content="Chico" FontSize="20"/>
+                <ComboBoxItem Content="Mediano" FontSize="24"/>
+                <ComboBoxItem Content="Grande" FontSize="36"/>
+            </ComboBox>
+            <TextBlock x:Name="Texto_Bienvenida_Copiar4" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="28" FontFamily="Yu Gothic Medium" TextAlignment="Center" Margin="10,5,0,0" Foreground="#FF11245F" HorizontalAlignment="Left" Height="44" Width="124" Grid.Row="2"><Run Language="es-mx" Text="Talkback"/><LineBreak/><Run Language="es-mx"/></TextBlock>
+            <ComboBox x:Name="Tamaño_Texto_Copiar3" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" Width="296" BorderBrush="#FF121482" Height="36" Grid.Row="2">
+                <ComboBoxItem Content="Chico" FontSize="20"/>
+                <ComboBoxItem Content="Mediano" FontSize="24"/>
+                <ComboBoxItem Content="Grande" FontSize="36"/>
+            </ComboBox>
+            <TextBlock x:Name="Texto_Bienvenida_Copiar5" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="28" FontFamily="Yu Gothic Medium" TextAlignment="Center" Margin="24,7,0,0" Foreground="#FF11245F" HorizontalAlignment="Left" Height="44" Width="220" Grid.Row="2" Grid.Column="1"><Run Language="es-mx" Text="Tamaño de Texto"/></TextBlock>
+            <ComboBox x:Name="Tamaño_Texto_Copiar4" HorizontalAlignment="Left" Margin="24,55,0,0" VerticalAlignment="Top" Width="296" BorderBrush="#FF121482" Height="36" Grid.Row="2" Grid.Column="1">
+                <ComboBoxItem Content="Chico" FontSize="20"/>
+                <ComboBoxItem Content="Mediano" FontSize="24"/>
+                <ComboBoxItem Content="Grande" FontSize="36"/>
+            </ComboBox>
         </Grid>
-    </Viewbox>
-    </UserControl>
+
+    </Grid>
+</UserControl>
