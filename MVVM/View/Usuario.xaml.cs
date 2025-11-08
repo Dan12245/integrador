@@ -19,7 +19,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
     /// </summary>
     public partial class Usuario : UserControl
     {
-
         /// <summary>
         /// creo que es la primera vez que voy a hacer notas asi queeee....
         /// 
@@ -36,8 +35,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             public string Descripcion { get; set; } //y la descripcion, meramente de relleno(¿
         }
 
-        //ahora, seteamos una variable collection que usara los datos en Domicilio para llenar el data grid
-        //en este caso, se llamara domicilios, pero puede ser cualquier nombre :p
+        // Colección que alimenta el DataGrid.
+        private ObservableCollection<Domicilio> Domicilios { get; set; } = new();
+
         //ahora, crearemos una funcion para que agregue domicilios (buscar con CTRL + F "private void AgregarDomicilio()"
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
@@ -48,8 +48,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 if (tb != null && !tb.IsReadOnly)
                 {
                     tb.IsReadOnly = true;
-                    // Mover el foco a otro elemento para que se dispare LostFocus
-                    Boton_Menu.Focus();
+                    // En lugar de Boton_Menu (no existe en este UserControl) movemos el foco al DataGrid
+                    miDataGrid.Focus();
                 }
             }
         }
@@ -60,10 +60,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             InitializeComponent();
 
-            //declaramos que la variable domicilios que tenemos antes
-            //es igual a cargar los datos del json
             Domicilios = CargarDatos();
-            //ahora hacemos que los elementos en el datagrid sea igual a domicilios
             miDataGrid.ItemsSource = Domicilios;
 
             if (Registro.GlobalData.UserName == null)
@@ -72,11 +69,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             InicializarTimer();
             ActualizarTextBox();
 
-            Texto_Nombre.Text = $"{GlobalData.UserName}";
+            // Corregido: referencia explícita a Registro.GlobalData
+            Texto_Nombre.Text = $"{Registro.GlobalData.UserName}";
             Barra_meta.Value = new Random().Next(10, 101);
             Datos_Usuario.Text = $"Invitados: " + new Random().Next(0, 101);
 
-            ActualizarImagen(); 
+            ActualizarImagen();
         }
 
 
