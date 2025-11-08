@@ -25,7 +25,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             "¿Sabías que usar una IA como ChatGPT consume bastante agua? durísimo hermano",
             "hola",
             "jaja",
-            "prueba"
+            "prueba",
+            "Por demaciaaaaa"
         };
 
         // Índice actual para recorrer mensajes de Teto

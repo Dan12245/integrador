@@ -591,7 +591,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     return consumo;
                 }
             }
-
             }
             catch (Exception ex)
             {
