@@ -23,8 +23,8 @@
                         <Border Background="{TemplateBinding Background}"
                          BorderBrush="{TemplateBinding BorderBrush}"
                          BorderThickness="1"
-                         CornerRadius="15">     
-                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                         CornerRadius="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -50,41 +50,68 @@
 
     </UserControl.Resources>
 
-    <Grid Background="#FFCBDAFF">
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF92AAE3" Offset="0.32"/>
+                <GradientStop Color="#FFCBDAFF" Offset="0.601"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="75"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="87"/>
+            <RowDefinition Height="269*"/>
+            <RowDefinition Height="69*"/>
             <RowDefinition Height="75"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="28" FontFamily="Cascadia Code" TextAlignment="Center"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
-            <TextBlock x:Name="Texto_Porcentaje" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="24" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Text="Texto consumo del mes"/></TextBlock>
+            <Rectangle HorizontalAlignment="Center" Height="87" VerticalAlignment="Center" Width="8427">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Black"/>
+                        <GradientStop Color="#FF262E75" Offset="1"/>
+                        <GradientStop Color="#FE222271"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="28" FontFamily="Yu Gothic Medium" TextAlignment="Center" Margin="0,4,0,0" Foreground="#FF8FA2DC"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
+            <TextBlock x:Name="Texto_Porcentaje" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" FontFamily="Yu Gothic Light" TextAlignment="Center" Margin="0,44,0,0" Foreground="#FF8FA2DC" FontWeight="Bold"><Run Text="Texto consumo del mes"/></TextBlock>
         </Grid>
 
-        <Grid Grid.Row="1" Background="#FFCBDAFF">
+        <Grid Grid.Row="1" Margin="0,10,0,71" Grid.RowSpan="3">
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FF91A9E2" Offset="0"/>
+                    <GradientStop Color="#FFCBDAFF" Offset="1"/>
+                </LinearGradientBrush>
+            </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <!-- Controles del gráfico -->
-            <StackPanel x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Margin="0,0,5,0" Command="{Binding GoToPage2Command}">Week</Button>
-                <Button Margin="0,0,5,0" Command="{Binding GoToPage3Command}">Month</Button>
-                <Button Margin="0,0,5,0" Command="{Binding SeeAllCommand}">Year</Button>
-                <Button Margin="0,0,5,0" Width="145" Name="btnDownload" Click="btnDownload_Click">Download report</Button>
+            <StackPanel x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Width="537" Height="35">
+                <Button Margin="0.2,0,5,0" Command="{Binding GoToPage2Command}" Width="121" Background="#FF252C74" FontFamily="Consolas">Week</Button>
+                <Button Margin="0.2,0,5,0" Command="{Binding GoToPage3Command}" Width="113" Background="#FF252C74" FontFamily="Consolas">Month</Button>
+                <Button Margin="0.2,0,5,0" Command="{Binding SeeAllCommand}" Width="130" Background="#FF262D75" FontFamily="Consolas" Click="Button_Click">Year</Button>
+                <Button Width="151" x:Name="btnDownload" Click="btnDownload_Click" Content="Download report" Margin="0.2,0,0,0" Background="#FF242873" FontFamily="Consolas" FontSize="16"/>
             </StackPanel>
 
             <!-- Gráfico bonito -->
             <Grid Grid.Row="1">
+                <Border BorderThickness="4,4,4,4" Margin="129,0,131,76" Background="White">
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="#FF102475" Opacity="0.4"/>
+                    </Border.BorderBrush>
+                </Border>
                 <lvc:CartesianChart x:Name="Chart" Background="Transparent" BorderBrush="WhiteSmoke" ZoomMode="X"
                  Series="{Binding Values}"
                  XAxes="{Binding XAxes}"
-                 YAxes="{Binding YAxes}"/>
+                 YAxes="{Binding YAxes}" Margin="134,4,142,86"/>
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -106,17 +133,16 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="texto_consejo" TextWrapping="Wrap" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
-                        <Run Language="es-mx" Text="Consejos consejosamente consejosos"/>
-                        </TextBlock>
+                        <TextBlock x:Name="texto_consejo" TextWrapping="Wrap" FontFamily="Cascadia Code SemiLight" TextAlignment="Center" Margin="0,-11,0,11" Foreground="#FF071148" FontSize="20"><Run Language="es-mx" Text="Consejos consejosamente consejosos"/></TextBlock>
 
                     </Grid>
                 </Viewbox>
 
                 <Viewbox Grid.Row="1">
                     <TextBlock VerticalAlignment="Bottom" x:Name="texto_modo" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
-                         <Run Language="es-mx" Text="Modo :diablo:"/>
-                    </TextBlock>
+                        <TextBlock.Foreground>
+                            <SolidColorBrush Color="Black" Opacity="0.5"/>
+                        </TextBlock.Foreground><Run Language="es-mx" Text="Modo :diablo:"/></TextBlock>
                 </Viewbox>
 
             </Grid>
@@ -127,15 +153,15 @@
                 </Button.RenderTransform>
                 <Image Stretch="Fill" gif:ImageBehavior.AnimatedSource="/Images/teto-tetoris.gif"/>
             </Button>
-            <Button Grid.Column="3" Click="btnSiguiente_Click" Height="36" Width="54" BorderBrush="Transparent">
+            <Button Grid.Column="3" Click="btnSiguiente_Click" Height="36" Width="54" BorderBrush="Transparent" Margin="6,4,6,35">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/flecha.png"/>
                 </Button.Background>
             </Button>
-            
+
             <Image Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stretch="Fill" MaxWidth="75" Source="/Images/perrito chivas.png" />
-            
-            <Button Grid.Column="1" Click="btnAnterior_Click" Height="36" Width="54" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" >
+
+            <Button Grid.Column="1" Click="btnAnterior_Click" Height="36" Width="54" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" Margin="6,4,6,35" >
                 <Button.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -149,5 +175,32 @@
                 </Button.Background>
             </Button>
         </Grid>
+        <StackPanel x:Name="Graph1_Copiar" Orientation="Horizontal" Grid.Row="1" Margin="133,262,124,13" Grid.RowSpan="2">
+            <Button x:Name="Boton_Eliminar" Content="" Height="52" Width="51" Grid.Row="1" Margin="380,-4,0,0">
+                <Button.BorderBrush>
+                    <ImageBrush/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Eliminar.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_Editar" Content="" Height="54" Width="54" Grid.Row="1" Margin="0,-3,0,0">
+                <Button.BorderBrush>
+                    <ImageBrush/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Editar.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_Agregar" Content="" Height="54" Width="54" Grid.Row="1" Margin="0,0,100,0">
+                <Button.BorderBrush>
+                    <ImageBrush/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Agregar.png"/>
+                </Button.Background>
+            </Button>
+        </StackPanel>
+
     </Grid>
 </UserControl>

@@ -1,10 +1,15 @@
 using Consumo_Reducido_de_Agua_ahora_si_definitivo;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
@@ -14,298 +19,195 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
     /// </summary>
     public partial class Usuario : UserControl
     {
-        private TextBox selectedTextBox = null;
-        private int domiciliosActivos = 1; // Solo el principal está visible inicialmente  
-        private bool estaEditando = false;
+
+        /// <summary>
+        /// creo que es la primera vez que voy a hacer notas asi queeee....
+        /// 
+        /// Este es el registro para hacer que el data grid agarre domicilios mediante los botones
+        /// de agregar, eliminar y editar :p
+        /// 
+        /// como primer paso, agregamos una public class Domicilios con los atributos que queremos
+        /// agregar al data grid :p
+        /// </summary>
+        public class Domicilio
+        {
+            public int Id { get; set; } //este es solo para la base de datos (o eso me dijo dani)
+            public string Nombre { get; set; } //nombre para que el usuario identifique su domicilio
+            public string Descripcion { get; set; } //y la descripcion, meramente de relleno(¿
+        }
+
+        //ahora, seteamos una variable collection que usara los datos en Domicilio para llenar el data grid
+        //en este caso, se llamara domicilios, pero puede ser cualquier nombre :p
+        //ahora, crearemos una funcion para que agregue domicilios (buscar con CTRL + F "private void AgregarDomicilio()"
+
+        public ObservableCollection<Domicilio> Domicilios { get; set; }
+
+        private const string FilePath = "Domicilios.json";
+        public bool Editor = false;
         public Usuario()
         {
             InitializeComponent();
+
+            //declaramos que la variable domicilios que tenemos antes
+            //es igual a cargar los datos del json
+            Domicilios = CargarDatos();
+            //ahora hacemos que los elementos en el datagrid sea igual a domicilios
+            miDataGrid.ItemsSource = Domicilios;
+
+            if (Registro.GlobalData.UserName == null)
+                Registro.GlobalData.UserName = "Usuario";
+
+            InicializarTimer();
+            ActualizarTextBox();
+
             Texto_Nombre.Text = $"{GlobalData.UserName}";
             Barra_meta.Value = new Random().Next(10, 101);
+            Datos_Usuario.Text = $"Invitados: " + new Random().Next(0, 101);
 
-            // Inicializar estado de los TextBox
-            InicializarDomicilios();
-            ActualizarBotones();
+            ActualizarImagen(); 
         }
 
-        private void InicializarDomicilios()
+
+        //funcion para actualizar la imagen del icono de editar/guardar
+        private void ActualizarImagen()
         {
-            // Hacer que todos los domicilios sean de solo lectura inicialmente
-            Domicilio_Principal.IsReadOnly = true;
-            Domicilio_1.IsReadOnly = true;
-            Domicilio_2.IsReadOnly = true;
-            Domilicio_3.IsReadOnly = true;
-
-            // Ocultar los domicilios secundarios
-            Domicilio_1.Visibility = Visibility.Collapsed;
-            Domicilio_2.Visibility = Visibility.Collapsed;
-            Domilicio_3.Visibility = Visibility.Collapsed;
-
-            // Agregar eventos para selección de TextBox
-            Domicilio_Principal.GotFocus += TextBox_GotFocus;
-            Domicilio_1.GotFocus += TextBox_GotFocus;
-            Domicilio_2.GotFocus += TextBox_GotFocus;
-            Domilicio_3.GotFocus += TextBox_GotFocus;
-
-            // Agregar eventos para Enter y LostFocus
-            Domicilio_Principal.KeyDown += TextBox_KeyDown;
-            Domicilio_1.KeyDown += TextBox_KeyDown;
-            Domicilio_2.KeyDown += TextBox_KeyDown;
-            Domilicio_3.KeyDown += TextBox_KeyDown;
-
-            Domicilio_Principal.LostFocus += TextBox_LostFocus;
-            Domicilio_1.LostFocus += TextBox_LostFocus;
-            Domicilio_2.LostFocus += TextBox_LostFocus;
-            Domilicio_3.LostFocus += TextBox_LostFocus;
+            //carga la ruta dependiendo de si estas en modo editor o no
+            string ruta = Editor ? "/Images/IconoGuardado.png" : "/Images/Editar.png";
+            //y actualiza la imagen del boton
+            BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
         }
 
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+
+        private DispatcherTimer timer;
+        private void InicializarTimer()
         {
-            selectedTextBox = sender as TextBox;
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromHours(1); // Actualiza cada hora
+            timer.Tick += Timer_Tick;
+            timer.Start();
         }
 
-        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+
+        //la funcion para cargar los datos del json, nada especial, solo lee el archivo y lo deserializa en la coleccion de domicilios
+        private ObservableCollection<Domicilio> CargarDatos()
         {
-            if (e.Key == Key.Enter)
+            try
+
             {
-                TextBox tb = sender as TextBox;
-                if (tb != null && !tb.IsReadOnly)
+                //detecta si es que el archivo existe
+                if (File.Exists(FilePath))
                 {
-                    tb.IsReadOnly = true;
-                    // Mover el foco a otro elemento para que se dispare LostFocus
-                    Boton_Menu.Focus();
+                    //si es asi, lee el archivo y deserializa el json en una coleccion de domicilios
+                    string json = File.ReadAllText(FilePath);
+                    var lista = JsonSerializer.Deserialize<ObservableCollection<Domicilio>>(json);
+                    return lista ?? new ObservableCollection<Domicilio>();
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar datos: {ex.Message}");
+            }
+            return new ObservableCollection<Domicilio>();
+        }
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            ActualizarTextBox();
         }
 
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Esta funcion se utilizara a la hora de usar el boton de agregar domicilio
+        /// asi queeeeeeee, toca ver como funciona :p
+        /// </summary>
+        private void AgregarDomicilio()
         {
-            //TextBox tb = sender as TextBox;
-            //if (tb != null && !tb.IsReadOnly)
-            //{
-            //    tb.IsReadOnly = true;
-            // }
+            ///primero que nada, declaramos una variable llamada NuevoDomicilio como un nuevo domicilio (omg)
+            var NuevoDomicilio = new Domicilio
+            {
+                //hacemos que el Id sea igual a la cantidad de domicilios + 1 (asi no se repiten los Ids)
+                Id = Domicilios.Count + 1,
+                //declaramos el nombre como un nuevo domicilio
+                Nombre = "Domicilio " + (Domicilios.Count + 1),
+                //y la descripcion como un campo vacio para que se pueda editar a gusto del usuario
+                Descripcion = "",
+            };
+            //finalmente, agregamos el nuevo domicilio a la coleccion de domicilios
+            Domicilios.Add(NuevoDomicilio);
+        }
+        private void EliminarDomicilio()
+        {
+            //detecta si es que tienes seleccionado algun elemento del data grid
+            if (miDataGrid.SelectedItem != null)
+            {
+                //si es asi, declara una variable domicilio que sera igual al domicilio seleccionado
+                var domicilio = (Domicilio)miDataGrid.SelectedItem;
+                //y elimina ese domicilio de la coleccion de domicilios
+                Domicilios.Remove(domicilio);
+            }
         }
 
-        private void Button_Agregar(object sender, RoutedEventArgs e)
+        private void ActualizarTextBox()
         {
-            if (domiciliosActivos >= 4)
-            {
-                MessageBox.Show("Has alcanzado el máximo de domicilios permitidos (3 adicionales).",
-                    "Límite alcanzado", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            string user_email = GlobalData.email;
-            var con = new conexion();
-            int id = GlobalData.userid;
-            switch (domiciliosActivos)
-            {
-                case 1:
-                    Domicilio_1.Visibility = Visibility.Visible;
-                    domiciliosActivos++;
-                    con = new conexion();
-                    //con.agregar_domicilio(user_email,"Domicilio 1",id);
-                    con.agregar_domicilio_async(user_email, Domicilio_1.Text, id);
-                    break;
-                case 2:
-                    Domicilio_2.Visibility = Visibility.Visible;
-                    domiciliosActivos++;
-                    con = new conexion();
-                    con.agregar_domicilio_async(user_email, Domicilio_2.Text, id);
-                    break;
-                case 3:
-                    Domilicio_3.Visibility = Visibility.Visible;
-                    domiciliosActivos++;
-                    con = new conexion();
-                    con.agregar_domicilio_async(user_email, Domilicio_3.Text, id);
-                    break;
-            }
+            //cosa que calcula los dias restantes del mes, no se, esta chistoso xd
+            DateTime hoy = DateTime.Now;
+            int ultimoDia = DateTime.DaysInMonth(hoy.Year, hoy.Month);
+            int diasRestantes = ultimoDia - hoy.Day + 1;
 
-            ActualizarBotones();
+            Dias_restantes.Text = $"{diasRestantes} días restantes";
         }
 
-        private void Button_Quitar(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// la funcion guardar datos es para basicamente, guardar datos (duh)
+        /// aqui te va toda la pinche mierda que es esto
+        /// </summary>
+        private void GuardarDatos()
+        {
+            try
+            {
+                //esto creo el json, como? no se, preguntale a visual xd
+                string json = JsonSerializer.Serialize(Domicilios, new JsonSerializerOptions { WriteIndented = true });
+                //y esto lo guarda en un archivo llamado domicilios.json
+                File.WriteAllText(FilePath, json);
+                MessageBox.Show("Datos guardados correctamente.");
+            }
+            catch (Exception ex)
+            {
+                //errorsito por si aca, no vaya a ser el viablo :anguished:
+                MessageBox.Show($"Error al guardar datos: {ex.Message}");
+            }
+        }
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            if (domiciliosActivos <= 1)
-            {
-                MessageBox.Show("No puedes eliminar el domicilio principal.",
-                    "Acción no permitida", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            string user_email = GlobalData.email;
-            var con = new conexion();
-            int id = GlobalData.userid;
-            // Eliminar el último domicilio visible
-            switch (domiciliosActivos)
-            {
-                case 4:
-                    Domilicio_3.Visibility = Visibility.Collapsed;
-                    Domilicio_3.Text = "Domicilio 3"; // Resetear texto
-                    domiciliosActivos--;
-                    con.eliminar_domicilio(Domilicio_3.Text, id);
-                    break;
-                case 3:
-                    Domicilio_2.Visibility = Visibility.Collapsed;
-                    Domicilio_2.Text = "Domicilio 2";
-                    domiciliosActivos--;
-                    con.eliminar_domicilio(Domicilio_2.Text, id);
-                    break;
-                case 2:
-                    Domicilio_1.Visibility = Visibility.Collapsed;
-                    Domicilio_1.Text = "Domicilio 1";
-                    domiciliosActivos--;
-                    con.eliminar_domicilio(Domicilio_1.Text, id);
-
-
-                    break;
-            }
-
-            ActualizarBotones();
         }
 
-        private async void Button_Editar(object sender, RoutedEventArgs e)
+        private void Boton_Agregar2_Click(object sender, RoutedEventArgs e)
         {
-            //bien, la explicacion de como jala (a medias) esta cosa es que habia una parte del codigo
-            //que hacia que el IsReadOnly se leyera como false aunque ya fuera considerado un true esto hacia
-            //que el codigo se confundiera y lo tomara como que no hacia nadota y ps tronaba, tmbn por eso
-            //ahora esta en un if para separar los casos y que no se confundan de neuvo
-            if (selectedTextBox == null)
+            AgregarDomicilio();
+            GuardarDatos();
+        }
+
+        private void Boton_Editar2_Click(object sender, RoutedEventArgs e)
+        {
+            Editor = !Editor;
+            miDataGrid.IsReadOnly = !Editor;
+
+            if (!Editor)
             {
-                MessageBox.Show("Por favor, selecciona primero un domicilio para editar.",
-                    "Selección requerida", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
+                GuardarDatos();
             }
 
-            // Verificar que el TextBox seleccionado sea visible
-            if (selectedTextBox.Visibility != Visibility.Visible)
+            if (Editor)
             {
-                MessageBox.Show("El domicilio seleccionado no está visible.",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            //a partir de aca no jala
-            // Habilitar edición
-            if (selectedTextBox.IsReadOnly)
-            {
-                // 1️⃣ Primer click → habilitar edición
-                selectedTextBox.IsReadOnly = false;
-                selectedTextBox.Focus();
-                selectedTextBox.SelectAll();
                 MessageBox.Show("Modo edición activado");
             }
-            else
-            {
-                // 2️⃣ Segundo click → guardar cambios
-                MessageBox.Show("Guardando cambios...");
 
-                selectedTextBox.IsReadOnly = true;
-
-                conexion con = new conexion();
-                string mail = GlobalData.email;
-                int iduser = GlobalData.userid;
-
-                try
-                {
-                    int idedificio = await con.id_edificio(iduser);
-                    MessageBox.Show($"Resultado idedificio = {idedificio}");
-
-                    if (await con.editar_domicilio(selectedTextBox.Text, idedificio))
-                    {
-                        MessageBox.Show("Domicilio editado correctamente.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error dentro del botón: {ex.Message}");
-                }
-            }
+            ActualizarImagen(); 
         }
 
-        private void ActualizarBotones()
+
+        private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e)
         {
-            // Deshabilitar botón Agregar si ya hay 4 domicilios
-            if (domiciliosActivos >= 4)
-            {
-                Button agregarBtn = FindName("Boton_Agregar") as Button;
-                if (agregarBtn == null)
-                {
-                    agregarBtn = LogicalTreeHelper.FindLogicalNode(this, "Boton_Agregar") as Button;
-                }
-                // Buscar el botón manualmente si no tiene nombre
-                var buttons = FindVisualChildren<Button>(this);
-                foreach (var btn in buttons)
-                {
-                    if (btn.Content?.ToString() == "Agregar")
-                    {
-                        btn.IsEnabled = false;
-                        btn.Opacity = 0.5;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                var buttons = FindVisualChildren<Button>(this);
-                foreach (var btn in buttons)
-                {
-                    if (btn.Content?.ToString() == "Agregar")
-                    {
-                        btn.IsEnabled = true;
-                        btn.Opacity = 1.0;
-                        break;
-                    }
-                }
-            }
-
-            // Deshabilitar botón Quitar si solo queda el principal
-            if (domiciliosActivos <= 1)
-            {
-                var buttons = FindVisualChildren<Button>(this);
-                foreach (var btn in buttons)
-                {
-                    if (btn.Content?.ToString() == "Quitar")
-                    {
-                        btn.IsEnabled = false;
-                        btn.Opacity = 0.5;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                var buttons = FindVisualChildren<Button>(this);
-                foreach (var btn in buttons)
-                {
-                    if (btn.Content?.ToString() == "Quitar")
-                    {
-                        btn.IsEnabled = true;
-                        btn.Opacity = 1.0;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Método auxiliar para encontrar elementos visuales
-        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
-        {
-            if (depObj != null)
-            {
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-                {
-                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-                    if (child != null && child is T)
-                    {
-                        yield return (T)child;
-                    }
-
-                    foreach (T childOfChild in FindVisualChildren<T>(child))
-                    {
-                        yield return childOfChild;
-                    }
-                }
-            }
+            EliminarDomicilio();
         }
     }
 }
