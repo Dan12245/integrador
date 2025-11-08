@@ -62,7 +62,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10, 101)}% este mes!";
 
             //Mostrar el primer consejo
-            texto_consejo.Text = consejos[indiceActual];
+            texto_consejo.Text = $"Consejo: " + consejos[indiceActual];
 
             //Temporizador para cambiar consejo cada 5 segundos
             timer = new DispatcherTimer();
@@ -203,7 +203,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             if (indiceActual < 0)
                 indiceActual = consejos.Count - 1;
 
-            texto_consejo.Text = consejos[indiceActual];
+            texto_consejo.Text = $"Consejo: " + $"Consejo: " + consejos[indiceActual];
             ReiniciarTimer();
         }
 
@@ -213,7 +213,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             if (indiceActual >= consejos.Count)
                 indiceActual = 0;
 
-            texto_consejo.Text = consejos[indiceActual];
+            texto_consejo.Text = $"Consejo: " + consejos[indiceActual];
         }
 
         private void ReiniciarTimer()
@@ -246,6 +246,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             {
                 mainWindow.CambiarFondoGradiente(colorInicio, colorFin, offset, direccion: "Horizontal");
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -41,6 +41,9 @@
     <None Remove="Image2.png" />
     <None Remove="Image3.png" />
     <None Remove="Image4.png" />
+    <None Remove="Images\Agregar.png" />
+    <None Remove="Images\Editar.png" />
+    <None Remove="Images\Eliminar.png" />
     <None Remove="Images\Help.png" />
     <None Remove="Images\logotilin2-blanco.png" />
     <None Remove="logo programa Pagina.png" />
@@ -50,6 +53,7 @@
     <None Remove="Menu Principal seleccionado.png" />
     <None Remove="Menu Principal.png" />
     <None Remove="Mes.png" />
+    <None Remove="MVVM\View\Place Holder Foto.jpg" />
     <None Remove="No.png" />
     <None Remove="Ojo.png" />
     <None Remove="perrito chivas.png" />
@@ -83,9 +87,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\Agregar.png" />
     <Resource Include="Images\Casa2 - Copier.png" />
     <Resource Include="Images\Casa2.png" />
     <Resource Include="Images\Correo.png" />
+    <Resource Include="Images\Editar.png" />
+    <Resource Include="Images\Eliminar.png" />
     <Resource Include="Images\Empresa.jpg" />
     <Resource Include="Images\Boton Iniciar sesion.png" />
     <Resource Include="Images\Boton Registrarse.png" />
@@ -97,6 +104,7 @@
     <Resource Include="Images\Fondo Preguntas %282%29.png" />
     <Resource Include="Images\fondo preguntas.png" />
     <Resource Include="Images\Help.png" />
+    <Resource Include="Images\IconoGuardado.png" />
     <Resource Include="Images\Image1.png" />
     <Resource Include="Images\Image2.png" />
     <Resource Include="Images\Image3.png" />
@@ -120,6 +128,7 @@
     <Resource Include="Images\Texto Inicio.png" />
     <Resource Include="Images\Usuario e invitados.png" />
     <Resource Include="Images\Vecindad.png" />
+    <Resource Include="MVVM\View\Place Holder Foto.jpg" />
   </ItemGroup>
 
   <ItemGroup>

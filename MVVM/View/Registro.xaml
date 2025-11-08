@@ -37,10 +37,7 @@
 
  <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
  <Grid x:Name="Login_Window" Background="#FFB2CFE6" Height="434" Width="800" KeyboardNavigation.TabNavigation="Cycle">
-
- <Image Margin="-187,48,547,-53" Source="/Images/descarga.png" Stretch="Fill"/>
- <Image x:Name="MareaImage" Margin="-76,343,-182,-146" Source="/Images/Marea.png" Stretch="Fill"/>
- <Rectangle Height="426" Width="392" UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Center" RadiusX="26.535" RadiusY="26.535">
+            <Rectangle Height="426" Width="392" UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Center" RadiusX="26.535" RadiusY="26.535">
  <Rectangle.Stroke>
  <SolidColorBrush Color="Black" Opacity="0"/>
  </Rectangle.Stroke>
