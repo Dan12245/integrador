@@ -94,7 +94,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 // Navegar a Inicio tras validar credenciales
                 if (Application.Current.MainWindow?.DataContext is MainViewModel shell)
                 {
-                    MessageBox.Show($"Resultado mail = {email}");
                     shell.NavigateToInicioCommand.Execute(null);
                 }
             }

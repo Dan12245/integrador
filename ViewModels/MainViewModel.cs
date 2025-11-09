@@ -4,6 +4,7 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.SKCharts;
 using SkiaSharp;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 
@@ -12,10 +13,18 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        //Simulated data for one year
         private readonly int year = DateTime.Today.Year;
         private readonly int daysInYear;
-        private readonly double[] totalConsumption;
+
+        // arreglo diario usado por la gráfica (llenado desde Items)
+        private double[] totalConsumption;
+
+        // colección editable por el usuario (DataGrid)
+        public ObservableCollection<DailyEntry> Items { get; } = new();
+
+        // límites para el selector de fecha
+        public DateTime StartOfYear => new DateTime(year,1,1);
+        public DateTime Today => DateTime.Today.Year == year ? DateTime.Today : new DateTime(year,1,1);
 
         [ObservableProperty]
         private string selectedPeriod = string.Empty;
@@ -36,49 +45,78 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 
         public Axis[] XAxes { get; set; } = new Axis[]
         {
-            new Axis
-            {
-            TextSize = 18 // Label X font size
-
-            }
+            new Axis { TextSize =18 }
         };
         public Axis[] YAxes { get; set; } = new Axis[]
         {
-            new Axis
-            {
-            TextSize = 18 // Label Y font size
-            }
+            new Axis { TextSize =18 }
         };
+
         public MainViewModel()
         {
-            daysInYear = DateTime.IsLeapYear(year) ? 366 : 365;
-            totalConsumption = GenerateRandomData(daysInYear, 170, 380);
+            daysInYear = DateTime.IsLeapYear(year) ?366 :365;
+            totalConsumption = new double[daysInYear]; // inicia en0
+
+            // Recalcular gráfico cuando cambie la colección o cualquier propiedad de un elemento
+            Items.CollectionChanged += (s, e) => RebuildFromItems();
 
             SelectedPeriod = "week";
             UpdateValues();
         }
-        private static double[] GenerateRandomData(int count, int min, int max)
+
+        // clase que representa una fila en el DataGrid
+        public partial class DailyEntry : ObservableObject
         {
-            var rnd = new Random();
-            var data = new double[count];
-            for (int i = 0; i < count; i++) data[i] = rnd.Next(min, max);
-            return data;
+            private DateTime _day;
+            private double _consumption;
+
+            public DateTime Day
+            {
+                get => _day;
+                set => SetProperty(ref _day, value);
+            }
+            public double Consumption
+            {
+                get => _consumption;
+                set => SetProperty(ref _consumption, value);
+            }
         }
+
+        // llamado para reconstruir el arreglo diario desde Items y refrescar la gráfica
+        public void RebuildFromItems()
+        {
+            Array.Clear(totalConsumption,0, totalConsumption.Length);
+            var startOfYear = new DateTime(year,1,1);
+            foreach (var it in Items)
+            {
+                // limitar a año en curso y no permitir futuro
+                if (it.Day.Year != year) continue;
+                if (it.Day.Date > Today.Date) continue;
+
+                int index = (int)(it.Day.Date - startOfYear).TotalDays;
+                if (index >=0 && index < totalConsumption.Length)
+                {
+                    // Acumular múltiples consumos registrados para el mismo día
+                    totalConsumption[index] += it.Consumption;
+                }
+            }
+            UpdateValues();
+        }
+
         partial void OnSelectedPeriodChanged(string value) => UpdateValues();
 
         private void UpdateValues()
         {
-            var startOfYear = new DateTime(year, 1, 1);
-            var today = DateTime.Today.Year == year ? DateTime.Today : startOfYear;
-            var todayIndex = Math.Clamp((today - startOfYear).Days, 0, daysInYear - 1);
+            var startOfYear = new DateTime(year,1,1);
+            var today = Today;
+            var todayIndex = Math.Clamp((today - startOfYear).Days,0, daysInYear -1);
             switch (selectedPeriod)
             {
                 case "week":
                     {
-                        // 0 to 6 to represent last 7 days
                         var end = todayIndex;
-                        var start = Math.Max(0, end - 6);
-                        var count = end - start + 1;
+                        var start = Math.Max(0, end -6);
+                        var count = end - start +1;
 
                         Values = new ISeries[]
                         {
@@ -87,11 +125,10 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 
                         var startDate = startOfYear.AddDays(start);
                         var labels = new string[count];
-                        for (int i = 0; i < count; i++)
+                        for (int i =0; i < count; i++)
                             labels[i] = startDate.AddDays(i).ToString("ddd", Culture);
                         XAxes[0].Labels = labels;
 
-                        // Create chart image
                         var chart = new SKCartesianChart
                         {
                             Series = new ISeries[] { new LineSeries<double> { Values = Slice(totalConsumption, start, count) } },
@@ -100,37 +137,37 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                         };
                         using (var stream = new MemoryStream())
                         {
-                            chart.SaveImage(stream, SKEncodedImageFormat.Png, 100);
+                            chart.SaveImage(stream, SKEncodedImageFormat.Png,100);
                             ChartWeekData = stream.ToArray();
                         }
                         break;
                     }
                 case "month":
                     {
-                        var monthStart = new DateTime(year, today.Month, 1);
+                        var monthStart = new DateTime(year, today.Month,1);
                         var dim = DateTime.DaysInMonth(year, today.Month);
                         var start = (monthStart - startOfYear).Days;
+                        var count = Math.Clamp(today.Day,1, dim);
 
                         Values = new ISeries[]
                         {
-                        new LineSeries<double> { Values = Slice(totalConsumption, start, dim) }
+                            new LineSeries<double> { Values = Slice(totalConsumption, start, count) }
                         };
 
-                        var labels = new string[dim];
-                        for (int i = 0; i < dim; i++)
+                        var labels = new string[count];
+                        for (int i =0; i < count; i++)
                             labels[i] = monthStart.AddDays(i).ToString("d MMM", Culture);
                         XAxes[0].Labels = labels;
 
-                        // Create chart image
                         var chart = new SKCartesianChart
                         {
-                            Series = new ISeries[] { new LineSeries<double> { Values = Slice(totalConsumption, start, dim) } },
+                            Series = new ISeries[] { new LineSeries<double> { Values = Slice(totalConsumption, start, count) } },
                             XAxes = XAxes,
                             YAxes = YAxes
                         };
                         using (var stream = new MemoryStream())
                         {
-                            chart.SaveImage(stream, SKEncodedImageFormat.Png, 100);
+                            chart.SaveImage(stream, SKEncodedImageFormat.Png,100);
                             ChartMonthData = stream.ToArray();
                         }
 
@@ -138,19 +175,18 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                     }
                 case "year":
                     {
-                        // Average per month
-                        var monthAverages = GetMonthlyAverages(year, totalConsumption);
+                        // Promedio por mes solo para meses pasados y el mes actual, limitado al día de hoy
+                        var monthAverages = GetMonthlyAveragesToDate(year, totalConsumption, today);
                         Values = new ISeries[]
                         {
                         new LineSeries<double> { Values = monthAverages }
                         };
 
-                        var labels = new string[12];
-                        for (int m = 1; m <= 12; m++)
-                            labels[m - 1] = new DateTime(year, m, 1).ToString("MMMM", Culture);
+                        var labels = new string[today.Month];
+                        for (int m =1; m <= today.Month; m++)
+                            labels[m -1] = new DateTime(year, m,1).ToString("MMMM", Culture);
                         XAxes[0].Labels = labels;
 
-                        // Create chart image
                         var chart = new SKCartesianChart
                         {
                             Series = new ISeries[] { new LineSeries<double> { Values = monthAverages } },
@@ -159,7 +195,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                         };
                         using (var stream = new MemoryStream())
                         {
-                            chart.SaveImage(stream, SKEncodedImageFormat.Png, 100);
+                            chart.SaveImage(stream, SKEncodedImageFormat.Png,100);
                             ChartYearData = stream.ToArray();
                         }
                         break;
@@ -170,32 +206,36 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                     break;
             }
         }
+
         private static double[] Slice(double[] source, int start, int count)
         {
             var result = new double[count];
-            Array.Copy(source, start, result, 0, count);
+            Array.Copy(source, start, result,0, count);
             return result;
         }
 
-        private static double[] GetMonthlyAverages(int year, double[] daily)
+        private static double[] GetMonthlyAveragesToDate(int year, double[] daily, DateTime today)
         {
-            var result = new double[12];
-            var offset = 0;
+            int months = today.Month;
+            var result = new double[months];
+            var offset =0;
 
-            for (int month = 1; month <= 12; month++)
+            for (int month =1; month <= months; month++)
             {
                 var dim = DateTime.DaysInMonth(year, month);
-                var take = Math.Min(dim, Math.Max(0, daily.Length - offset));
+                var take = month == today.Month ? Math.Clamp(today.Day,1, dim) : dim;
 
-                if (take <= 0)
+                take = Math.Min(take, Math.Max(0, daily.Length - offset));
+
+                if (take <=0)
                 {
-                    result[month - 1] = 0;
+                    result[month -1] =0;
                 }
                 else
                 {
-                    double sum = 0;
-                    for (int i = 0; i < take; i++) sum += daily[offset + i];
-                    result[month - 1] = sum / take;
+                    double sum =0;
+                    for (int i =0; i < take; i++) sum += daily[offset + i];
+                    result[month -1] = sum / take;
                 }
 
                 offset += dim;

@@ -94,6 +94,15 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             bienvenidaTimer.Start();
         }
 
+        private void Boton_Editar_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Editors.ConsumoEditorWindow(mainViewModel)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            win.ShowDialog();
+        }
+
         // Método para agregar mensajes personalizados
         public void AgregarMensajeTeto(string mensaje)
         {

@@ -81,17 +81,17 @@
                 <Button Margin="0.2,0,5,0" Command="{Binding GoToPage3Command}">Month</Button>
                 <Button Margin="0.2,0,5,0" Command="{Binding SeeAllCommand}" Click="Button_Click">Year</Button>
                 <Button Width="150" x:Name="btnDownload" Click="btnDownload_Click" Content="Download report"/>
-                <Button x:Name="Boton_Eliminar" Height="50" Margin="10,0,0,0" BorderBrush="Transparent">
+                <Button x:Name="Boton_Eliminar" Height="50" Margin="10,0,0,0">
                     <Button.Background>
                         <ImageBrush ImageSource="/Images/Eliminar.png"/>
                     </Button.Background>
                 </Button>
-                <Button x:Name="Boton_Editar" Height="50" Margin="10,0,0,0" BorderBrush="Transparent">
+                <Button x:Name="Boton_Editar" Height="50" Margin="10,0,0,0" Click="Boton_Editar_Click">
                     <Button.Background>
                         <ImageBrush ImageSource="/Images/Editar.png"/>
                     </Button.Background>
                 </Button>
-                <Button x:Name="Boton_Agregar" Height="50" Margin="10,0,0,0" BorderBrush="Transparent">
+                <Button x:Name="Boton_Agregar" Height="50" Margin="10,0,0,0">
                     <Button.Background>
                         <ImageBrush ImageSource="/Images/Agregar.png"/>
                     </Button.Background>

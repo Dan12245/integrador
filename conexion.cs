@@ -37,7 +37,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             {
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
-                MessageBox.Show("conectado con exito");
+                // Removed MessageBox de prueba
                 conex.Close();
 
             }
@@ -72,7 +72,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                         ejecutor.Parameters.AddWithValue("@correo", email);
                         ejecutor.Parameters.AddWithValue("@contra", passwordHash);
 
-                        object result = ejecutor.ExecuteScalarAsync();
+                        object result = await ejecutor.ExecuteScalarAsync();
                         if (result != null)
                         {
                             GlobalData.userid = Convert.ToInt32(result);
@@ -119,7 +119,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                                     GlobalData.userid = userId;
                                     GlobalData.UserName = nombre;
                                     GlobalData.email = email;
-                                    return true;
+                                    return true; // sin MessageBox
                                 }
                                 else
                                 {
@@ -469,7 +469,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         #endregion
         //y las funciones relacionadas con el consumo
         #region consumo
-        public async Task<bool> agregar_consumo(int buildingId, int consumo)
+        public async Task<bool> agregar_consumo(int buildingId, double consumo)
         {
             try
             {
