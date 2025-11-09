@@ -28,7 +28,9 @@
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
+
                 </Setter.Value>
+                
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -36,6 +38,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+
         <Storyboard x:Key="SaltoStoryboard">
             <DoubleAnimation
          Storyboard.TargetName="btnSaltoTransform"
@@ -77,25 +81,21 @@
             </Grid.RowDefinitions>
             <!-- Controles del gráfico -->
             <StackPanel x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Margin="0.2,0,5,0" Command="{Binding GoToPage2Command}" >Week</Button>
+                <!--selector de edificio -->
+                <Border CornerRadius="15" BorderBrush="#FF7385E3" BorderThickness="1" Background="#FF252C74" Margin="0,0,10,0" Height="35">
+                    <ComboBox Width="180" Height="35" FontSize="16" FontFamily="Consolas" ItemsSource="{Binding Buildings}" DisplayMemberPath="Alias" SelectedItem="{Binding SelectedBuilding, Mode=TwoWay}"/>
+                </Border>
+                <!-- Botones de periodo -->
+                <Button Margin="10,0,5,0" Command="{Binding GoToPage2Command}" >Week</Button>
                 <Button Margin="0.2,0,5,0" Command="{Binding GoToPage3Command}">Month</Button>
-                <Button Margin="0.2,0,5,0" Command="{Binding SeeAllCommand}" Click="Button_Click">Year</Button>
+                <Button Margin="0.2,0,5,0" Command="{Binding SeeAllCommand}">Year</Button>
                 <Button Width="150" x:Name="btnDownload" Click="btnDownload_Click" Content="Download report"/>
-                <Button x:Name="Boton_Eliminar" Height="50" Margin="10,0,0,0">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Images/Eliminar.png"/>
-                    </Button.Background>
-                </Button>
-                <Button x:Name="Boton_Editar" Height="50" Margin="10,0,0,0" Click="Boton_Editar_Click">
+                <Button x:Name="Boton_Editar" Height="50" Margin="10,0,0,0" Click="Boton_Editar_Click" BorderBrush="Transparent">
                     <Button.Background>
                         <ImageBrush ImageSource="/Images/Editar.png"/>
                     </Button.Background>
                 </Button>
-                <Button x:Name="Boton_Agregar" Height="50" Margin="10,0,0,0">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Images/Agregar.png"/>
-                    </Button.Background>
-                </Button>
+                
             </StackPanel>
 
             <!-- Gráfico bonito -->
@@ -105,10 +105,12 @@
                     <ColumnDefinition Width="8*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <lvc:CartesianChart Grid.Column="1" x:Name="Chart" Background="White" BorderThickness="3" BorderBrush="#FF262E75" ZoomMode="X"
+                <Border Grid.Column="1" CornerRadius="15" BorderBrush="#FF262E75" BorderThickness="3" Background="White" ClipToBounds="True" SnapsToDevicePixels="True">
+                    <lvc:CartesianChart x:Name="Chart" Background="Transparent" ZoomMode="X"
                  Series="{Binding Values}"
                  XAxes="{Binding XAxes}"
                  YAxes="{Binding YAxes}"/>
+                </Border>
             </Grid>
         </Grid>
         <Grid Grid.Row="2">

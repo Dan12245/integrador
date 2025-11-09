@@ -13,6 +13,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
+		<!-- Header row: date + liters + add/update -->
 		<StackPanel Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Top" HorizontalAlignment="Left">
 			<TextBlock Text="Date:" VerticalAlignment="Center" Margin="0,0,6,0"/>
 			<DatePicker x:Name="FechaPicker"
@@ -20,7 +21,7 @@
 				DisplayDateStart="{Binding StartOfYear, Mode=OneWay}"
 				DisplayDateEnd="{Binding Today, Mode=OneWay}"
 				FirstDayOfWeek="Monday" Margin="6,0,0,0"/>
-			<TextBlock Text="Litters:" VerticalAlignment="Center" Margin="12,0,6,0"/>
+			<TextBlock Text="Liters:" VerticalAlignment="Center" Margin="12,0,6,0"/>
 			<Grid Width="160" Height="28" VerticalAlignment="Center" Margin="0,0,6,0">
 				<TextBox x:Name="ConsumoTextBox"
 					HorizontalAlignment="Stretch"
@@ -28,10 +29,10 @@
 					Padding="6,2,6,2"
 					PreviewTextInput="ConsumoTextBox_PreviewTextInput"
 					DataObject.Pasting="ConsumoTextBox_Pasting"/>
-				<TextBlock Text=" Per example 120.34"
+				<TextBlock Text=" e.g.120.34"
 					Foreground="Gray"
 					VerticalAlignment="Center"
-					HorizontalAlignment="left"
+					HorizontalAlignment="Left"
 					IsHitTestVisible="False">
 					<TextBlock.Style>
 						<Style TargetType="TextBlock">
@@ -48,6 +49,7 @@
 			<Button Content="Add/Update" Click="AddOrUpdate_Click"/>
 		</StackPanel>
 
+		<!-- Grid with two columns only -->
 		<DataGrid x:Name="ConsumosGrid" Grid.Row="1"
 			ItemsSource="{Binding Items}"
 			SelectedItem="{Binding SelectedEntry, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}"
@@ -59,12 +61,13 @@
 			PreviewMouseLeftButtonDown="ConsumosGrid_PreviewMouseLeftButtonDown">
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Date" Binding="{Binding Day, StringFormat=d}" IsReadOnly="True"/>
-				<DataGridTextColumn Header="Consumption (L)" Binding="{Binding Consumption}"/>
+				<DataGridTextColumn Header="Consumption (L)" Binding="{Binding Consumption, StringFormat=F2}"/>
 			</DataGrid.Columns>
 		</DataGrid>
 
-		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="right" Height="30">
-			<Button x:Name="DeleteButton" Content="Delete" Click="Delete_Click"  IsEnabled="False" Width="50" Margin="0,0,20,0"/>
+		<!-- Footer buttons -->
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Height="30">
+			<Button x:Name="DeleteButton" Content="Delete" Click="Delete_Click" IsEnabled="False" Width="50" Margin="0,0,20,0"/>
 			<Button Content="Close" Click="Close_Click" Width="50"/>
 		</StackPanel>
 	</Grid>

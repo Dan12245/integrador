@@ -1,5 +1,6 @@
 ﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo;
 using Npgsql;
+using NpgsqlTypes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
@@ -7,12 +8,12 @@ using Windows.System;
 using static SkiaSharp.HarfBuzz.SKShaper;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
-//ignoren este comentario solo es para llegar a las 600 lineas
-//_. . ..._ . ._.  __. ___ _. _. ._ __. .. ..._ .  _.__ ___ .._  .._ .__. 
+//ignoren este comentario solo es para llegar a las600 lineas
+//_. . ..._ . ._. __. ___ _. _. ._ __. .. ..._ . _.__ ___ .._ .._ .__. 
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 {
-    //esta parte es importane pq aca hacemos el string de conexion no lo borren o nos quedamos sin base de  datos
+    //esta parte es importane pq aca hacemos el string de conexion no lo borren o nos quedamos sin base de datos
     class conexion
     {
         //si quieren cambiar de base de datos aca ponen los parametros nuevos y se genera solo
@@ -599,5 +600,113 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
         #endregion
-    }
+        #region nuevos_métodos_DB
+        public async Task<List<(int Id, string Alias)>> GetBuildingsForUser(int userId)
+ {
+ var result = new List<(int, string)>();
+ try
+ {
+ await using var con = new NpgsqlConnection(cadena_conexion);
+ await con.OpenAsync();
+ string sql = "SELECT building_id, COALESCE(alias,'Edificio '||building_id) FROM cra.buildings WHERE user_id=@uid ORDER BY building_id";
+ await using var cmd = new NpgsqlCommand(sql, con);
+ cmd.Parameters.AddWithValue("@uid", userId);
+ await using var reader = await cmd.ExecuteReaderAsync();
+ while (await reader.ReadAsync())
+ {
+ int bid = reader.GetInt32(0);
+ string alias = reader.GetString(1);
+ result.Add((bid, alias));
+ }
+ }
+ catch (Exception ex) { Console.WriteLine("GetBuildingsForUser error:" + ex); }
+ return result;
+ }
+
+ public async Task<List<(DateTime Day, double Consumption)>> GetConsumptionForBuilding(int buildingId, int year)
+ {
+ var result = new List<(DateTime, double)>();
+ try
+ {
+ await using var con = new NpgsqlConnection(cadena_conexion);
+ await con.OpenAsync();
+ DateTime start = new DateTime(year,1,1);
+ DateTime end = new DateTime(year,12,31);
+ string sql = "SELECT day, consumption FROM cra.consumption_per_day WHERE building_id=@bid AND day BETWEEN @d1 AND @d2 ORDER BY day";
+ await using var cmd = new NpgsqlCommand(sql, con);
+ cmd.Parameters.AddWithValue("@bid", buildingId);
+ cmd.Parameters.Add("@d1", NpgsqlDbType.Date).Value = start.Date;
+ cmd.Parameters.Add("@d2", NpgsqlDbType.Date).Value = end.Date;
+ await using var reader = await cmd.ExecuteReaderAsync();
+ while (await reader.ReadAsync())
+ {
+ var day = reader.GetDateTime(0);
+ // consumption es float4 (real) -> leer como Single y convertir a double
+ float consF = reader.GetFloat(1);
+ result.Add((day, (double)consF));
+ }
+ }
+ catch (Exception ex) { Console.WriteLine("GetConsumptionForBuilding error:" + ex); }
+ return result;
+ }
+
+ public async Task<bool> UpsertConsumption(int buildingId, DateTime day, double consumption)
+ {
+ try
+ {
+ // asegurar índice único antes del upsert atómico
+ await EnsureConsumptionUniqueIndexAsync();
+ await using var con = new NpgsqlConnection(cadena_conexion);
+ await con.OpenAsync();
+ var dateVal = day.Date;
+ var realVal = (float)Math.Round(consumption,2, MidpointRounding.AwayFromZero);
+ string sql = "INSERT INTO cra.consumption_per_day(building_id, day, consumption) VALUES(@b,@d,@c) ON CONFLICT (building_id, day) DO UPDATE SET consumption=EXCLUDED.consumption";
+ await using var cmd = new NpgsqlCommand(sql, con);
+ cmd.Parameters.AddWithValue("@b", buildingId);
+ cmd.Parameters.Add("@d", NpgsqlDbType.Date).Value = dateVal;
+ cmd.Parameters.Add("@c", NpgsqlDbType.Real).Value = realVal;
+ await cmd.ExecuteNonQueryAsync();
+ return true;
+ }
+ catch (Exception ex)
+ {
+ Console.WriteLine("UpsertConsumption error:" + ex);
+ return false;
+ }
+ }
+
+ public async Task<bool> DeleteConsumption(int buildingId, DateTime day)
+ {
+ try
+ {
+ await using var con = new NpgsqlConnection(cadena_conexion);
+ await con.OpenAsync();
+ string sql = "DELETE FROM cra.consumption_per_day WHERE building_id=@b AND day=@d";
+ await using var cmd = new NpgsqlCommand(sql, con);
+ cmd.Parameters.AddWithValue("@b", buildingId);
+ cmd.Parameters.Add("@d", NpgsqlDbType.Date).Value = day.Date;
+ int affected = await cmd.ExecuteNonQueryAsync();
+ return affected >0;
+ }
+ catch (Exception ex) { Console.WriteLine("DeleteConsumption error:" + ex); return false; }
+ }
+ #endregion
+ // Asegura el índice único requerido para ON CONFLICT (idempotente)
+ public async Task EnsureConsumptionUniqueIndexAsync()
+ {
+ try
+ {
+ await using var con = new NpgsqlConnection(cadena_conexion);
+ await con.OpenAsync();
+ const string sql = "CREATE UNIQUE INDEX IF NOT EXISTS ux_consumption_building_day ON cra.consumption_per_day (building_id, day)";
+ await using var cmd = new NpgsqlCommand(sql, con);
+ await cmd.ExecuteNonQueryAsync();
+ }
+ catch (Exception ex)
+ {
+ Console.WriteLine("EnsureConsumptionUniqueIndexAsync error:" + ex);
+ }
+ }
+ }
+
 }

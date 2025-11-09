@@ -1,8 +1,11 @@
 ﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels;
-using QuestPDF.Companion;
 using QuestPDF.Fluent;
+using QuestPDF.Companion; // restaurado para ShowInCompanionAsync
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -44,7 +47,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             InitializeComponent();
             Loaded += Inicio_Loaded;
-            this.DataContext = mainViewModel;
+            DataContext = mainViewModel; // una sola asignación
             MainWindow.UserData.Load();
 
             CambiarFondoGradiente(
@@ -53,14 +56,39 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                0.5,
                "Horizontal"
            );
+        }
 
+        private async void Inicio_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Optimizar: configurar el chart primero (render hints)
+            ConfigurarChart_Fant();
+
+            // cargar edificios y consumos antes de poblar UI
+            await mainViewModel.LoadBuildingsAsync();
+            if (mainViewModel.SelectedBuilding != null)
+            {
+                await mainViewModel.LoadConsumptionForSelectedBuildingAsync();
+            }
+
+            InicializarUI();
+
+            // Mostrar mensaje de bienvenida de Teto después de un pequeño delay
+            var bienvenidaTimer = new DispatcherTimer { Interval = System.TimeSpan.FromSeconds(2) };
+            bienvenidaTimer.Tick += (s, ev) =>
+            {
+                MostrarMensajeTeto("Hola, soy Teto, tu asistente virtual");
+                bienvenidaTimer.Stop();
+                primerMensajeMostrado = true;
+            };
+            bienvenidaTimer.Start();
+        }
+
+        private void InicializarUI()
+        {
             if (Registro.GlobalData.UserName == null)
                 Registro.GlobalData.UserName = "Usuario";
 
-            if (MainWindow.UserData.Uso == false)
-                texto_modo.Text = "Modo Empresarial";
-            else
-                texto_modo.Text = "Modo Doméstico";
+            texto_modo.Text = MainWindow.UserData.Uso ? "Modo Doméstico" : "Modo Empresarial";
 
             Texto_Bienvenida.Text = $"Hola, {Registro.GlobalData.UserName}!";
             Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10,101)}% este mes!";
@@ -69,29 +97,18 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             texto_consejo.Text = $"Consejo: " + consejos[indiceActual];
 
             //Temporizador para cambiar consejo cada5 segundos
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(5);
+            timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
             timer.Tick += Timer_Tick;
             timer.Start();
 
-            //Generar el documento PDF de ejemplo
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
-            // Obtener datos para el documento
+            // preparar gráficos en cache
+            var original = mainViewModel.SelectedPeriod;
+            mainViewModel.SelectedPeriod = "week";
             mainViewModel.SelectedPeriod = "month";
             mainViewModel.SelectedPeriod = "year";
-            mainViewModel.SelectedPeriod = "week";
-
-            // Mostrar mensaje de bienvenida de Teto después de un pequeño delay
-            var bienvenidaTimer = new DispatcherTimer();
-            bienvenidaTimer.Interval = TimeSpan.FromSeconds(2);
-            bienvenidaTimer.Tick += (s, e) =>
-            {
-                MostrarMensajeTeto("Hola, soy Teto, tu asistente virtual");
-                bienvenidaTimer.Stop();
-                primerMensajeMostrado = true;
-            };
-            bienvenidaTimer.Start();
+            mainViewModel.SelectedPeriod = original;
         }
 
         private void Boton_Editar_Click(object sender, RoutedEventArgs e)
@@ -213,19 +230,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             ReiniciarTimer();
         }
 
-        private void Inicio_Loaded(object sender, RoutedEventArgs e)
-        {
-            ConfigurarChart_Fant();
-        }
-        private void ConfigurarChart_Fant()
-        {
-            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Fant);
-            RenderOptions.SetEdgeMode(Chart, EdgeMode.Unspecified);
-            Chart.SnapsToDevicePixels = true;
-            Chart.UseLayoutRounding = true;
-            TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Display);
-            TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
-        }
         private void btnAnterior_Click(object sender, RoutedEventArgs e)
         {
             indiceActual--;
@@ -259,18 +263,34 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             // Mostrar siguiente mensaje del listado cada vez que se hace clic, anclado al botón presionado
             MostrarSiguienteMensajeTeto(sender as FrameworkElement);
         }
-        private void btnDownload_Click(object sender, RoutedEventArgs e)
+        private async void btnDownload_Click(object sender, RoutedEventArgs e)
         {
-            var data = new ViewModels.InvoiceDocumentDataSource();
-            var model = data.GetInvoiceDetails();
+            try
+            {
+                // restaurar lógica original sin Task.Run: generar gráficos y mostrar PDF directamente
+                var original = mainViewModel.SelectedPeriod;
+                mainViewModel.SelectedPeriod = "week";
+                mainViewModel.SelectedPeriod = "month";
+                mainViewModel.SelectedPeriod = "year";
+                mainViewModel.SelectedPeriod = original;
 
-            var document = new ViewModels.InvoiceDocument(
-            model, mainViewModel.ChartWeekData,
-            mainViewModel.ChartMonthData,
-            mainViewModel.ChartYearData);
+                var data = new ViewModels.InvoiceDocumentDataSource();
+                var model = data.GetInvoiceDetails();
+                var document = new ViewModels.InvoiceDocument(
+                model,
+                mainViewModel.ChartWeekData,
+                mainViewModel.ChartMonthData,
+                mainViewModel.ChartYearData);
 
-            document.GeneratePdfAndShow();
-            document.ShowInCompanionAsync();
+                // Mostrar directamente (GeneratePdfAndShow crea y abre el PDF temporal)
+                document.GeneratePdfAndShow();
+                // Abrir en Companion para vista adicional (async fire & forget)
+                await document.ShowInCompanionAsync();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show("Error generando reporte: " + ex.Message);
+            }
         }
         public static void CambiarFondoGradiente(MediaColor colorInicio, MediaColor colorFin, double offset =0.5, string direccion = "Horizontal")
         {
@@ -280,9 +300,14 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ConfigurarChart_Fant()
         {
-
+            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Fant);
+            RenderOptions.SetEdgeMode(Chart, EdgeMode.Unspecified);
+            Chart.SnapsToDevicePixels = true;
+            Chart.UseLayoutRounding = true;
+            TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Display);
+            TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
         }
     }
 }

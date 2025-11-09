@@ -6,6 +6,7 @@ using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using Windows.Devices.I2c.Provider;
+using QuestPDF.Infrastructure; // agregado para licencia QuestPDF
 // Alias to distinguish between Shell and Charts MainViewModel
 using ShellMainViewModel = Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel.MainViewModel;
 using ChartsMainViewModel = Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels.MainViewModel;
@@ -18,6 +19,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
         public App()
         {
+            // Configurar licencia QuestPDF globalmente
+            QuestPDF.Settings.License = LicenseType.Community;
+
             IServiceCollection services = new ServiceCollection();
 
             // Register main VMs
@@ -59,6 +63,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            // Alternativamente, también se puede configurar aquí antes de cualquier uso
+            // QuestPDF.Settings.License = LicenseType.Community;
+
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             base.OnStartup(e);

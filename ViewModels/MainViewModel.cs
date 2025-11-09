@@ -1,13 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.SKCharts;
 using SkiaSharp;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-
+using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 {
@@ -21,6 +23,22 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 
         // colección editable por el usuario (DataGrid)
         public ObservableCollection<DailyEntry> Items { get; } = new();
+
+        // edificios del usuario
+        public class BuildingInfo
+        {
+            public int Id { get; set; }
+            public string Alias { get; set; } = string.Empty;
+            public override string ToString() => Alias;
+        }
+
+        public ObservableCollection<BuildingInfo> Buildings { get; } = new();
+
+        [ObservableProperty]
+        private BuildingInfo selectedBuilding;
+
+        [ObservableProperty]
+        private bool isBusy; // agregado
 
         // límites para el selector de fecha
         public DateTime StartOfYear => new DateTime(year,1,1);
@@ -62,6 +80,98 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 
             SelectedPeriod = "week";
             UpdateValues();
+        }
+
+        // cargar edificios del usuario y seleccionar el de menor Id
+        public async Task LoadBuildingsAsync()
+        {
+            try
+            {
+                IsBusy = true;
+                var cx = new conexion();
+                Buildings.Clear();
+                // tomar el user id global tras login
+                int uid = GlobalData.userid;
+                if (uid <=0) return;
+                var list = await cx.GetBuildingsForUser(uid);
+                foreach (var (id, alias) in list)
+                    Buildings.Add(new BuildingInfo { Id = id, Alias = alias });
+                // seleccionar el de menor Id por defecto
+                if (Buildings.Count >0)
+                {
+                    BuildingInfo min = null;
+                    foreach (var b in Buildings)
+                        if (min == null || b.Id < min.Id) min = b;
+                    SelectedBuilding = min;
+                }
+            }
+            finally { IsBusy = false; }
+        }
+
+        partial void OnSelectedBuildingChanged(BuildingInfo value)
+        {
+            _ = LoadConsumptionForSelectedBuildingAsync();
+        }
+
+        public async Task LoadConsumptionForSelectedBuildingAsync()
+        {
+            try
+            {
+                IsBusy = true;
+                if (SelectedBuilding == null) return;
+                var cx = new conexion();
+                var rows = await cx.GetConsumptionForBuilding(SelectedBuilding.Id, year);
+                Items.Clear();
+                foreach (var tuple in rows)
+                {
+                    var day = tuple.Day;
+                    var cons = tuple.Consumption;
+                    Items.Add(new DailyEntry { Day = day.Date, Consumption = cons });
+                }
+                RebuildFromItems();
+            }
+            finally { IsBusy = false; }
+        }
+
+        public async Task<bool> SaveOrUpdateConsumptionAsync(DateTime day, double consumption)
+        {
+            if (SelectedBuilding == null) return false;
+            try
+            {
+                IsBusy = true;
+                var cx = new conexion();
+                var ok = await cx.UpsertConsumption(SelectedBuilding.Id, day.Date, Math.Round(consumption,2));
+                if (!ok) return false;
+                var existing = FindEntryByDay(day.Date);
+                if (existing != null) existing.Consumption = Math.Round(consumption,2); else Items.Add(new DailyEntry { Day = day.Date, Consumption = Math.Round(consumption,2) });
+                RebuildFromItems();
+                return true;
+            }
+            finally { IsBusy = false; }
+        }
+
+        public async Task<bool> DeleteConsumptionAsync(DateTime day)
+        {
+            if (SelectedBuilding == null) return false;
+            try
+            {
+                IsBusy = true;
+                var cx = new conexion();
+                var ok = await cx.DeleteConsumption(SelectedBuilding.Id, day.Date);
+                if (!ok) return false;
+                var existing = FindEntryByDay(day.Date);
+                if (existing != null) Items.Remove(existing);
+                RebuildFromItems();
+                return true;
+            }
+            finally { IsBusy = false; }
+        }
+
+        private DailyEntry FindEntryByDay(DateTime day)
+        {
+            foreach (var it in Items)
+                if (it.Day.Date == day.Date) return it;
+            return null;
         }
 
         // clase que representa una fila en el DataGrid
