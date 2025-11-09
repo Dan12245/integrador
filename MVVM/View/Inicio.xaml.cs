@@ -2,7 +2,7 @@
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels;
 using QuestPDF.Fluent;
-using QuestPDF.Companion; // restaurado para ShowInCompanionAsync
+using QuestPDF.Companion; //Necesario para abrir en Companion
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -25,11 +25,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         // Lista de mensajes de Teto
         private List<string> mensajesTeto = new List<string>
         {
-            "¿Sabías que usar una IA como ChatGPT consume bastante agua? durísimo hermano",
-            "hola",
-            "jaja",
-            "prueba",
-            "Por demaciaaaaa"
+            "Did you know that using an AI like ChatGPT consumes a lot of water? That's hard, bro.",
+            "Hello",
+            "Bonjour",
+            "Hola",
+            "Hahaha",
+            "Proof text",
+            "For demaciaaaa"
         };
 
         // Índice actual para recorrer mensajes de Teto
@@ -49,6 +51,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             Loaded += Inicio_Loaded;
             DataContext = mainViewModel; // una sola asignación
             MainWindow.UserData.Load();
+            InicializarUI();
 
             CambiarFondoGradiente(
               MediaColor.FromRgb(26,34,53),
@@ -61,7 +64,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         private async void Inicio_Loaded(object sender, RoutedEventArgs e)
         {
             // Optimizar: configurar el chart primero (render hints)
-            ConfigurarChart_Fant();
+            //ConfigurarChart_Fant();
 
             // cargar edificios y consumos antes de poblar UI
             await mainViewModel.LoadBuildingsAsync();
@@ -70,13 +73,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 await mainViewModel.LoadConsumptionForSelectedBuildingAsync();
             }
 
-            InicializarUI();
-
             // Mostrar mensaje de bienvenida de Teto después de un pequeño delay
-            var bienvenidaTimer = new DispatcherTimer { Interval = System.TimeSpan.FromSeconds(2) };
+            var bienvenidaTimer = new DispatcherTimer { Interval = System.TimeSpan.FromSeconds(3) };
             bienvenidaTimer.Tick += (s, ev) =>
             {
-                MostrarMensajeTeto("Hola, soy Teto, tu asistente virtual");
+                MostrarMensajeTeto("Hello, i'm Teto, your virtual assistant");
                 bienvenidaTimer.Stop();
                 primerMensajeMostrado = true;
             };
@@ -88,27 +89,22 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             if (Registro.GlobalData.UserName == null)
                 Registro.GlobalData.UserName = "Usuario";
 
-            texto_modo.Text = MainWindow.UserData.Uso ? "Modo Doméstico" : "Modo Empresarial";
+            texto_modo.Text = MainWindow.UserData.Uso ? "Domestic mode" : "Business mode";
 
-            Texto_Bienvenida.Text = $"Hola, {Registro.GlobalData.UserName}!";
-            Texto_Porcentaje.Text = $"¡Tu consumo de agua ha sido del {new Random().Next(10,101)}% este mes!";
+            Texto_Bienvenida.Text = $"Hello, {Registro.GlobalData.UserName}!";
+            Texto_Porcentaje.Text = $"¡Your water consumption has been of {new Random().Next(10,101)}% this month!";
 
             //Mostrar el primer consejo
-            texto_consejo.Text = $"Consejo: " + consejos[indiceActual];
+            texto_consejo.Text = consejos[indiceActual];
 
             //Temporizador para cambiar consejo cada5 segundos
             timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
             timer.Tick += Timer_Tick;
             timer.Start();
 
-            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community; // Configurar licencia QuestPDF
 
-            // preparar gráficos en cache
-            var original = mainViewModel.SelectedPeriod;
-            mainViewModel.SelectedPeriod = "week";
-            mainViewModel.SelectedPeriod = "month";
-            mainViewModel.SelectedPeriod = "year";
-            mainViewModel.SelectedPeriod = original;
+
         }
 
         private void Boton_Editar_Click(object sender, RoutedEventArgs e)
@@ -163,7 +159,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             // Resolver ancla: intentar por parámetro, luego por nombre en el árbol, si no, usar ventana principal
             var target = anchor ?? (FindName("btnSalto") as FrameworkElement) ?? Application.Current.MainWindow as FrameworkElement;
 
-            // Posicionar relativo al target disponible
+            // Posicionar relativo al target disponible (Teto image/button)
             tetoPopup = new Popup
             {
                 Child = border,
@@ -178,7 +174,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
             tetoPopup.IsOpen = true;
 
-            // Auto-cerrar después de8 segundos
+            // Auto-cerrar después de 8 segundos
             var closeTimer = new DispatcherTimer();
             closeTimer.Interval = TimeSpan.FromSeconds(8);
             closeTimer.Tick += (s, e) =>
@@ -206,14 +202,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
         private List<string> consejos = new List<string>
         {
-        "Dúchate rápido: Intenta reducir el tiempo en la regadera a5 minutos o menos.",
-         "Cierra la llave cuando no la uses: Al enjabonarte las manos, etc evita dejar correr el agua.",
-         "Usa un vaso para cepillarte los dientes: En vez de usar la llave, llena un vaso y con eso se enjuaga",
-         "Lava los trastes con método: Enjabona todo primero con la llave cerrada y luego enjuágalos de una.",
-         "Carga la lavadora al máximo recomendado: No uses la lavadora con poca ropa.",
-         "Revisa fugas en baños y llaves: Una fuga puede desperdiciar demasiada agua al mes sin que se note.",
-         "Riega de noche o temprano: Así evitas la evaporación por el sol y las plantas no se secan.",
-         "Reutiliza agua cuando se pueda: El agua de lavar frutas o verduras puede servir para regar plantas.",
+            "Take quick showers: Try to reduce your shower time to 5 minutes or less.",
+            "Turn off the tap when not in use: When soaping your hands, etc., avoid letting the water run.",
+            "Use a glass to brush your teeth: Instead of using the tap, fill a glass and use that to rinse.",
+            "Wash dishes efficiently: Soap everything first with the tap closed, and then rinse them all at once.",
+            "Run the washing machine at the recommended maximum load: Don't use the washing machine with only a few clothes.",
+            "Water plants at night or early in the morning: This way, you avoid evaporation from the sun and the plants don't dry out.",
+            "Reuse water when possible: The water from washing fruits or vegetables can be used to water plants."
         };
 
         private int indiceActual =0;
@@ -236,7 +231,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             if (indiceActual <0)
                 indiceActual = consejos.Count -1;
 
-            texto_consejo.Text = $"Consejo: " + $"Consejo: " + consejos[indiceActual];
+            texto_consejo.Text = consejos[indiceActual];
             ReiniciarTimer();
         }
 
@@ -246,7 +241,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             if (indiceActual >= consejos.Count)
                 indiceActual =0;
 
-            texto_consejo.Text = $"Consejo: " + consejos[indiceActual];
+            texto_consejo.Text = consejos[indiceActual];
         }
 
         private void ReiniciarTimer()
@@ -289,7 +284,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show("Error generando reporte: " + ex.Message);
+                MessageBox.Show("Error generated: " + ex.Message);
             }
         }
         public static void CambiarFondoGradiente(MediaColor colorInicio, MediaColor colorFin, double offset =0.5, string direccion = "Horizontal")
@@ -300,14 +295,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
         }
 
-        private void ConfigurarChart_Fant()
-        {
-            RenderOptions.SetBitmapScalingMode(Chart, BitmapScalingMode.Fant);
-            RenderOptions.SetEdgeMode(Chart, EdgeMode.Unspecified);
-            Chart.SnapsToDevicePixels = true;
-            Chart.UseLayoutRounding = true;
-            TextOptions.SetTextFormattingMode(Chart, TextFormattingMode.Display);
-            TextOptions.SetTextRenderingMode(Chart, TextRenderingMode.ClearType);
-        }
+
     }
 }

@@ -83,7 +83,7 @@
             <StackPanel x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <!--selector de edificio -->
                 <Border CornerRadius="15" BorderBrush="#FF7385E3" BorderThickness="1" Background="#FF252C74" Margin="0,0,10,0" Height="35">
-                    <ComboBox Width="180" Height="35" FontSize="16" FontFamily="Consolas" ItemsSource="{Binding Buildings}" DisplayMemberPath="Alias" SelectedItem="{Binding SelectedBuilding, Mode=TwoWay}"/>
+                    <ComboBox Width="250" Height="35" FontSize="16" FontFamily="Consolas" ItemsSource="{Binding Buildings}" DisplayMemberPath="Alias" SelectedItem="{Binding SelectedBuilding, Mode=TwoWay}"/>
                 </Border>
                 <!-- Botones de periodo -->
                 <Button Margin="10,0,5,0" Command="{Binding GoToPage2Command}" >Week</Button>

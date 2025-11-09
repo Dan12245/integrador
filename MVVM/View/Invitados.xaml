@@ -39,7 +39,7 @@
  <Grid x:Name="Login_Window" Background="#FF86A5FF" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
  <Rectangle Stroke="White" Margin="111,56,10,10" Fill="White" RadiusX="17.5" RadiusY="17.5"/>
  <Rectangle HorizontalAlignment="Left" Height="434" Stroke="#FF394D7E" VerticalAlignment="Center" Width="98" Fill="#FF394D7E"/>
- <Button x:Name="Boton_Usuarios" Content="Usuario Principal"
+ <Button x:Name="Boton_Usuarios" Content="Main user"
  Command="{Binding DataContext.NavigateToCommand, RelativeSource={RelativeSource AncestorType=Window}}"
  CommandParameter="{x:Type viewModel:UsuarioViewModel}"
  HorizontalAlignment="Left" Margin="111,8,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="16" Width="227" Height="35" RenderTransformOrigin="0,0" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}">
@@ -50,7 +50,7 @@
  <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
  </Button.Background>
  </Button>
- <Button x:Name="Boton_Invitados" Content="Invitados" HorizontalAlignment="Left" Margin="301,8,0,0" VerticalAlignment="Top" FontSize="16" Width="229" Height="35" RenderTransformOrigin="0,0">
+ <Button x:Name="Boton_Invitados" Content="Guests" HorizontalAlignment="Left" Margin="301,8,0,0" VerticalAlignment="Top" FontSize="16" Width="229" Height="35" RenderTransformOrigin="0,0">
  <Button.BorderBrush>
  <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
  </Button.BorderBrush>
@@ -65,10 +65,10 @@
  <Rectangle HorizontalAlignment="Left" Height="2" Margin="98,42,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="702"/>
  <Image x:Name="Foto" Margin="575,93,0,280" Source="Images/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="68"/>
  <Rectangle HorizontalAlignment="Left" Height="2" Margin="128,167,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="610"/>
- <TextBlock x:Name="Nombre" HorizontalAlignment="Left" Margin="128,108,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="423" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Nombre para medir texto para los nombres y aja"/></TextBlock>
- <Image x:Name="Foto_2" Margin="575,183,0,190" Source="/Images/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="68"/>
+ <TextBlock x:Name="Nombre" HorizontalAlignment="Left" Margin="128,108,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="552" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Proof text to measure textbox and names lenght"/></TextBlock>
+ <Image x:Name="Foto_2" Margin="670,179,0,194" Source="/Images/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="68"/>
  <Rectangle HorizontalAlignment="Left" Height="2" Margin="128,256,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="610"/>
- <TextBlock x:Name="Nombre_2" HorizontalAlignment="Left" Margin="128,198,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="423" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Nombre para medir texto para los nombres y aja"/></TextBlock>
+ <TextBlock x:Name="Nombre_2" HorizontalAlignment="Left" Margin="128,198,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="484" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Iker Ozuna Shippuden Gonzalez Rodriguez"/></TextBlock>
  </Grid>
  </Viewbox>
 </UserControl>

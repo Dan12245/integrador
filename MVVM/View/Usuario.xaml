@@ -42,7 +42,7 @@
                     <GradientStop Color="#FFCBDAFF" Offset="1"/>
                 </LinearGradientBrush>
             </Grid.Background>
-            <Button x:Name="Boton_Register" Content="Invitados"
+            <Button x:Name="Boton_Register" Content="Guests"
  Command="{Binding DataContext.NavigateToCommand, RelativeSource={RelativeSource AncestorType=Window}}"
  CommandParameter="{x:Type viewModel:InvitadosViewModel}"
  HorizontalAlignment="Left" Margin="400,0,0,0" VerticalAlignment="Top" FontSize="16" Width="416" Height="43" RenderTransformOrigin="0,0">
@@ -81,21 +81,21 @@
                     <ImageBrush ImageSource="/Images/Agregar.png"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Login" Content="Usuario Principal" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFBDC8FD" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="424" Height="44" RenderTransformOrigin="0,0" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
+            <Button x:Name="Boton_Login" Content="Main user" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFBDC8FD" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="424" Height="44" RenderTransformOrigin="0,0" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
             <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,42,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="800"/>
             <TextBlock x:Name="Texto_Nombre" HorizontalAlignment="Left" TextAlignment="Center" Margin="10,163,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="247" MaxWidth="513" Foreground="#FF071148"/>
             <Image Margin="76,49,0,276" Source="/MVVM/View/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
-            <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" TextAlignment="Center" Margin="11,284,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="246" Height="28" Foreground="#FF071148"><Run Text="Invitados:3000 :O"/><LineBreak/><Run/></TextBlock>
+            <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" TextAlignment="Center" Margin="11,284,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="246" Height="28" Foreground="#FF071148"><Run Text="Guests:3000 :O"/><LineBreak/><Run/></TextBlock>
             <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,317,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="780"/>
             <TextBlock x:Name="Datos_Usuario_Copiar" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,329,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="779" Height="24"><Run Language="es-mx" Text="Meta de reduccion de consumo"/></TextBlock>
             <ProgressBar x:Name="Barra_meta" HorizontalAlignment="Center" Height="38" Margin="0,355,0,0" VerticalAlignment="Top" Width="780" Background="#FFB9D5FF" BorderBrush="#FF0A2D65" Value="50" Foreground="#FF5F89C8"/>
-            <TextBlock x:Name="Dias_restantes" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,401,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="780" Height="24" Foreground="#FF071148"><Run Language="es-mx" Text="Dias restantes: te te te te teto"/></TextBlock>
-            <TextBlock x:Name="Meta_de_consumo_texto" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,326,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="780" Height="24" Foreground="#FF071148"><Run Language="es-mx" Text="Meta de consumo"/></TextBlock>
+            <TextBlock x:Name="Dias_restantes" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,401,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="780" Height="24" Foreground="#FF071148"><Run Language="es-mx" Text="Remaining days: te te te te teto"/></TextBlock>
+            <TextBlock x:Name="Meta_de_consumo_texto" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,326,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="780" Height="24" Foreground="#FF071148"><Run Language="es-mx" Text="Consumption goal"/></TextBlock>
 
             <DataGrid x:Name="miDataGrid" AutoGenerateColumns="False" Margin="284,49,83,127" BorderBrush="#FF1B0F73" Background="White" Foreground="#FF102567" FontFamily="Verdana" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Nombre de domicilio" Binding="{Binding Nombre}" Width="*"/>
-                    <DataGridTextColumn Header="Descripcion" Binding="{Binding Descripcion}" Width="*"/>
+                    <DataGridTextColumn Header="Building name" Binding="{Binding Nombre}" Width="*"/>
+                    <DataGridTextColumn Header="Description" Binding="{Binding Descripcion}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
             <Button x:Name="Boton_Eliminar2" Content="" Margin="734,252,15,130" Click="Boton_Eliminar2_Click">

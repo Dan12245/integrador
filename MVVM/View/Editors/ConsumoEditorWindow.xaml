@@ -5,7 +5,8 @@
 	 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	 xmlns:vm="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels"
 	 mc:Ignorable="d"
-	 Title="Manage consumptions" Height="400" Width="560" MaxHeight="400" MaxWidth="560" WindowStartupLocation="CenterOwner">
+	 Title="Manage consumptions" Height="400" Width="560" MaxHeight="400" MaxWidth="560"
+	 WindowStartupLocation="CenterOwner" Icon="/Images/logotilin2-blanco.png">
 	<Grid Margin="10">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>

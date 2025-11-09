@@ -29,16 +29,16 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls
             //     "Te encuentras aquí"
             //     );
             ShowCalloutFor(Boton_Menu,
-                "Presiona aquí para ir a la ventana principal.\nTambien puedes acceder a la ventana presionando '1'."
+                "Home.\nShortcut: ctrl + 1."
                 );
             ShowCalloutFor(Boton_Usuario,
-                "Presiona aquí para ir a la ventana de usuario e invitados.\nTambien puedes acceder a la ventana presionando '3'."
+                "User window.\nShortcut: ctrl + 3."
                 );
             ShowCalloutFor(Boton_Reportar,
-                "Presiona aquí para ir a la ventana de reporte de errores.\nTambien puedes acceder a la ventana presionando '4'."
+                "Reports window \nShortcut: ctrl + 4."
                 );
             ShowCalloutFor(Boton_Configuracion,
-                "Presiona aquí para ir a la ventana de configuracion.\nTambien puedes acceder a la ventana presionando '2'."
+                "Configuration\nShortcut: ctrl + 2."
                  );
 
         }

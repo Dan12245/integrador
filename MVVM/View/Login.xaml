@@ -77,10 +77,10 @@
                  VerticalContentAlignment="Center" Background="#FFD9D9D9" Foreground="#FF717171" Margin="0,226,0,0" PasswordChanged="txtPassword_PasswordChanged"/>
             <TextBox x:Name="txtEmail" HorizontalAlignment="Center" Margin="0,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" TabIndex="2"
                 Width="294" Height="31" FontFamily="Yu Gothic" FontSize="16" MaxLines="3" VerticalContentAlignment="Center" TextChanged="txtEmail_TextChanged" Background="#FFD9D9D9" Foreground="#FF717171"/>
-            <Button Content="Olvido el correo?" HorizontalAlignment="Left" Margin="253,183,0,0" VerticalAlignment="Top" TabIndex="5"
-                Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="16"/>
-            <Button Content="Olvido la contraseña?" HorizontalAlignment="Left" Margin="253,261,0,0" VerticalAlignment="Top" TabIndex="6"
-                Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="16"/>
+            <Button Content="Forgot mail?" HorizontalAlignment="Left" Margin="255,183,0,0" VerticalAlignment="Top" TabIndex="5"
+                Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="16" Cursor="Hand"/>
+            <Button Content="Forgot password?" HorizontalAlignment="Left" Margin="253,261,0,0" VerticalAlignment="Top" TabIndex="6"
+                Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" FontSize="16" Cursor="Hand"/>
             <Rectangle HorizontalAlignment="Center" Height="1" Margin="0,137,0,0" Stroke="Black" VerticalAlignment="Top" Width="284"/>
             <Rectangle HorizontalAlignment="Center" Height="2" Stroke="Black" VerticalAlignment="Top" Width="284" Margin="0,395,0,0"/>
             <Button x:Name="Iniciar_Sesion" Content="" HorizontalAlignment="Center" Margin="0,298,0,0" VerticalAlignment="Top" TabIndex="4"
@@ -93,7 +93,7 @@
                 <TextBlock.Foreground>
                     <SolidColorBrush Color="#FF717171" Opacity="1"/>
                 </TextBlock.Foreground>
-            <Run Language="es-mx" Text="Contraseña"/>
+            <Run Language="es-mx" Text="Password"/>
             </TextBlock>
             <TextBlock x:Name="txtPlaceholderEmail" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="256,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Yu Gothic" FontSize="16">
                 <TextBlock.Foreground>
