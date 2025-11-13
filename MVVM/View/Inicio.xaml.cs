@@ -45,10 +45,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         private const double POSICION_INICIAL =586;
         private const double RANGO_MOVIMIENTO =70;
 
+        private bool _dataLoaded; // asegura carga una vez visible
+
         public Inicio()
         {
             InitializeComponent();
             Loaded += Inicio_Loaded;
+            IsVisibleChanged += Inicio_IsVisibleChanged;
             DataContext = mainViewModel; // una sola asignación
             MainWindow.UserData.Load();
             InicializarUI();
@@ -63,16 +66,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
         private async void Inicio_Loaded(object sender, RoutedEventArgs e)
         {
-            // Optimizar: configurar el chart primero (render hints)
-            //ConfigurarChart_Fant();
-
-            // cargar edificios y consumos antes de poblar UI
-            await mainViewModel.LoadBuildingsAsync();
-            if (mainViewModel.SelectedBuilding != null)
-            {
-                await mainViewModel.LoadConsumptionForSelectedBuildingAsync();
-            }
-
+            await EnsureDataLoadedAsync();
             // Mostrar mensaje de bienvenida de Teto después de un pequeño delay
             var bienvenidaTimer = new DispatcherTimer { Interval = System.TimeSpan.FromSeconds(3) };
             bienvenidaTimer.Tick += (s, ev) =>
@@ -82,6 +76,41 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 primerMensajeMostrado = true;
             };
             bienvenidaTimer.Start();
+        }
+
+        private async void Inicio_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (IsVisible && !_dataLoaded)
+            {
+                await EnsureDataLoadedAsync();
+            }
+        }
+
+        private async Task EnsureDataLoadedAsync()
+        {
+            // Asegurar que el usuario esté listo antes de cargar datos
+            int retries =0;
+            while (Registro.GlobalData.userid <=0 && retries <50)
+            {
+                await Task.Delay(100);
+                retries++;
+            }
+
+            // cargar edificios y consumos antes de poblar UI
+            await mainViewModel.LoadBuildingsAsync();
+
+            // Garantizar selección inicial si el VM aún no asignó una
+            if (mainViewModel.SelectedBuilding == null && mainViewModel.Buildings.Count >0)
+            {
+                mainViewModel.SelectedBuilding = mainViewModel.Buildings[0];
+            }
+
+            if (mainViewModel.SelectedBuilding != null)
+            {
+                await mainViewModel.LoadConsumptionForSelectedBuildingAsync();
+            }
+
+            _dataLoaded = mainViewModel.SelectedBuilding != null && mainViewModel.Buildings.Count >0;
         }
 
         private void InicializarUI()
@@ -101,10 +130,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
             timer.Tick += Timer_Tick;
             timer.Start();
-
-            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community; // Configurar licencia QuestPDF
-
-
         }
 
         private void Boton_Editar_Click(object sender, RoutedEventArgs e)
@@ -262,7 +287,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             try
             {
-                // restaurar lógica original sin Task.Run: generar gráficos y mostrar PDF directamente
+                //Generar gráficos y mostrar PDF
                 var original = mainViewModel.SelectedPeriod;
                 mainViewModel.SelectedPeriod = "week";
                 mainViewModel.SelectedPeriod = "month";
