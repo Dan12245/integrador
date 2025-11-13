@@ -77,7 +77,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         public static string UsuarioActualEmail { get; private set; }
 
         // --- LOGIN ---
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        private async void btnLogin_Click(object sender, RoutedEventArgs e)
         {
             string email = txtEmail.Text;
             string password = txtPassword.Password;
@@ -89,7 +89,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
 
             conexion con = new conexion();
-            if (con.iniciar_sesion(email, password))
+            if (await con.iniciar_sesion(email, password))
             {
                 // Navegar a Inicio tras validar credenciales
                 if (Application.Current.MainWindow?.DataContext is MainViewModel shell)
@@ -144,5 +144,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 mostrandoContraseña = false;
             }
         }
+
+
     }
 }

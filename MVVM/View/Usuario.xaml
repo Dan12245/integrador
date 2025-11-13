@@ -6,140 +6,125 @@
  xmlns:viewModel="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel"
  mc:Ignorable="d" 
  d:DesignHeight="450" d:DesignWidth="800">
- <UserControl.Resources>
- <Style TargetType="Button">
- <Setter Property="Background" Value="#FF04023E"/>
- <Setter Property="Foreground" Value="White"/>
- <Setter Property="FontSize" Value="16"/>
- <Setter Property="BorderBrush" Value="#FF7385E3"/>
- <Setter Property="Template">
- <Setter.Value>
- <ControlTemplate TargetType="Button">
- <Border Background="{TemplateBinding Background}" 
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#FF04023E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderBrush" Value="#FF7385E3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
  BorderBrush="{TemplateBinding BorderBrush}" 
  BorderThickness="1" 
  CornerRadius="15">
- <!-- 🔸 Redondeo de esquinas -->
- <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
- </Border>
- </ControlTemplate>
- </Setter.Value>
- </Setter>
- <Style.Triggers>
- <Trigger Property="IsMouseOver" Value="True">
- <Setter Property="Background" Value="#FF7385E3"/>
- <Setter Property="Foreground" Value="White"/>
- </Trigger>
- </Style.Triggers>
- </Style>
- </UserControl.Resources>
+                            <!-- 🔸 Redondeo de esquinas -->
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF7385E3"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
 
- <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
- <Grid x:Name="Login_Window" Background="#FF86A5FF" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
- <Rectangle Stroke="White" Margin="111,56,10,10" Fill="White" RadiusX="17.5" RadiusY="17.5"/>
- <Rectangle HorizontalAlignment="Left" Height="434" Stroke="#FF394D7E" VerticalAlignment="Center" Width="98" Fill="#FF394D7E"/>
- <Button x:Name="Boton_Configuracion" HorizontalAlignment="Left" Margin="20,80,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
-
- <Button.Foreground>
- <SolidColorBrush Color="White" Opacity="0.4"/>
- </Button.Foreground>
- <Button.Background>
- <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
- </Button.Background>
- </Button>
- <Button x:Name="Boton_Reportar" HorizontalAlignment="Left" Margin="20,368,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0,0" Cursor="Hand">
-
- <Button.Foreground>
- <SolidColorBrush Color="White" Opacity="0.4"/>
- </Button.Foreground>
- <Button.Background>
- <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
- </Button.Background>
- </Button>
- <Image Margin="12,5,712,364" Source="Images/Logo.png" Height="65"/>
-
- <Button x:Name="Boton_Usuario" HorizontalAlignment="Left" Margin="20,274,0,0" VerticalAlignment="Top" BorderBrush="#FF7385E3" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0.5,0.5" Cursor="Hand">
- <Button.RenderTransform>
- <TransformGroup>
- <ScaleTransform/>
- <SkewTransform/>
- <RotateTransform Angle="45.933"/>
- <TranslateTransform/>
- </TransformGroup>
- </Button.RenderTransform>
-
- <Button.Foreground>
- <SolidColorBrush Color="White" Opacity="0.4"/>
- </Button.Foreground>
- <Button.Background>
- <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
- </Button.Background>
- </Button>
- <Button x:Name="Boton_Menu" HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="#FF303C73" FontSize="36" Width="58" Height="56" RenderTransformOrigin="0.5,0.5" Margin="49,163,0,0" BorderThickness="100">
- <Button.RenderTransform>
- <TransformGroup>
- <ScaleTransform/>
- <SkewTransform/>
- <RotateTransform Angle="0.447"/>
- <TranslateTransform X="-28.1381" Y="12.3021"/>
- </TransformGroup>
- </Button.RenderTransform>
-
- <Button.Foreground>
- <SolidColorBrush Color="White" Opacity="0.4"/>
- </Button.Foreground>
- <Button.Background>
- <SolidColorBrush Color="#FFBBD3F8" Opacity="1"/>
- </Button.Background>
- </Button>
- <Image Margin="32,378,734,20" Source="Images/Reportar.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
- <Image Margin="30,284,730,114" Source="Images/Usuario e invitados.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
- <Image Margin="29,183,729,211" Source=" Images/Configuracion.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
- <Image Margin="26,90,726,307" Source="Images/Menu Principal seleccionado.png" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"/>
- <Image Margin="-796,-7,813,0" Source="Images/Captura de pantalla2025-10-17101012.png" Stretch="Fill"/>
- <Button x:Name="Boton_Register" Content="Invitados"
+    <Viewbox Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid x:Name="Login_Window" Height="434" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FF91A9E2"/>
+                    <GradientStop Color="#FFCBDAFF" Offset="1"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Button x:Name="Boton_Register" Content="Guests"
  Command="{Binding DataContext.NavigateToCommand, RelativeSource={RelativeSource AncestorType=Window}}"
  CommandParameter="{x:Type viewModel:InvitadosViewModel}"
- HorizontalAlignment="Left" Margin="301,8,0,0" VerticalAlignment="Top" FontSize="16" Width="229" Height="35" RenderTransformOrigin="0,0">
- <Button.BorderBrush>
- <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
- </Button.BorderBrush>
+ HorizontalAlignment="Left" Margin="400,0,0,0" VerticalAlignment="Top" FontSize="16" Width="416" Height="43" RenderTransformOrigin="0,0">
+                <Button.BorderBrush>
+                    <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
+                </Button.BorderBrush>
 
- <Button.Foreground>
- <SolidColorBrush Color="White" Opacity="0.4"/>
- </Button.Foreground>
- <Button.Background>
- <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
- </Button.Background>
- </Button>
- <Button x:Name="Boton_Login" Content="Usuario Principal" HorizontalAlignment="Left" Margin="111,8,0,0" VerticalAlignment="Top" Background="#FFBDC8FD" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="227" Height="35" RenderTransformOrigin="0,0" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
- <Rectangle HorizontalAlignment="Left" Height="2" Margin="98,42,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="702"/>
- <TextBlock x:Name="Texto_Nombre" HorizontalAlignment="Left" Margin="258,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="247" MaxWidth="513"><Run Text="si este texto llega a salir, reportarlo al "/><LineBreak/><Run Language="es-mx" Text="pendejo de dani que se le olvido que el visual no vale verga"/></TextBlock>
- <Image Margin="126,71,0,254" Source="Images/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
- <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" Margin="126,284,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="645" MaxWidth="645" Height="28"><Run Text="Invitados:3000 :O"/><LineBreak/><Run/></TextBlock>
- <Rectangle HorizontalAlignment="Left" Height="2" Margin="144,317,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="610"/>
- <TextBlock x:Name="Datos_Usuario_Copiar" TextAlignment="Center" HorizontalAlignment="Left" Margin="126,329,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="645" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Meta de reduccion de consumo"/></TextBlock>
- <ProgressBar x:Name="Barra_meta" HorizontalAlignment="Left" Height="38" Margin="144,355,0,0" VerticalAlignment="Top" Width="610" Background="#FFB9D5FF" BorderBrush="#FF0A2D65" Value="50" Foreground="#FF5F89C8"/>
- <TextBlock x:Name="Datos_Usuario_Copiar1" TextAlignment="Center" HorizontalAlignment="Left" Margin="144,397,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="610" MaxWidth="645" Height="24"><Run Language="es-mx" Text="Dias restantes: te te te te teto"/></TextBlock>
- <Button Margin="752,0,6,392" Cursor="Hand">
- <Button.BorderBrush>
- <SolidColorBrush Color="#FF7385E3" Opacity="0"/>
- </Button.BorderBrush>
- <Button.Background>
- <ImageBrush ImageSource="/Images/Help.png"/>
- </Button.Background>
- </Button>
- <TextBlock x:Name="Texto_Nombre_Copiar" HorizontalAlignment="Left" Margin="681,8,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="22" Width="66" MaxWidth="513" Height="26">
- <TextBlock.Foreground>
- <SolidColorBrush Color="White" Opacity="0.7"/>
- </TextBlock.Foreground><Run Language="es-mx" Text="Ayuda"/></TextBlock>
- <TextBox x:Name="Domicilio_1" HorizontalAlignment="Left" Margin="538,102,0,0" TextWrapping="Wrap" Text="Domicilio1" VerticalAlignment="Top" Width="235"/>
- <TextBox x:Name="Domicilio_2" HorizontalAlignment="Left" Margin="538,139,0,0" TextWrapping="Wrap" Text="Domicilio2" VerticalAlignment="Top" Width="235"/>
- <TextBox x:Name="Domilicio_3" HorizontalAlignment="Left" Margin="538,178,0,0" TextWrapping="Wrap" Text="Domicilio3" VerticalAlignment="Top" Width="235"/>
- <TextBox x:Name="Domicilio_Principal" HorizontalAlignment="Left" Margin="538,64,0,0" TextWrapping="Wrap" Text="Domicilio Principal" VerticalAlignment="Top" Width="235"/>
- <Button Content="Agregar" HorizontalAlignment="Left" Margin="523,217,0,0" VerticalAlignment="Top" Width="76" Height="32" Click="Button_Agregar" BorderBrush="#FF7385E3"/>
- <Button Content="Quitar" HorizontalAlignment="Left" Margin="617,217,0,0" VerticalAlignment="Top" Width="76" Height="32" Click="Button_Quitar" BorderBrush="#FF7385E3"/>
- <Button Content="Editar" HorizontalAlignment="Left" Margin="709,217,0,0" VerticalAlignment="Top" Width="76" Height="32" Click="Button_Editar" BorderBrush="#FF7385E3"/>
- </Grid>
- </Viewbox>
+                <Button.Foreground>
+                    <SolidColorBrush Color="White" Opacity="0.4"/>
+                </Button.Foreground>
+                <Button.Background>
+                    <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_Eliminar" Content="" Height="52" Width="51" Grid.Row="1" Margin="380,-4,0,0">
+                <Button.BorderBrush>
+                    <ImageBrush/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Eliminar.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_Editar" Content="" Height="54" Width="54" Grid.Row="1" Margin="0,-3,0,0">
+                <Button.BorderBrush>
+                    <ImageBrush/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Editar.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_Agregar" Content="" Height="54" Width="54" Grid.Row="1" Margin="0,0,100,0">
+                <Button.BorderBrush>
+                    <ImageBrush/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Agregar.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_Login" Content="Main user" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFBDC8FD" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="424" Height="44" RenderTransformOrigin="0,0" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
+            <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,42,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="800"/>
+            <TextBlock x:Name="Texto_Nombre" HorizontalAlignment="Left" TextAlignment="Center" Margin="10,163,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="247" MaxWidth="513" Foreground="#FF071148"/>
+            <Image Margin="76,49,0,276" Source="/MVVM/View/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
+            <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" TextAlignment="Center" Margin="11,284,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="246" Height="28" Foreground="#FF071148"><Run Text="Guests:3000 :O"/><LineBreak/><Run/></TextBlock>
+            <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,317,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="780"/>
+            <TextBlock x:Name="Datos_Usuario_Copiar" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,329,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="779" Height="24"><Run Language="es-mx" Text="Meta de reduccion de consumo"/></TextBlock>
+            <ProgressBar x:Name="Barra_meta" HorizontalAlignment="Center" Height="38" Margin="0,355,0,0" VerticalAlignment="Top" Width="780" Background="#FFB9D5FF" BorderBrush="#FF0A2D65" Value="50" Foreground="#FF5F89C8"/>
+            <TextBlock x:Name="Dias_restantes" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,401,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="780" Height="24" Foreground="#FF071148"><Run Language="es-mx" Text="Remaining days: te te te te teto"/></TextBlock>
+            <TextBlock x:Name="Meta_de_consumo_texto" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,326,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="780" Height="24" Foreground="#FF071148"><Run Language="es-mx" Text="Consumption goal"/></TextBlock>
+
+            <DataGrid x:Name="miDataGrid" AutoGenerateColumns="False" Margin="284,49,83,127" BorderBrush="#FF1B0F73" Background="White" Foreground="#FF102567" FontFamily="Verdana" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Building name" Binding="{Binding Nombre}" Width="*"/>
+                    <DataGridTextColumn Header="Description" Binding="{Binding Descripcion}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button x:Name="Boton_Eliminar2" Content="" Margin="734,252,15,130" Click="Boton_Eliminar2_Click">
+                <Button.BorderBrush>
+                    <ImageBrush/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Eliminar.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_Agregar2" Content="" Margin="732,58,14,322" Click="Boton_Agregar2_Click">
+                <Button.BorderBrush>
+                    <ImageBrush/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Agregar.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="Boton_Editar2"
+        Click="Boton_Editar2_Click"
+        Margin="732,152,14,224"
+        Background="Transparent"
+        BorderBrush="{x:Null}">
+                <Image x:Name="BotonImagen"
+           Source="/Images/Editar.png"
+           Stretch="Uniform"/>
+            </Button>
+
+        </Grid>
+
+    </Viewbox>
 </UserControl>

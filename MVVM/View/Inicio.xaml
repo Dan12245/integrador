@@ -9,33 +9,36 @@
      xmlns:UserControl="clr-namespace:Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls"
      mc:Ignorable="d"
      d:DesignHeight="500" d:DesignWidth="800">
-
     <UserControl.Resources>
         <Style TargetType="Button">
-            <Setter Property="Background" Value="#FF04023E"/>
+            <Setter Property="Background" Value="#FF252C74"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="BorderBrush" Value="#FF7385E3"/>
             <Setter Property="Width" Value="60"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
                          BorderBrush="{TemplateBinding BorderBrush}"
                          BorderThickness="1"
-                         CornerRadius="15">     
-                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                         CornerRadius="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
-                </Setter.Value>
-            </Setter>
 
+                </Setter.Value>
+                
+            </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="BorderBrush" Value="White"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
+
 
         <Storyboard x:Key="SaltoStoryboard">
             <DoubleAnimation
@@ -45,47 +48,72 @@
          AutoReverse="True"
          RepeatBehavior="2x"/>
         </Storyboard>
-
         <vm:PeriodToCheckedConverter x:Key="PeriodToCheckedConverter"/>
-
     </UserControl.Resources>
+    <Grid >
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF92AAE3" Offset="0.32"/>
+                <GradientStop Color="#FFCBDAFF" Offset="0.601"/>
+            </LinearGradientBrush>
+        </Grid.Background>
 
-    <Grid Background="#FFCBDAFF">
         <Grid.RowDefinitions>
-            <RowDefinition Height="75"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="6*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="75"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="28" FontFamily="Cascadia Code" TextAlignment="Center"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
-            <TextBlock x:Name="Texto_Porcentaje" TextWrapping="Wrap" VerticalAlignment="Bottom" FontSize="24" FontFamily="Cascadia Code SemiLight" TextAlignment="Center"><Run Text="Texto consumo del mes"/></TextBlock>
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Black"/>
+                    <GradientStop Color="#FF262E75" Offset="1"/>
+                    <GradientStop Color="#FE222271"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <TextBlock x:Name="Texto_Bienvenida" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="28" FontFamily="Yu Gothic Medium" TextAlignment="Center" Margin="0,4,0,0" Foreground="#FF8FA2DC"><Run Language="es-mx" Text="Texto de bienvenida"/></TextBlock>
+            <TextBlock x:Name="Texto_Porcentaje" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" FontFamily="Yu Gothic Light" TextAlignment="Center" Margin="0,44,0,0" Foreground="#FF8FA2DC" FontWeight="Bold"><Run Text="Texto consumo del mes"/></TextBlock>
         </Grid>
-
-        <Grid Grid.Row="1" Background="#FFCBDAFF">
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
             <!-- Controles del gráfico -->
             <StackPanel x:Name="Graph1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Margin="0,0,5,0" Command="{Binding GoToPage2Command}">Week</Button>
-                <Button Margin="0,0,5,0" Command="{Binding GoToPage3Command}">Month</Button>
-                <Button Margin="0,0,5,0" Command="{Binding SeeAllCommand}">Year</Button>
-                <Button Margin="0,0,5,0" Width="145" Name="btnDownload" Click="btnDownload_Click">Download report</Button>
+                <!--selector de edificio -->
+                <Border CornerRadius="15" BorderBrush="#FF7385E3" BorderThickness="1" Background="#FF252C74" Margin="0,0,10,0" Height="35">
+                    <ComboBox Width="250" Height="35" FontSize="16" FontFamily="Consolas" ItemsSource="{Binding Buildings}" DisplayMemberPath="Alias" SelectedItem="{Binding SelectedBuilding, Mode=TwoWay}"/>
+                </Border>
+                <!-- Botones de periodo -->
+                <Button Margin="10,0,5,0" Command="{Binding GoToPage2Command}" >Week</Button>
+                <Button Margin="0.2,0,5,0" Command="{Binding GoToPage3Command}">Month</Button>
+                <Button Margin="0.2,0,5,0" Command="{Binding SeeAllCommand}">Year</Button>
+                <Button Width="150" x:Name="btnDownload" Click="btnDownload_Click" Content="Download report"/>
+                <Button x:Name="Boton_Editar" Height="50" Margin="10,0,0,0" Click="Boton_Editar_Click" BorderBrush="Transparent">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Images/Editar.png"/>
+                    </Button.Background>
+                </Button>
+                
             </StackPanel>
 
             <!-- Gráfico bonito -->
             <Grid Grid.Row="1">
-                <lvc:CartesianChart x:Name="Chart" Background="Transparent" BorderBrush="WhiteSmoke" ZoomMode="X"
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="1" CornerRadius="15" BorderBrush="#FF262E75" BorderThickness="3" Background="White" ClipToBounds="True" SnapsToDevicePixels="True">
+                    <lvc:CartesianChart x:Name="Chart" Background="Transparent" ZoomMode="X"
                  Series="{Binding Values}"
                  XAxes="{Binding XAxes}"
                  YAxes="{Binding YAxes}"/>
+                </Border>
             </Grid>
         </Grid>
-
         <Grid Grid.Row="2">
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -93,61 +121,54 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="4*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-
                 <Viewbox Grid.Row="0" Stretch="Uniform" StretchDirection="Both">
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock x:Name="texto_consejo" TextWrapping="Wrap" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
-                        <Run Language="es-mx" Text="Consejos consejosamente consejosos"/>
-                        </TextBlock>
-
+                        <TextBlock x:Name="texto_consejo" TextWrapping="Wrap" FontFamily="Cascadia Code SemiLight" TextAlignment="Center" Foreground="#FF071148" FontSize="16"><Run Language="es-mx" Text="Consejos consejosamente consejosos"/></TextBlock>
                     </Grid>
                 </Viewbox>
-
                 <Viewbox Grid.Row="1">
                     <TextBlock VerticalAlignment="Bottom" x:Name="texto_modo" FontFamily="Cascadia Code SemiLight" TextAlignment="Center">
-                         <Run Language="es-mx" Text="Modo :diablo:"/>
-                    </TextBlock>
+                        <TextBlock.Foreground>
+                            <SolidColorBrush Color="Black" Opacity="0.5"/>
+                        </TextBlock.Foreground><Run Language="es-mx" Text="Modo :diablo:"/></TextBlock>
                 </Viewbox>
-
             </Grid>
-
-            <Button Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{x:Null}" BorderBrush="{x:Null}" Click="btnSalto_Click">
-                <Button.RenderTransform>
-                    <TranslateTransform x:Name="btnSaltoTransform" Y="0"/>
-                </Button.RenderTransform>
-                <Image Stretch="Fill" gif:ImageBehavior.AnimatedSource="/Images/teto-tetoris.gif"/>
-            </Button>
-            <Button Grid.Column="3" Click="btnSiguiente_Click" Height="36" Width="54" BorderBrush="Transparent">
-                <Button.Background>
-                    <ImageBrush ImageSource="/Images/flecha.png"/>
-                </Button.Background>
-            </Button>
-            
-            <Image Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stretch="Fill" MaxWidth="75" Source="/Images/perrito chivas.png" />
-            
-            <Button Grid.Column="1" Click="btnAnterior_Click" Height="36" Width="54" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" >
-                <Button.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="-179.517"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Button.RenderTransform>
-                <Button.Background>
-                    <ImageBrush ImageSource="/Images/flecha.png"/>
-                </Button.Background>
-            </Button>
+            <Viewbox Grid.Column="4">
+                <Button x:Name="btnSalto" Height="75" Width="75" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{x:Null}" BorderBrush="{x:Null}" Click="btnSalto_Click">
+                    <Button.RenderTransform>
+                        <TranslateTransform x:Name="btnSaltoTransform" Y="0"/>
+                    </Button.RenderTransform>
+                    <Image Stretch="Uniform" gif:ImageBehavior.AnimatedSource="/Images/teto-tetoris.gif"/>
+                </Button>
+            </Viewbox>
+            <Viewbox Grid.Column="3" MaxWidth="100">
+                <Button Click="btnSiguiente_Click" BorderBrush="Transparent">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Images/flecha.png"/>
+                    </Button.Background>
+                </Button>
+            </Viewbox>
+            <Image Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stretch="Uniform" Source="/Images/perrito chivas.png" />
+            <Viewbox Grid.Column="1" MaxWidth="100">
+                <Button Grid.Column="1" Click="btnAnterior_Click" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" >
+                    <Button.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="-179.517"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Button.RenderTransform>
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Images/flecha.png"/>
+                    </Button.Background>
+                </Button>
+            </Viewbox>
         </Grid>
     </Grid>
 </UserControl>
