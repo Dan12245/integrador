@@ -1,5 +1,6 @@
 using Consumo_Reducido_de_Agua_ahora_si_definitivo;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls;
+using MiApp;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
@@ -10,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Invitados;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
@@ -118,21 +120,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         /// Esta funcion se utilizara a la hora de usar el boton de agregar domicilio
         /// asi queeeeeeee, toca ver como funciona :p
         /// </summary>
-        private void AgregarDomicilio()
-        {
-            ///primero que nada, declaramos una variable llamada NuevoDomicilio como un nuevo domicilio (omg)
-            var NuevoDomicilio = new Domicilio
-            {
-                //hacemos que el Id sea igual a la cantidad de domicilios + 1 (asi no se repiten los Ids)
-                Id = Domicilios.Count + 1,
-                //declaramos el nombre como un nuevo domicilio
-                Nombre = "Domicilio " + (Domicilios.Count + 1),
-                //y la descripcion como un campo vacio para que se pueda editar a gusto del usuario
-                Descripcion = "",
-            };
-            //finalmente, agregamos el nuevo domicilio a la coleccion de domicilios
-            Domicilios.Add(NuevoDomicilio);
-        }
+
         private void EliminarDomicilio()
         {
             //detecta si es que tienes seleccionado algun elemento del data grid
@@ -182,7 +170,32 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
         private void Boton_Agregar2_Click(object sender, RoutedEventArgs e)
         {
-            AgregarDomicilio();
+            var dialogo = new AgregarDomicilio();
+
+            // ShowDialog() devuelve true si presionaron Aceptar
+            if (dialogo.ShowDialog() == true)
+            {
+                // Obtener nuevo ID
+                int nuevoId = Domicilios.Count > 0 ? Domicilios.Max(p => p.Id) + 1 : 1;
+
+                // Crear nueva persona con los datos del diálogo
+
+                ///primero que nada, declaramos una variable llamada NuevoDomicilio como un nuevo domicilio (omg)
+                var NuevoDomicilio = new Domicilio
+                {
+                    //hacemos que el Id sea igual a la cantidad de Domicilios + 1 (asi no se repiten los Ids)
+                    Id = Domicilios.Count + 1,
+                    //declaramos el nombre como un nuevo domicilio
+                    Nombre = dialogo.Nombre,
+                    //y la descripcion como un campo vacio para que se pueda editar a gusto del usuario
+                    Descripcion = dialogo.Descripcion
+                };
+                //finalmente, agregamos el nuevo domicilio a la coleccion de Domicilios
+                Domicilios.Add(NuevoDomicilio);
+
+                MessageBox.Show("Persona agregada exitosamente!", "Éxito",
+                                  MessageBoxButton.OK, MessageBoxImage.Information);
+            }
             GuardarDatos();
         }
 
@@ -208,6 +221,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e)
         {
             EliminarDomicilio();
+            GuardarDatos();
         }
     }
 }

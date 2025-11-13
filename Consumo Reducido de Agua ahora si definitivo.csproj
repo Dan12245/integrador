@@ -41,8 +41,11 @@
     <None Remove="Image2.png" />
     <None Remove="Image3.png" />
     <None Remove="Image4.png" />
+    <None Remove="Images\Agregar usuario.png" />
     <None Remove="Images\Agregar.png" />
+    <None Remove="Images\Editar usuario.png" />
     <None Remove="Images\Editar.png" />
+    <None Remove="Images\Eliminar usuario.png" />
     <None Remove="Images\Eliminar.png" />
     <None Remove="Images\Help.png" />
     <None Remove="Images\logotilin2-blanco.png" />
@@ -87,11 +90,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\Agregar usuario.png" />
     <Resource Include="Images\Agregar.png" />
     <Resource Include="Images\Casa2 - Copier.png" />
     <Resource Include="Images\Casa2.png" />
     <Resource Include="Images\Correo.png" />
+    <Resource Include="Images\Editar usuario.png" />
     <Resource Include="Images\Editar.png" />
+    <Resource Include="Images\Eliminar usuario.png" />
     <Resource Include="Images\Eliminar.png" />
     <Resource Include="Images\Empresa.jpg" />
     <Resource Include="Images\Boton Iniciar sesion.png" />
