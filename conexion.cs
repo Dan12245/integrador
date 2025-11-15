@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using Windows.System;
 using static SkiaSharp.HarfBuzz.SKShaper;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View;
 
 //ignoren este comentario solo es para llegar a las600 lineas
 //_. . ..._ . ._. __. ___ _. _. ._ __. .. ..._ . _.__ ___ .._ .._ .__. 
@@ -273,7 +274,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         public async Task<int> id_usuario(string email)
         {
             NpgsqlConnection.ClearAllPools();
-            MessageBox.Show("si entró");
             try
             {
                 await using var cone = new NpgsqlConnection(cadena_conexion);
@@ -468,10 +468,33 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
         }
         #endregion
+        #region Reportes
+        public async void reportes(int user_id, string type, string description)
+        {
+            try
+            {
+                await using var con= new NpgsqlConnection(cadena_conexion);
+                await con.OpenAsync();
+                int id = Login.userid;
+                string com = "INSERT INTO cra.bugs (user_id, type, description) VALUES (@user_id, @type, @description)";
+                await using (var ejecutor = new NpgsqlCommand(com, con))
+                {
+                    ejecutor.Parameters.AddWithValue("@user_id", id);                    
+                    ejecutor.Parameters.AddWithValue("@type", type);
+                    ejecutor.Parameters.AddWithValue("@description", description);
+                    await ejecutor.ExecuteNonQueryAsync();
+                }
+                MessageBox.Show("Error enviado");
+            }
+            catch (Exception ex) {
+                MessageBox.Show("error, "+ex.ToString());
+            }
+        }
+        #endregion
         //y las funciones relacionadas con el consumo
 
         #region metodos edicion de consumo
-         public async Task<List<(int Id, string Alias)>> GetBuildingsForUser(int userId)
+        public async Task<List<(int Id, string Alias)>> GetBuildingsForUser(int userId)
          {
              var result = new List<(int, string)>();
              try

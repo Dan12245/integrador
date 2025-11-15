@@ -74,13 +74,15 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
                 // Información adicional con el tipo de error
                 string additionalInfo = $"Tipo de Error: {errorType}\nReportado desde: Ventana de Reporte";
-
+                int id= Login.userid;
+                conexion con= new conexion();
+                con.reportes(id,errorType,description);
                 // Reportar el bug
                 BugReporter.Instance.ReportBug(
                     title: title,
                     description: description,
                     steps: "",
-                    additionalInfo: additionalInfo
+                    additionalInfo: additionalInfo             
                 );
 
                 // Mostrar mensaje de éxito

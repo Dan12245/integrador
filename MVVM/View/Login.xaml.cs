@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
+using Windows.System;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
@@ -12,6 +13,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
     /// </summary>
     public partial class Login : UserControl
     {
+        public static int userid {get; set;}
         private bool mostrandoContraseña = false; // Estado actual
         public Login()
         {
@@ -94,6 +96,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 // Navegar a Inicio tras validar credenciales
                 if (Application.Current.MainWindow?.DataContext is MainViewModel shell)
                 {
+                    userid=await con.id_usuario(email);
                     shell.NavigateToInicioCommand.Execute(null);
                 }
             }
