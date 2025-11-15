@@ -41,8 +41,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             // Guardar los valores
             Nombre = txtNombre.Text.Trim();
             Descripcion = Descripcion_Texto.Text.Trim();
-
+            conexion con = new conexion();
             // Cerrar el diálogo con resultado positivo
+            con.agregar_domicilio_async(Nombre,Descripcion, Login.userid);
             DialogResult = true;
             Close();
         }

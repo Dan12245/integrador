@@ -21,6 +21,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
     /// </summary>
     public partial class Usuario : UserControl
     {
+        conexion con = new conexion();
         /// <summary>
         /// creo que es la primera vez que voy a hacer notas asi queeee....
         /// 
@@ -203,7 +204,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 //finalmente, agregamos el nuevo domicilio a la coleccion de Domicilios
                 Domicilios.Add(NuevoDomicilio);
 
-                MessageBox.Show("Persona agregada exitosamente!", "Éxito",
+                MessageBox.Show("Domicilio agregado exitosamente!", "Éxito",
                                   MessageBoxButton.OK, MessageBoxImage.Information);
             }
             GuardarDatos();
@@ -216,6 +217,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
             if (!Editor)
             {
+                
                 GuardarDatos();
             }
 

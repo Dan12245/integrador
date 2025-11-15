@@ -182,15 +182,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //aca ponemos funciones relacionadas a los domicilios
         #region domicilio
         //Funcion para agregar domicilio
-        public async void agregar_domicilio_async(string email, string alias, int userId)
+        public async void agregar_domicilio_async(string alias, string descripcion, int userId)
         {
             try
             {
                 await using (var con = new NpgsqlConnection(cadena_conexion))
                 {
-                    await con.OpenAsync();
-
-                    string descripcion = "tiene un colchon que me robé de la calle, un cuarto y no tiene baños";
+                    await con.OpenAsync();                    
                     string query = "INSERT INTO cra.buildings (user_id, alias, description) VALUES (@user_id, @alias, @description)";
 
                     await using (var ejecutor = new NpgsqlCommand(query, con))
