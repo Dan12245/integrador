@@ -132,14 +132,16 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         /// asi queeeeeeee, toca ver como funciona :p
         /// </summary>
 
-        private void EliminarDomicilio()
+        private async void EliminarDomicilio()
         {
             //detecta si es que tienes seleccionado algun elemento del data grid
             if (miDataGrid.SelectedItem != null)
             {
                 //si es asi, declara una variable domicilio que sera igual al domicilio seleccionado
                 var domicilio = (Domicilio)miDataGrid.SelectedItem;
+                string alias = domicilio.Nombre;
                 //y elimina ese domicilio de la coleccion de domicilios
+                con.eliminar_domicilio(alias, Login.userid);
                 Domicilios.Remove(domicilio);
             }
         }
@@ -232,7 +234,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
         private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e)
         {
-            EliminarDomicilio();
+            EliminarDomicilio();            
             GuardarDatos();
         }
     }
