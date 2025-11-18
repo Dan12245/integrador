@@ -39,7 +39,6 @@
             </Style.Triggers>
         </Style>
 
-
         <Storyboard x:Key="SaltoStoryboard">
             <DoubleAnimation
          Storyboard.TargetName="btnSaltoTransform"

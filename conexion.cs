@@ -581,8 +581,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             catch (Exception ex) { Console.WriteLine("DeleteConsumption error:" + ex); return false; }
         }
         #endregion
-        // Asegura el índice único requerido para ON CONFLICT (buildingID + UserID)
 
+        // Asegura el índice único requerido para ON CONFLICT (buildingID + UserID
         public async Task EnsureConsumptionUniqueIndexAsync()
         {
             try
