@@ -54,7 +54,7 @@
                        TextAlignment="Center" 
                        Margin="0,13,0,0" 
                        Foreground="#FF8FA2DC" 
-                       Text="Reporte de Bugs o Errores !"/>
+                       Text="Error or Bug Reporting !"/>
 
             <!-- Imágenes de advertencia -->
             <Image Margin="106,24,654,441" Source="/Images/Advertencia.png" Stretch="Fill"/>
@@ -71,7 +71,7 @@
                        FontSize="20" 
                        Width="780" 
                        Foreground="#FF273A36">
-                <Run Language="es-mx" Text="Seleccione el tipo de reporte:"/>
+                <Run Language="es-mx" Text="Select the type of problem:"/>
             </TextBlock>
 
             <ComboBox x:Name="ErrorTypeComboBox" 
@@ -82,11 +82,11 @@
                       Width="558" 
                       Height="29"
                       SelectedIndex="0" FontSize="18" FontFamily="Corbel">
-                <ComboBoxItem Content="Error de Funcionalidad"/>
-                <ComboBoxItem Content="Error Visual/UI"/>
-                <ComboBoxItem Content="Error de Rendimiento"/>
-                <ComboBoxItem Content="Crash/Cierre Inesperado"/>
-                <ComboBoxItem Content="Otro"/>
+                <ComboBoxItem Content="Functionality Error"/>
+                <ComboBoxItem Content="Visual/UI Error"/>
+                <ComboBoxItem Content="Performance Error"/>
+                <ComboBoxItem Content="Crash/Unexpected Termination"/>
+                <ComboBoxItem Content="Other"/>
             </ComboBox>
 
             <!-- Severidad -->
@@ -102,7 +102,7 @@
                        FontSize="18" 
                        Width="780" 
                        Foreground="#FF273A36">
-                <Run Language="es-mx" Text="Describa de manera breve el problema que se le presentó:"/>
+                <Run Language="es-mx" Text="Briefly describe the problem you have encountered:"/>
             </TextBlock>
 
             <TextBox x:Name="DescriptionTextBox" 
@@ -117,7 +117,7 @@
 
             <!-- Botón Reportar -->
             <Button x:Name="ReportButton"
-                    Content="Reportar" 
+                    Content="Send Report" 
                     HorizontalAlignment="Right" 
                     Margin="0,415,30,0" 
                     VerticalAlignment="Top" 
@@ -126,13 +126,13 @@
                     Foreground="#FF9A1D1D" 
                     Height="41" 
                     Width="200" 
-                    FontSize="28" 
+                    FontSize="22" 
                     FontFamily="Tw Cen MT"
                     Click="SubmitReport_Click"/>
 
             <!-- Botón Ver Reportes -->
             <Button x:Name="ViewReportsButton"
-                    Content="Ver Reportes" 
+                    Content="See Reports" 
                     HorizontalAlignment="Left" 
                     Margin="370,415,0,0" 
                     VerticalAlignment="Top" 
@@ -156,7 +156,7 @@
                        FontSize="18" 
                        Width="345" 
                        Foreground="#FF273A36">
-                <Run Language="es-mx" Text="¡Tu feedback siempre es bueno!"/>
+                <Run Language="es-mx" Text="Your feedback is always appreciated!"/>
             </TextBlock>
         </Grid>
     </Viewbox>
