@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
+using Windows.System;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
@@ -12,6 +13,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
     /// </summary>
     public partial class Login : UserControl
     {
+        public static int userid {get; set;}
         private bool mostrandoContraseña = false; // Estado actual
         public Login()
         {
@@ -67,11 +69,84 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             string password = txtPassword.Password;
             if (string.IsNullOrWhiteSpace(password))
             {
-                txtPlaceholderPass.Text = "Contraseña";
+                txtPlaceholderPass.Text = "Password";
             }
             else
             {
                 txtPlaceholderPass.Text = "";
+            }
+
+            if (txtPassword.Visibility == Visibility.Visible)
+            {
+                txtPassVisible.Text = txtPassword.Password;
+            }
+        }
+
+        private void txtPassVisible_TextChanged(object sender, RoutedEventArgs e)
+        {
+            if (txtPassVisible.Visibility == Visibility.Visible)
+            {
+                txtPassword.Password = txtPassVisible.Text;
+            }
+        }
+        private void Icono_Contraseña_Click(object sender, RoutedEventArgs e)
+        {
+            //// No hacer nada si no hay contraseña escrita
+            //if (string.IsNullOrEmpty(txtPassword.Password))
+            //    return;
+
+            //if (!mostrandoContraseña)
+            //{
+            //    // Mostrar texto
+            //    txtPlaceholderPass.Text = txtPassword.Password;
+
+            //    // Mostrar el TextBox y desactivar el PasswordBox
+            //    txtPlaceholderPass.Opacity = 1;
+            //    txtPlaceholderPass.IsHitTestVisible = false;
+
+            //    txtPassword.Opacity = 0;
+            //    txtPassword.IsHitTestVisible = true;
+
+            //    mostrandoContraseña = true;
+            //}
+            //else
+            //{
+            //    // Volver al modo oculto
+            //    txtPassword.Password = txtPlaceholderPass.Text;
+
+            //    txtPlaceholderPass.Opacity = 0;
+            //    txtPlaceholderPass.IsHitTestVisible = false;
+
+            //    txtPassword.Opacity = 1;
+            //    txtPassword.IsHitTestVisible = true;
+
+            //    mostrandoContraseña = false;
+            //}
+            
+            if (txtPassVisible.Visibility == Visibility.Visible)
+            {
+                //txtPassVisible
+                // MODO: Ocultar contraseña
+                txtPassword.Password = txtPassVisible.Text; // Sincronizar
+                txtPassVisible.Visibility = Visibility.Collapsed;
+                txtPassword.Visibility = Visibility.Visible;
+
+                // Poner foco y cursor al final
+                txtPassword.Focus();
+                // Nota: PasswordBox no tiene Select(), el cursor va al inicio por defecto.
+                // Para moverlo al final en PasswordBox se requiere código extra complejo, 
+                // pero el foco funciona bien.
+            }
+            else
+            {
+                // MODO: Mostrar contraseña
+                txtPassVisible.Text = txtPassword.Password; // Sincronizar
+                txtPassword.Visibility = Visibility.Collapsed;
+                txtPassVisible.Visibility = Visibility.Visible;
+
+                // Poner foco y cursor al final para seguir escribiendo fluido
+                txtPassVisible.Focus();
+                txtPassVisible.CaretIndex = txtPlaceholderPass.Text.Length;
             }
         }
         public static string UsuarioActualEmail { get; private set; }
@@ -94,6 +169,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 // Navegar a Inicio tras validar credenciales
                 if (Application.Current.MainWindow?.DataContext is MainViewModel shell)
                 {
+                    userid=await con.id_usuario(email);
                     shell.NavigateToInicioCommand.Execute(null);
                 }
             }
@@ -110,41 +186,5 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 main.CambiarEscena(new Inicio());
             }
         }
-        private void Icono_Contraseña_Click(object sender, RoutedEventArgs e)
-        {
-            // No hacer nada si no hay contraseña escrita
-            if (string.IsNullOrEmpty(txtPassword.Password))
-                return;
-
-            if (!mostrandoContraseña)
-            {
-                // Mostrar texto
-                txtPlaceholderPass.Text = txtPassword.Password;
-
-                // Mostrar el TextBox y desactivar el PasswordBox
-                txtPlaceholderPass.Opacity = 1;
-                txtPlaceholderPass.IsHitTestVisible = false;
-
-                txtPassword.Opacity = 0;
-                txtPassword.IsHitTestVisible = true;
-
-                mostrandoContraseña = true;
-            }
-            else
-            {
-                // Volver al modo oculto
-                txtPassword.Password = txtPlaceholderPass.Text;
-
-                txtPlaceholderPass.Opacity = 0;
-                txtPlaceholderPass.IsHitTestVisible = false;
-
-                txtPassword.Opacity = 1;
-                txtPassword.IsHitTestVisible = true;
-
-                mostrandoContraseña = false;
-            }
-        }
-
-
     }
 }

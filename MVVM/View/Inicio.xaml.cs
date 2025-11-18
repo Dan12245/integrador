@@ -31,7 +31,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             "Hola",
             "Hahaha",
             "Proof text",
-            "For demaciaaaa"
+            "For demaciaaaa",
+            
         };
 
         // Índice actual para recorrer mensajes de Teto
@@ -140,17 +141,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             };
             win.ShowDialog();
         }
-
-        // Método para agregar mensajes personalizados
-        public void AgregarMensajeTeto(string mensaje)
-        {
-            if (!string.IsNullOrWhiteSpace(mensaje))
-            {
-                mensajesTeto.Add(mensaje);
-            }
-        }
-
-        // Mostrar mensaje en un popup anclado al botón de Teto (o al ancla pasada)
+        // Mostrar mensaje en un popup anclado al botón de Teto
         private void MostrarMensajeTeto(string mensaje, FrameworkElement? anchor = null)
         {
             // Cerrar popup anterior si existe
@@ -304,8 +295,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
                 // Mostrar directamente (GeneratePdfAndShow crea y abre el PDF temporal)
                 document.GeneratePdfAndShow();
-                // Abrir en Companion para vista adicional (async fire & forget)
-                await document.ShowInCompanionAsync();
+                // Abrir en Companion para vista adicional
+               // await document.ShowInCompanionAsync();
             }
             catch (System.Exception ex)
             {
@@ -319,7 +310,5 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 mainWindow.CambiarFondoGradiente(colorInicio, colorFin, offset, direccion: "Horizontal");
             }
         }
-
-
     }
 }

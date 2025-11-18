@@ -10,6 +10,7 @@ using SkiaSharp;
 using System.Globalization;
 using System.IO;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
+using System.Collections.Generic;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 {
@@ -41,8 +42,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
         private bool isBusy; // agregado
 
         // límites para el selector de fecha
-        public DateTime StartOfYear => new DateTime(year,1,1);
-        public DateTime Today => DateTime.Today.Year == year ? DateTime.Today : new DateTime(year,1,1);
+        public DateTime StartOfYear => new DateTime(year, 1, 1);
+        public DateTime Today => DateTime.Today.Year == year ? DateTime.Today : new DateTime(year, 1, 1);
 
         [ObservableProperty]
         private string selectedPeriod = string.Empty;
@@ -70,9 +71,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
             new Axis { TextSize =18 }
         };
 
+        // evita cargas reentrantes
+        private bool _loadingBuildings;
+
         public MainViewModel()
         {
-            daysInYear = DateTime.IsLeapYear(year) ?366 :365;
+            daysInYear = DateTime.IsLeapYear(year) ? 366 : 365;
             totalConsumption = new double[daysInYear]; // inicia en0
 
             // Recalcular gráfico cuando cambie la colección o cualquier propiedad de un elemento
@@ -85,6 +89,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
         // cargar edificios del usuario y seleccionar el de menor Id
         public async Task LoadBuildingsAsync()
         {
+            if (_loadingBuildings) return; // evita reentrada
+            _loadingBuildings = true;
             try
             {
                 IsBusy = true;
@@ -92,12 +98,23 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                 Buildings.Clear();
                 // tomar el user id global tras login
                 int uid = GlobalData.userid;
-                if (uid <=0) return;
+                if (uid <= 0) return;
                 var list = await cx.GetBuildingsForUser(uid);
-                foreach (var (id, alias) in list)
+
+                // filtrar duplicados por Id y por Alias normalizado (trim, case-insensitive)
+                var ids = new HashSet<int>();
+                var aliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var (id, aliasRaw) in list)
+                {
+                    var alias = (aliasRaw ?? string.Empty).Trim();
+                    if (!ids.Add(id)) continue; // ya tenemos ese Id
+                    if (!aliases.Add(alias)) continue; // alias repetido
+
                     Buildings.Add(new BuildingInfo { Id = id, Alias = alias });
+                }
                 // seleccionar el de menor Id por defecto
-                if (Buildings.Count >0)
+                if (Buildings.Count > 0)
                 {
                     BuildingInfo min = null;
                     foreach (var b in Buildings)
@@ -105,7 +122,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                     SelectedBuilding = min;
                 }
             }
-            finally { IsBusy = false; }
+            finally { IsBusy = false; _loadingBuildings = false; }
         }
 
         partial void OnSelectedBuildingChanged(BuildingInfo value)
@@ -140,10 +157,10 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
             {
                 IsBusy = true;
                 var cx = new conexion();
-                var ok = await cx.UpsertConsumption(SelectedBuilding.Id, day.Date, Math.Round(consumption,2));
+                var ok = await cx.UpsertConsumption(SelectedBuilding.Id, day.Date, Math.Round(consumption, 2));
                 if (!ok) return false;
                 var existing = FindEntryByDay(day.Date);
-                if (existing != null) existing.Consumption = Math.Round(consumption,2); else Items.Add(new DailyEntry { Day = day.Date, Consumption = Math.Round(consumption,2) });
+                if (existing != null) existing.Consumption = Math.Round(consumption, 2); else Items.Add(new DailyEntry { Day = day.Date, Consumption = Math.Round(consumption, 2) });
                 RebuildFromItems();
                 return true;
             }
@@ -195,8 +212,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
         // llamado para reconstruir el arreglo diario desde Items y refrescar la gráfica
         public void RebuildFromItems()
         {
-            Array.Clear(totalConsumption,0, totalConsumption.Length);
-            var startOfYear = new DateTime(year,1,1);
+            Array.Clear(totalConsumption, 0, totalConsumption.Length);
+            var startOfYear = new DateTime(year, 1, 1);
             foreach (var it in Items)
             {
                 // limitar a año en curso y no permitir futuro
@@ -204,7 +221,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                 if (it.Day.Date > Today.Date) continue;
 
                 int index = (int)(it.Day.Date - startOfYear).TotalDays;
-                if (index >=0 && index < totalConsumption.Length)
+                if (index >= 0 && index < totalConsumption.Length)
                 {
                     // Acumular múltiples consumos registrados para el mismo día
                     totalConsumption[index] += it.Consumption;
@@ -217,16 +234,16 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 
         private void UpdateValues()
         {
-            var startOfYear = new DateTime(year,1,1);
+            var startOfYear = new DateTime(year, 1, 1);
             var today = Today;
-            var todayIndex = Math.Clamp((today - startOfYear).Days,0, daysInYear -1);
+            var todayIndex = Math.Clamp((today - startOfYear).Days, 0, daysInYear - 1);
             switch (selectedPeriod)
             {
                 case "week":
                     {
                         var end = todayIndex;
-                        var start = Math.Max(0, end -6);
-                        var count = end - start +1;
+                        var start = Math.Max(0, end - 6);
+                        var count = end - start + 1;
 
                         Values = new ISeries[]
                         {
@@ -235,7 +252,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 
                         var startDate = startOfYear.AddDays(start);
                         var labels = new string[count];
-                        for (int i =0; i < count; i++)
+                        for (int i = 0; i < count; i++)
                             labels[i] = startDate.AddDays(i).ToString("ddd", Culture);
                         XAxes[0].Labels = labels;
 
@@ -247,17 +264,17 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                         };
                         using (var stream = new MemoryStream())
                         {
-                            chart.SaveImage(stream, SKEncodedImageFormat.Png,100);
+                            chart.SaveImage(stream, SKEncodedImageFormat.Png, 100);
                             ChartWeekData = stream.ToArray();
                         }
                         break;
                     }
                 case "month":
                     {
-                        var monthStart = new DateTime(year, today.Month,1);
+                        var monthStart = new DateTime(year, today.Month, 1);
                         var dim = DateTime.DaysInMonth(year, today.Month);
                         var start = (monthStart - startOfYear).Days;
-                        var count = Math.Clamp(today.Day,1, dim);
+                        var count = Math.Clamp(today.Day, 1, dim);
 
                         Values = new ISeries[]
                         {
@@ -265,7 +282,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                         };
 
                         var labels = new string[count];
-                        for (int i =0; i < count; i++)
+                        for (int i = 0; i < count; i++)
                             labels[i] = monthStart.AddDays(i).ToString("d MMM", Culture);
                         XAxes[0].Labels = labels;
 
@@ -277,7 +294,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                         };
                         using (var stream = new MemoryStream())
                         {
-                            chart.SaveImage(stream, SKEncodedImageFormat.Png,100);
+                            chart.SaveImage(stream, SKEncodedImageFormat.Png, 100);
                             ChartMonthData = stream.ToArray();
                         }
 
@@ -293,8 +310,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                         };
 
                         var labels = new string[today.Month];
-                        for (int m =1; m <= today.Month; m++)
-                            labels[m -1] = new DateTime(year, m,1).ToString("MMMM", Culture);
+                        for (int m = 1; m <= today.Month; m++)
+                            labels[m - 1] = new DateTime(year, m, 1).ToString("MMMM", Culture);
                         XAxes[0].Labels = labels;
 
                         var chart = new SKCartesianChart
@@ -305,7 +322,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                         };
                         using (var stream = new MemoryStream())
                         {
-                            chart.SaveImage(stream, SKEncodedImageFormat.Png,100);
+                            chart.SaveImage(stream, SKEncodedImageFormat.Png, 100);
                             ChartYearData = stream.ToArray();
                         }
                         break;
@@ -320,7 +337,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
         private static double[] Slice(double[] source, int start, int count)
         {
             var result = new double[count];
-            Array.Copy(source, start, result,0, count);
+            Array.Copy(source, start, result, 0, count);
             return result;
         }
 
@@ -328,24 +345,24 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
         {
             int months = today.Month;
             var result = new double[months];
-            var offset =0;
+            var offset = 0;
 
-            for (int month =1; month <= months; month++)
+            for (int month = 1; month <= months; month++)
             {
                 var dim = DateTime.DaysInMonth(year, month);
-                var take = month == today.Month ? Math.Clamp(today.Day,1, dim) : dim;
+                var take = month == today.Month ? Math.Clamp(today.Day, 1, dim) : dim;
 
                 take = Math.Min(take, Math.Max(0, daily.Length - offset));
 
-                if (take <=0)
+                if (take <= 0)
                 {
-                    result[month -1] =0;
+                    result[month - 1] = 0;
                 }
                 else
                 {
-                    double sum =0;
-                    for (int i =0; i < take; i++) sum += daily[offset + i];
-                    result[month -1] = sum / take;
+                    double sum = 0;
+                    for (int i = 0; i < take; i++) sum += daily[offset + i];
+                    result[month - 1] = sum / take;
                 }
 
                 offset += dim;

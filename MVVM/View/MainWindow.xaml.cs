@@ -10,6 +10,8 @@ using IOPath = System.IO.Path;
 using System.ComponentModel;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.Services;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel;
+using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
 {
@@ -110,6 +112,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
         private INotifyPropertyChanged? _navigationInpc;
         private bool _isStartupAnimating = true; // fuerza ocultar menú durante animación
 
+        // Track keybindings we create so we can add/remove them based on current view
+        private readonly List<KeyBinding> _menuKeyBindings = new();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -124,6 +129,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
         {
             AttachNavigationListener();
             UpdateMenuVisibilityForCurrentView();
+
+            // Register key bindings now that the window is loaded (DataContext should be available)
+            RegisterMenuKeyBindings();
+
+            // Ensure bindings reflect the current view (login/register should block shortcuts)
+            ApplyMenuKeyBindingsState();
         }
 
         private void MainWindow_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -131,6 +142,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
             DetachNavigationListener();
             AttachNavigationListener();
             UpdateMenuVisibilityForCurrentView();
+
+            // Re-register key bindings when DataContext changes
+            RegisterMenuKeyBindings();
+
+            // Ensure bindings reflect the current view after re-register
+            ApplyMenuKeyBindingsState();
         }
 
         private void AttachNavigationListener()
@@ -155,7 +172,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
         {
             if (e.PropertyName == nameof(INavigationService.CurrentView))
             {
-                Dispatcher.Invoke(UpdateMenuVisibilityForCurrentView);
+                Dispatcher.Invoke(() =>
+                {
+                    UpdateMenuVisibilityForCurrentView();
+                    // Update key bindings when navigation target changes (block on Login/Registro)
+                    ApplyMenuKeyBindingsState();
+                });
             }
         }
 
@@ -184,6 +206,72 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.View
             if (FindName("MenuColumn") is ColumnDefinition col)
             {
                 col.Width = hide ? new GridLength(0) : GridLength.Auto;
+            }
+        }
+
+        /// <summary>
+        /// Register (or re-register) window-level Ctrl+1..Ctrl+4 keybindings to navigate menu views.
+        /// KeyBindings are created and tracked here, but only added to InputBindings when the
+        /// current view is not Login or Registro. This lets us block shortcuts while on those views.
+        /// Ctrl+1 => Inicio
+        /// Ctrl+2 => Configuracion
+        /// Ctrl+3 => Usuario
+        /// Ctrl+4 => Reporte
+        /// </summary>
+        private void RegisterMenuKeyBindings()
+        {
+            // Remove previous bindings we added from InputBindings and clear our list
+            foreach (var kb in _menuKeyBindings.ToArray())
+            {
+                if (InputBindings.Contains(kb)) InputBindings.Remove(kb);
+            }
+            _menuKeyBindings.Clear();
+
+            if (DataContext is Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.ViewModel.MainViewModel shell)
+            {
+                // Helper to create a binding and track it (but do NOT necessarily add to InputBindings yet)
+                void CreateAndTrack(ICommand? cmd, Key key)
+                {
+                    if (cmd == null) return;
+                    var gesture = new KeyGesture(key, ModifierKeys.Control);
+                    var binding = new KeyBinding(cmd, gesture);
+                    _menuKeyBindings.Add(binding);
+                }
+
+                CreateAndTrack(shell.NavigateToInicioCommand, Key.D1);
+                CreateAndTrack(shell.NavigateToConfiguracionCommand, Key.D2);
+                CreateAndTrack(shell.NavigateToUsuarioCommand, Key.D3);
+                CreateAndTrack(shell.NavigateToReporteCommand, Key.D4);
+            }
+        }
+
+        /// <summary>
+        /// Apply (add/remove) the tracked key bindings to the window input bindings based on current view.
+        /// If current view is LoginViewModel or RegistroViewModel we remove the bindings to block shortcuts.
+        /// Otherwise we ensure the bindings are present so shortcuts work.
+        /// </summary>
+        private void ApplyMenuKeyBindingsState()
+        {
+            var vm = GetCurrentViewModel();
+            bool shouldBlock = vm is LoginViewModel || vm is RegistroViewModel;
+
+            if (shouldBlock)
+            {
+                // Ensure tracked bindings are not active
+                foreach (var kb in _menuKeyBindings)
+                {
+                    if (InputBindings.Contains(kb))
+                        InputBindings.Remove(kb);
+                }
+            }
+            else
+            {
+                // Ensure tracked bindings are active
+                foreach (var kb in _menuKeyBindings)
+                {
+                    if (!InputBindings.Contains(kb))
+                        InputBindings.Add(kb);
+                }
             }
         }
 

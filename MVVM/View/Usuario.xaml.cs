@@ -21,6 +21,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
     /// </summary>
     public partial class Usuario : UserControl
     {
+        conexion con = new conexion();
         /// <summary>
         /// creo que es la primera vez que voy a hacer notas asi queeee....
         /// 
@@ -131,14 +132,16 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         /// asi queeeeeeee, toca ver como funciona :p
         /// </summary>
 
-        private void EliminarDomicilio()
+        private async void EliminarDomicilio()
         {
             //detecta si es que tienes seleccionado algun elemento del data grid
             if (miDataGrid.SelectedItem != null)
             {
                 //si es asi, declara una variable domicilio que sera igual al domicilio seleccionado
                 var domicilio = (Domicilio)miDataGrid.SelectedItem;
+                string alias = domicilio.Nombre;
                 //y elimina ese domicilio de la coleccion de domicilios
+                con.eliminar_domicilio(alias, Login.userid);
                 Domicilios.Remove(domicilio);
             }
         }
@@ -203,7 +206,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 //finalmente, agregamos el nuevo domicilio a la coleccion de Domicilios
                 Domicilios.Add(NuevoDomicilio);
 
-                MessageBox.Show("Persona agregada exitosamente!", "Éxito",
+                MessageBox.Show("Domicilio agregado exitosamente!", "Éxito",
                                   MessageBoxButton.OK, MessageBoxImage.Information);
             }
             GuardarDatos();
@@ -216,6 +219,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
             if (!Editor)
             {
+                
                 GuardarDatos();
             }
 
@@ -230,7 +234,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
         private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e)
         {
-            EliminarDomicilio();
+            EliminarDomicilio();            
             GuardarDatos();
         }
     }
