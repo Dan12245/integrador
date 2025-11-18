@@ -75,6 +75,15 @@
             <Rectangle HorizontalAlignment="Center" Height="32" Margin="0,226,0,0" Stroke="#FFABADB3" VerticalAlignment="Top" Width="294" Fill="#FFD9D9D9" IsEnabled="False"/>
             <PasswordBox x:Name="txtPassword" HorizontalAlignment="Center" VerticalAlignment="Top" Width="294" Height="32" TabIndex="3"
                  VerticalContentAlignment="Center" Background="#FFD9D9D9" Foreground="#FF717171" Margin="0,226,0,0" PasswordChanged="txtPassword_PasswordChanged"/>
+            <TextBox
+                x:Name="txtPassVisible"
+                HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center"
+                Width="294" Height="32" TabIndex="3"
+                Background="#FFD9D9D9" Foreground="#FF717171"
+                FontSize="16" FontFamily="Yu Gothic"
+                Margin="0,226,0,0" TextChanged="txtPassVisible_TextChanged"
+                Visibility="Collapsed"
+            />
             <TextBox x:Name="txtEmail" HorizontalAlignment="Center" Margin="0,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" TabIndex="2"
                 Width="294" Height="31" FontFamily="Yu Gothic" FontSize="16" MaxLines="3" VerticalContentAlignment="Center" TextChanged="txtEmail_TextChanged" Background="#FFD9D9D9" Foreground="#FF717171"/>
             <Button Content="Forgot mail?" HorizontalAlignment="Left" Margin="255,183,0,0" VerticalAlignment="Top" TabIndex="5"
