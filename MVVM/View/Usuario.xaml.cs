@@ -1,5 +1,6 @@
 using Consumo_Reducido_de_Agua_ahora_si_definitivo;
 using Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.View;
 using MiApp;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -16,49 +17,37 @@ using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
-    /// <summary>
-    /// Lógica de interacción para Usuario.xaml
-    /// </summary>
     public partial class Usuario : UserControl
     {
-        conexion con = new conexion();
-        /// <summary>
-        /// creo que es la primera vez que voy a hacer notas asi queeee....
-        /// 
-        /// Este es el registro para hacer que el data grid agarre domicilios mediante los botones
-        /// de agregar, eliminar y editar :p
-        /// 
-        /// como primer paso, agregamos una public class Domicilios con los atributos que queremos
-        /// agregar al data grid :p
-        /// </summary>
         public class Domicilio
         {
-            public int Id { get; set; } //este es solo para la base de datos (o eso me dijo dani)
-            public string Nombre { get; set; } //nombre para que el usuario identifique su domicilio
-            public string Descripcion { get; set; } //y la descripcion, meramente de relleno(¿
+            public int Id { get; set; }
+            public string Nombre { get; set; }
+            public string Descripcion { get; set; }
         }
 
-        // Colección que alimenta el DataGrid.
-        private ObservableCollection<Domicilio> Domicilios { get; set; } = new();
-
-        //ahora, crearemos una funcion para que agregue domicilios (buscar con CTRL + F "private void AgregarDomicilio()"
-
-        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        public class ConfiguracionMeta
         {
-            if (e.Key == Key.Enter)
-            {
-                TextBox tb = sender as TextBox;
-                if (tb != null && !tb.IsReadOnly)
-                {
-                    tb.IsReadOnly = true;
-                    // En lugar de Boton_Menu (no existe en este UserControl) movemos el foco al DataGrid
-                    miDataGrid.Focus();
-                }
-            }
+            public double MetaConsumo { get; set; } = 100.0;
+            public double PromedioActual { get; set; } = 0.0;
         }
+
+        public class EstadoMes
+        {
+            public int MesActual { get; set; }
+            public int AnioActual { get; set; }
+            public bool MensajeMostrado { get; set; } = false;
+        }
+
+        public ObservableCollection<Domicilio> Domicilios { get; set; }
 
         private const string FilePath = "Domicilios.json";
+        private const string MetaFilePath = "MetaConsumo.json";
+        private const string EstadoMesFilePath = "EstadoMes.json";
         public bool Editor = false;
+        private ConfiguracionMeta configuracionMeta;
+        private EstadoMes estadoMes;
+
         public Usuario()
         {
             InitializeComponent();
@@ -67,50 +56,287 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             miDataGrid.ItemsSource = Domicilios;
 
             if (Registro.GlobalData.UserName == null)
-                Registro.GlobalData.UserName = "Usuario";
+                Registro.GlobalData.UserName = "User";
+
+            configuracionMeta = CargarConfiguracionMeta();
+            estadoMes = CargarEstadoMes();
 
             InicializarTimer();
             ActualizarTextBox();
+            ActualizarBarraMeta();
 
-            // Corregido: referencia explícita a Registro.GlobalData
-            Texto_Nombre.Text = $"{Registro.GlobalData.UserName}";
-            Barra_meta.Value = new Random().Next(10, 101);
-            Datos_Usuario.Text = $"Invitados: " + new Random().Next(0, 101);
+            Texto_Nombre.Text = $"{GlobalData.UserName}";
+            Datos_Usuario.Text = $"Guests: " + new Random().Next(0, 101);
 
             ActualizarImagen();
         }
 
-
-        //funcion para actualizar la imagen del icono de editar/guardar
-        private void ActualizarImagen()
+        private ConfiguracionMeta CargarConfiguracionMeta()
         {
-            //carga la ruta dependiendo de si estas en modo editor o no
-            string ruta = Editor ? "/Images/IconoGuardado.png" : "/Images/Editar.png";
-            //y actualiza la imagen del boton
-            BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
+            try
+            {
+                if (File.Exists(MetaFilePath))
+                {
+                    string json = File.ReadAllText(MetaFilePath);
+                    var config = JsonSerializer.Deserialize<ConfiguracionMeta>(json);
+                    return config ?? new ConfiguracionMeta();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading consumption goal configuration: {ex.Message}");
+            }
+            return new ConfiguracionMeta();
         }
 
+        private EstadoMes CargarEstadoMes()
+        {
+            try
+            {
+                if (File.Exists(EstadoMesFilePath))
+                {
+                    string json = File.ReadAllText(EstadoMesFilePath);
+                    var estado = JsonSerializer.Deserialize<EstadoMes>(json);
+                    return estado ?? new EstadoMes();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading month status: {ex.Message}");
+            }
+            return new EstadoMes();
+        }
+
+        private void GuardarConfiguracionMeta()
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(configuracionMeta, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(MetaFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving consumption goal configuration: {ex.Message}");
+            }
+        }
+
+        private void GuardarEstadoMes()
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(estadoMes, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(EstadoMesFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving month status: {ex.Message}");
+            }
+        }
+
+        private void VerificarNuevoMes()
+        {
+            DateTime hoy = DateTime.Now;
+
+            if (estadoMes.MesActual != hoy.Month || estadoMes.AnioActual != hoy.Year)
+            {
+                estadoMes.MesActual = hoy.Month;
+                estadoMes.AnioActual = hoy.Year;
+                estadoMes.MensajeMostrado = false;
+                GuardarEstadoMes();
+            }
+        }
+
+        private void ActualizarBarraMeta()
+        {
+            if (configuracionMeta.MetaConsumo > 0)
+            {
+                double porcentaje = (configuracionMeta.PromedioActual / configuracionMeta.MetaConsumo) * 100;
+                porcentaje = Math.Max(0, Math.Min(100, porcentaje));
+
+                Barra_meta.Value = porcentaje;
+
+                Meta_de_consumo_texto.Text =
+                    $"Consumption: {configuracionMeta.PromedioActual:F1} m³ / Goal: {configuracionMeta.MetaConsumo:F1} m³ ({porcentaje:F1}%)";
+
+                if (porcentaje <= 70)
+                {
+                    Barra_meta.Foreground = new SolidColorBrush(Color.FromRgb(76, 175, 80));
+                }
+                else if (porcentaje <= 90)
+                {
+                    Barra_meta.Foreground = new SolidColorBrush(Color.FromRgb(255, 193, 7));
+                }
+                else
+                {
+                    Barra_meta.Foreground = new SolidColorBrush(Color.FromRgb(244, 67, 54));
+                }
+            }
+        }
+
+        public void Boton_EditarMeta_Click(object sender, RoutedEventArgs e)
+        {
+            var dialogo = new Window
+            {
+                Title = "Edit Consumption Goal",
+                Width = 400,
+                Height = 250,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize
+            };
+
+            var grid = new Grid();
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var txtMeta = new TextBlock
+            {
+                Text = "Monthly Consumption Goal (Cubic Meters):",
+                FontSize = 16,
+                Margin = new Thickness(20, 0, 20, 2),
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
+            var inputMeta = new TextBox
+            {
+                Text = configuracionMeta.MetaConsumo.ToString("F1"),
+                FontSize = 16,
+                Margin = new Thickness(20, 15, 20, 19),
+                VerticalAlignment = VerticalAlignment.Bottom
+            };
+
+            var txtPromedio = new TextBlock
+            {
+                Text = "Current Average (Cubic Meters):",
+                FontSize = 16,
+                Margin = new Thickness(20, 0, 20, 5),
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            Grid.SetRow(txtPromedio, 1);
+
+            var inputPromedio = new TextBox
+            {
+                Text = configuracionMeta.PromedioActual.ToString("F1"),
+                FontSize = 16,
+                Margin = new Thickness(20, 10, 20, 20),
+                VerticalAlignment = VerticalAlignment.Bottom
+            };
+            Grid.SetRow(inputPromedio, 1);
+
+            var panelBotones = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 10, 0, 10)
+            };
+            Grid.SetRow(panelBotones, 2);
+
+            var btnGuardar = new Button
+            {
+                Content = "Save",
+                Width = 100,
+                Height = 35,
+                Margin = new Thickness(5),
+                Background = new SolidColorBrush(Color.FromRgb(76, 175, 80)),
+                Foreground = Brushes.White,
+                FontSize = 14
+            };
+
+            var btnCancelar = new Button
+            {
+                Content = "Cancel",
+                Width = 100,
+                Height = 35,
+                Margin = new Thickness(5),
+                Background = new SolidColorBrush(Color.FromRgb(244, 67, 54)),
+                Foreground = Brushes.White,
+                FontSize = 14
+            };
+
+            btnGuardar.Click += (s, args) =>
+            {
+                if (double.TryParse(inputMeta.Text, out double meta) &&
+                    double.TryParse(inputPromedio.Text, out double promedio))
+                {
+                    if (meta > 0 && promedio >= 0)
+                    {
+                        configuracionMeta.MetaConsumo = meta;
+                        configuracionMeta.PromedioActual = promedio;
+                        GuardarConfiguracionMeta();
+                        ActualizarBarraMeta();
+                        dialogo.DialogResult = true;
+                        dialogo.Close();
+
+                        if (promedio > meta)
+                        {
+                            MessageBox.Show(
+                                "You have exceeded your consumption limit!\n\n" +
+                                $"Current consumption: {promedio:F1} m³\n" +
+                                $"Set goal: {meta:F1} m³\n" +
+                                $"Excess: {(promedio - meta):F1} m³",
+                                "Limit Exceeded",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Goal successfully updated", "Success",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("The values must be greater than 0", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please enter valid numeric values", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            };
+
+            btnCancelar.Click += (s, args) =>
+            {
+                dialogo.DialogResult = false;
+                dialogo.Close();
+            };
+
+            panelBotones.Children.Add(btnGuardar);
+            panelBotones.Children.Add(btnCancelar);
+
+            grid.Children.Add(txtMeta);
+            grid.Children.Add(inputMeta);
+            grid.Children.Add(txtPromedio);
+            grid.Children.Add(inputPromedio);
+            grid.Children.Add(panelBotones);
+
+            dialogo.Content = grid;
+            dialogo.ShowDialog();
+        }
+
+        private void ActualizarImagen()
+        {
+            string ruta = Editor ? "/Images/IconoGuardado.png" : "/Images/Editar.png";
+            BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
+        }
 
         private DispatcherTimer timer;
         private void InicializarTimer()
         {
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromHours(1); // Actualiza cada hora
+            timer.Interval = TimeSpan.FromHours(1);
             timer.Tick += Timer_Tick;
             timer.Start();
         }
 
-
-        //la funcion para cargar los datos del json, nada especial, solo lee el archivo y lo deserializa en la coleccion de domicilios
         private ObservableCollection<Domicilio> CargarDatos()
         {
             try
-
             {
-                //detecta si es que el archivo existe
                 if (File.Exists(FilePath))
                 {
-                    //si es asi, lee el archivo y deserializa el json en una coleccion de domicilios
                     string json = File.ReadAllText(FilePath);
                     var lista = JsonSerializer.Deserialize<ObservableCollection<Domicilio>>(json);
                     return lista ?? new ObservableCollection<Domicilio>();
@@ -118,64 +344,118 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar datos: {ex.Message}");
+                MessageBox.Show($"Error loading data: {ex.Message}");
             }
             return new ObservableCollection<Domicilio>();
         }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
             ActualizarTextBox();
         }
 
-        /// <summary>
-        /// Esta funcion se utilizara a la hora de usar el boton de agregar domicilio
-        /// asi queeeeeeee, toca ver como funciona :p
-        /// </summary>
-
-        private async void EliminarDomicilio()
+        private void EliminarDomicilio()
         {
-            //detecta si es que tienes seleccionado algun elemento del data grid
             if (miDataGrid.SelectedItem != null)
             {
-                //si es asi, declara una variable domicilio que sera igual al domicilio seleccionado
                 var domicilio = (Domicilio)miDataGrid.SelectedItem;
-                string alias = domicilio.Nombre;
-                //y elimina ese domicilio de la coleccion de domicilios
-                con.eliminar_domicilio(alias, Login.userid);
                 Domicilios.Remove(domicilio);
             }
         }
 
-        private void ActualizarTextBox()
+        public void ActualizarTextBox()
         {
-            //cosa que calcula los dias restantes del mes, no se, esta chistoso xd
+            VerificarNuevoMes();
+
             DateTime hoy = DateTime.Now;
             int ultimoDia = DateTime.DaysInMonth(hoy.Year, hoy.Month);
-            int diasRestantes = ultimoDia - hoy.Day + 1;
+            int diasRestantes = ultimoDia - hoy.Day;
 
-            Dias_restantes.Text = $"{diasRestantes} días restantes";
+            if (diasRestantes > 0)
+            {
+                Dias_restantes.Text = $"{diasRestantes} days remaining";
+            }
+            else
+            {
+                Dias_restantes.Text = "Last day of the month";
+            }
+
+            if (diasRestantes == 0 && !estadoMes.MensajeMostrado)
+            {
+                MostrarResumenMensual();
+                estadoMes.MensajeMostrado = true;
+                GuardarEstadoMes();
+            }
         }
 
-        /// <summary>
-        /// la funcion guardar datos es para basicamente, guardar datos (duh)
-        /// aqui te va toda la pinche mierda que es esto
-        /// </summary>
+        private void MostrarResumenMensual()
+        {
+            if (configuracionMeta.MetaConsumo > 0)
+            {
+                double porcentajeConsumo = (configuracionMeta.PromedioActual / configuracionMeta.MetaConsumo) * 100;
+                double porcentajeReduccion = 100 - porcentajeConsumo;
+
+                string mensaje;
+                string titulo;
+                MessageBoxImage icono;
+
+                if (configuracionMeta.PromedioActual <= configuracionMeta.MetaConsumo)
+                {
+                    mensaje =
+                        "🎉 Congratulations! You have reached your consumption goal.\n\n" +
+                        "📊 Monthly Summary:\n" +
+                        $"• Set goal: {configuracionMeta.MetaConsumo:F1} m³\n" +
+                        $"• Actual consumption: {configuracionMeta.PromedioActual:F1} m³\n" +
+                        $"• You reduced your consumption by {Math.Abs(porcentajeReduccion):F1}%\n" +
+                        $"• Savings: {(configuracionMeta.MetaConsumo - configuracionMeta.PromedioActual):F1} m³\n\n" +
+                        "Keep it up! 💧";
+
+                    titulo = "✅ Goal Achieved";
+                    icono = MessageBoxImage.Information;
+                }
+                else
+                {
+                    double exceso = configuracionMeta.PromedioActual - configuracionMeta.MetaConsumo;
+
+                    mensaje =
+                        "⚠️ You did not reach your goal this month.\n\n" +
+                        "📊 Monthly Summary:\n" +
+                        $"• Set goal: {configuracionMeta.MetaConsumo:F1} m³\n" +
+                        $"• Actual consumption: {configuracionMeta.PromedioActual:F1} m³\n" +
+                        $"• You exceeded the goal by {(porcentajeConsumo - 100):F1}%\n" +
+                        $"• Excess consumption: {exceso:F1} m³\n\n" +
+                        "💡 Tip: Try reducing your usage next month.";
+
+                    titulo = "❌ Goal Not Reached";
+                    icono = MessageBoxImage.Warning;
+                }
+
+                MessageBox.Show(mensaje, titulo, MessageBoxButton.OK, icono);
+            }
+            else
+            {
+                MessageBox.Show(
+                    "No consumption goal has been set to evaluate this month's usage.",
+                    "No Goal",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+
         private void GuardarDatos()
         {
             try
             {
-                //esto creo el json, como? no se, preguntale a visual xd
                 string json = JsonSerializer.Serialize(Domicilios, new JsonSerializerOptions { WriteIndented = true });
-                //y esto lo guarda en un archivo llamado domicilios.json
                 File.WriteAllText(FilePath, json);
-                MessageBox.Show("Datos guardados correctamente.");
+                MessageBox.Show("Data saved successfully.");
             }
             catch (Exception ex)
             {
-                //errorsito por si aca, no vaya a ser el viablo :anguished:
-                MessageBox.Show($"Error al guardar datos: {ex.Message}");
+                MessageBox.Show($"Error saving data: {ex.Message}");
             }
         }
+
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -185,28 +465,20 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             var dialogo = new AgregarDomicilio();
 
-            // ShowDialog() devuelve true si presionaron Aceptar
             if (dialogo.ShowDialog() == true)
             {
-                // Obtener nuevo ID
                 int nuevoId = Domicilios.Count > 0 ? Domicilios.Max(p => p.Id) + 1 : 1;
 
-                // Crear nueva persona con los datos del diálogo
-
-                ///primero que nada, declaramos una variable llamada NuevoDomicilio como un nuevo domicilio (omg)
                 var NuevoDomicilio = new Domicilio
                 {
-                    //hacemos que el Id sea igual a la cantidad de Domicilios + 1 (asi no se repiten los Ids)
                     Id = Domicilios.Count + 1,
-                    //declaramos el nombre como un nuevo domicilio
                     Nombre = dialogo.Nombre,
-                    //y la descripcion como un campo vacio para que se pueda editar a gusto del usuario
                     Descripcion = dialogo.Descripcion
                 };
-                //finalmente, agregamos el nuevo domicilio a la coleccion de Domicilios
+
                 Domicilios.Add(NuevoDomicilio);
 
-                MessageBox.Show("Domicilio agregado exitosamente!", "Éxito",
+                MessageBox.Show("Person added successfully!", "Success",
                                   MessageBoxButton.OK, MessageBoxImage.Information);
             }
             GuardarDatos();
@@ -219,23 +491,29 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
             if (!Editor)
             {
-                
                 GuardarDatos();
             }
 
             if (Editor)
             {
-                MessageBox.Show("Modo edición activado");
+                MessageBox.Show("Edit mode activated");
             }
 
-            ActualizarImagen(); 
+            ActualizarImagen();
         }
-
 
         private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e)
         {
-            EliminarDomicilio();            
+            EliminarDomicilio();
             GuardarDatos();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current.MainWindow is MainWindow main)
+            {
+                main.CambiarEscena(new Login());
+            }
         }
     }
 }

@@ -16,10 +16,9 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" 
- BorderBrush="{TemplateBinding BorderBrush}" 
- BorderThickness="1" 
- CornerRadius="15">
-                            <!-- 🔸 Redondeo de esquinas -->
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="1" 
+                                CornerRadius="15">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -42,14 +41,14 @@
                     <GradientStop Color="#FFCBDAFF" Offset="1"/>
                 </LinearGradientBrush>
             </Grid.Background>
+
             <Button x:Name="Boton_Register" Content="Guests"
  Command="{Binding DataContext.NavigateToCommand, RelativeSource={RelativeSource AncestorType=Window}}"
  CommandParameter="{x:Type viewModel:InvitadosViewModel}"
- HorizontalAlignment="Left" Margin="400,0,0,0" VerticalAlignment="Top" FontSize="16" Width="416" Height="43" RenderTransformOrigin="0,0">
+ HorizontalAlignment="Left" Margin="400,0,0,0" VerticalAlignment="Top" FontSize="16" Width="416" Height="43">
                 <Button.BorderBrush>
                     <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
                 </Button.BorderBrush>
-
                 <Button.Foreground>
                     <SolidColorBrush Color="White" Opacity="0.4"/>
                 </Button.Foreground>
@@ -57,74 +56,89 @@
                     <SolidColorBrush Color="#FF04023E" Opacity="0.6"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Eliminar" Content="" Height="52" Width="51" Grid.Row="1" Margin="380,-4,0,0">
-                <Button.BorderBrush>
-                    <ImageBrush/>
-                </Button.BorderBrush>
+
+            <Button x:Name="Boton_Eliminar" Content="" Height="52" Width="51" Margin="380,-4,0,0">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Eliminar.png"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Editar" Content="" Height="54" Width="54" Grid.Row="1" Margin="0,-3,0,0">
-                <Button.BorderBrush>
-                    <ImageBrush/>
-                </Button.BorderBrush>
+
+            <Button x:Name="Boton_Editar" Content="" Height="54" Width="54" Margin="0,-3,0,0">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Editar.png"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Agregar" Content="" Height="54" Width="54" Grid.Row="1" Margin="0,0,100,0">
-                <Button.BorderBrush>
-                    <ImageBrush/>
-                </Button.BorderBrush>
+
+            <Button x:Name="Boton_Agregar" Content="" Height="54" Width="54" Margin="0,0,100,0">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Agregar.png"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Login" Content="Main user" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFBDC8FD" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="424" Height="44" RenderTransformOrigin="0,0" OpacityMask="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"/>
+
+            <Button x:Name="Boton_Login" Content="Main User" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FFBDC8FD" BorderBrush="#FF7385E3" Foreground="White" FontSize="16" Width="424" Height="44"/>
+
             <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,42,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="800"/>
-            <TextBlock x:Name="Texto_Nombre" HorizontalAlignment="Left" TextAlignment="Center" Margin="10,163,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="247" MaxWidth="513" Foreground="#FF071148"/>
+
+            <TextBlock x:Name="Texto_Nombre" HorizontalAlignment="Left" TextAlignment="Center" Margin="10,163,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="247" Foreground="#FF071148"/>
+
             <Image Margin="76,49,0,276" Source="/MVVM/View/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
-            <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" TextAlignment="Center" Margin="11,284,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="246" Height="28" Foreground="#FF071148"><Run Text="Guests:3000 :O"/><LineBreak/><Run/></TextBlock>
+
+            <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" TextAlignment="Center" Margin="11,186,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="246" Height="28" Foreground="#FF071148">
+                <Run Text="Guests: 3000 :O"/>
+            </TextBlock>
+
             <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,317,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="780"/>
-            <TextBlock x:Name="Datos_Usuario_Copiar" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,329,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="779" Height="24"><Run Language="es-mx" Text="Meta de reduccion de consumo"/></TextBlock>
+
+            <TextBlock x:Name="Datos_Usuario_Copiar" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,329,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="779">
+                <Run Text="Consumption Reduction Goal"/>
+            </TextBlock>
+
             <ProgressBar x:Name="Barra_meta" HorizontalAlignment="Center" Height="38" Margin="0,355,0,0" VerticalAlignment="Top" Width="780" Background="#FFB9D5FF" BorderBrush="#FF0A2D65" Value="50" Foreground="#FF5F89C8"/>
-            <TextBlock x:Name="Dias_restantes" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,401,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="780" Height="24" Foreground="#FF071148"><Run Language="es-mx" Text="Remaining days: te te te te teto"/></TextBlock>
-            <TextBlock x:Name="Meta_de_consumo_texto" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,326,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="780" Height="24" Foreground="#FF071148"><Run Language="es-mx" Text="Consumption goal"/></TextBlock>
+
+            <TextBlock x:Name="Dias_restantes" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,401,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="780" Foreground="#FF071148">
+                <Run Text="Days remaining: loading..."/>
+            </TextBlock>
+
+            <TextBlock x:Name="Meta_de_consumo_texto" TextAlignment="Center" HorizontalAlignment="Left" Margin="11,326,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="16" Width="659" Foreground="#FF071148">
+                <Run Text="Consumption Goal"/>
+            </TextBlock>
+
+            <Button x:Name="Boton_EditarMeta" 
+                    Content="Edit Goal" 
+                    Click="Boton_EditarMeta_Click"
+                    HorizontalAlignment="Right" 
+                    Margin="0,324,15,0" 
+                    VerticalAlignment="Top" 
+                    Width="110" 
+                    Height="28"
+                    FontSize="16"
+                    ToolTip="Edit consumption goal"/>
 
             <DataGrid x:Name="miDataGrid" AutoGenerateColumns="False" Margin="284,49,83,127" BorderBrush="#FF1B0F73" Background="White" Foreground="#FF102567" FontFamily="Verdana" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Building name" Binding="{Binding Nombre}" Width="*"/>
+                    <DataGridTextColumn Header="Home Name" Binding="{Binding Nombre}" Width="*"/>
                     <DataGridTextColumn Header="Description" Binding="{Binding Descripcion}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
+
             <Button x:Name="Boton_Eliminar2" Content="" Margin="734,252,15,130" Click="Boton_Eliminar2_Click">
-                <Button.BorderBrush>
-                    <ImageBrush/>
-                </Button.BorderBrush>
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Eliminar.png"/>
                 </Button.Background>
             </Button>
+
             <Button x:Name="Boton_Agregar2" Content="" Margin="732,58,14,322" Click="Boton_Agregar2_Click">
-                <Button.BorderBrush>
-                    <ImageBrush/>
-                </Button.BorderBrush>
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Agregar.png"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="Boton_Editar2"
-        Click="Boton_Editar2_Click"
-        Margin="732,152,14,224"
-        Background="Transparent"
-        BorderBrush="{x:Null}">
-                <Image x:Name="BotonImagen"
-           Source="/Images/Editar.png"
-           Stretch="Uniform"/>
+
+            <Button x:Name="Boton_Editar2" Click="Boton_Editar2_Click" Margin="732,152,14,224" Background="Transparent" BorderBrush="{x:Null}">
+                <Image x:Name="BotonImagen" Source="/Images/Editar.png" Stretch="Uniform"/>
             </Button>
 
-        </Grid>
+            <Button Content="Log Out" HorizontalAlignment="Left" Margin="47,237,0,0" VerticalAlignment="Top" Height="59" Width="174" Click="Button_Click"/>
 
+        </Grid>
     </Viewbox>
 </UserControl>

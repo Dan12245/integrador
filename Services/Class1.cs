@@ -28,25 +28,25 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.Services
             {
                 var report = new StringBuilder();
                 report.AppendLine(new string('=', 70));
-                report.AppendLine("REPORTE DE BUG");
+                report.AppendLine("BUG REPORT");
                 report.AppendLine(new string('=', 70));
-                report.AppendLine($"Fecha y Hora: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-                report.AppendLine($"Título: {title}");
+                report.AppendLine($"DATE & HOUR: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                report.AppendLine($"TITLE: {title}");
                 report.AppendLine();
-                report.AppendLine("DESCRIPCIÓN:");
+                report.AppendLine("DESCRIPTION:");
                 report.AppendLine(description);
 
                 if (!string.IsNullOrWhiteSpace(steps))
                 {
                     report.AppendLine();
-                    report.AppendLine("PASOS PARA REPRODUCIR:");
+                    report.AppendLine("STEPS TO REPRODUCE:");
                     report.AppendLine(steps);
                 }
 
                 if (!string.IsNullOrWhiteSpace(additionalInfo))
                 {
                     report.AppendLine();
-                    report.AppendLine("INFORMACIÓN ADICIONAL:");
+                    report.AppendLine("ADDITIONAL INFORMATION:");
                     report.AppendLine(additionalInfo);
                 }
 
@@ -57,7 +57,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error al guardar reporte: {ex.Message}");
+                Debug.WriteLine($"Error saving report: {ex.Message}");
             }
         }
 
@@ -72,25 +72,25 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.Services
                 report.AppendLine(new string('=', 70));
                 report.AppendLine("EXCEPCIÓN CAPTURADA");
                 report.AppendLine(new string('=', 70));
-                report.AppendLine($"Fecha y Hora: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-                report.AppendLine($"Tipo de Excepción: {exception.GetType().Name}");
-                report.AppendLine($"Mensaje: {exception.Message}");
+                report.AppendLine($"DATE & HOUR: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                report.AppendLine($"EXCEPTION TYPE: {exception.GetType().Name}");
+                report.AppendLine($"MESSAGE: {exception.Message}");
 
                 if (!string.IsNullOrEmpty(context))
                 {
-                    report.AppendLine($"Contexto: {context}");
+                    report.AppendLine($"CONTEXT: {context}");
                 }
 
                 report.AppendLine();
-                report.AppendLine("STACK TRACE:");
+                report.AppendLine("Stack Trace:");
                 report.AppendLine(exception.StackTrace);
 
                 if (exception.InnerException != null)
                 {
                     report.AppendLine();
                     report.AppendLine("INNER EXCEPTION:");
-                    report.AppendLine($"Tipo: {exception.InnerException.GetType().Name}");
-                    report.AppendLine($"Mensaje: {exception.InnerException.Message}");
+                    report.AppendLine($"TYPE: {exception.InnerException.GetType().Name}");
+                    report.AppendLine($"MESSAGE: {exception.InnerException.Message}");
                     report.AppendLine($"Stack Trace: {exception.InnerException.StackTrace}");
                 }
 
@@ -101,7 +101,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error al guardar excepción: {ex.Message}");
+                Debug.WriteLine($"Error saving exception: {ex.Message}");
             }
         }
 

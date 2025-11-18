@@ -56,8 +56,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 if (string.IsNullOrWhiteSpace(DescriptionTextBox.Text))
                 {
                     MessageBox.Show(
-                        "Por favor describe el problema que encontraste.",
-                        "Campo Requerido",
+                        "Please describe que problem you have encountered.",
+                        "Required Field",
                         MessageBoxButton.OK,
                         MessageBoxImage.Warning
                     );
@@ -66,14 +66,14 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 }
 
                 // Obtener valores
-                string errorType = (ErrorTypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "No especificado";
+                string errorType = (ErrorTypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Not specified";
                 string description = DescriptionTextBox.Text.Trim();
 
                 // Crear título automático basado en el tipo de error
                 string title = $"{errorType} - {DateTime.Now:dd/MM/yyyy HH:mm}";
 
                 // Información adicional con el tipo de error
-                string additionalInfo = $"Tipo de Error: {errorType}\nReportado desde: Ventana de Reporte";
+                string additionalInfo = $"Error Type: {errorType}\nReported From: Bug Reporting Window";
                 int id= Login.userid;
                 conexion con= new conexion();
                 await con.reportes(id,errorType,description);
@@ -87,10 +87,10 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
                 // Mostrar mensaje de éxito
                 MessageBox.Show(
-                    "¡Bug reportado exitosamente!\n\n" +
-                    "Gracias por ayudarnos a mejorar la aplicación.\n" +
-                    $"El reporte se guardó en:\n{BugReporter.Instance.GetLogFilePath()}",
-                    "Reporte Enviado",
+                    "Error Reported Successfully!\n\n" +
+                    "Thank you for helping us to make a better application.\n"+
+                    $"The report was stored in:\n{BugReporter.Instance.GetLogFilePath()}",
+                    "Report Sent",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information
                 );
@@ -101,14 +101,14 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Error al enviar el reporte:\n{ex.Message}",
+                    $"Error saving report:\n{ex.Message}",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
 
                 // Reportar el error del mismo sistema de reportes
-                BugReporter.Instance.ReportException(ex, "Error en SubmitReport_Click");
+                BugReporter.Instance.ReportException(ex, "Error in SubmitReport_Click");
             }
         }
 
@@ -132,9 +132,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 if (!BugReporter.Instance.HasReports())
                 {
                     MessageBox.Show(
-                        "No hay reportes guardados todavía.\n\n" +
-                        "Cuando reportes un bug, aparecerá aquí.",
-                        "Sin Reportes",
+                        "There are no stored reports yet.\n\n" +
+                        "When you report a bug, it will appear here",
+                        "No Reports",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information
                     );
@@ -146,7 +146,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Error al abrir los reportes:\n{ex.Message}",
+                    $"Error opening reports:\n{ex.Message}",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error

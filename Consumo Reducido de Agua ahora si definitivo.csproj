@@ -41,6 +41,7 @@
     <None Remove="Image2.png" />
     <None Remove="Image3.png" />
     <None Remove="Image4.png" />
+    <None Remove="Images\Advertencia.png" />
     <None Remove="Images\Agregar usuario.png" />
     <None Remove="Images\Agregar.png" />
     <None Remove="Images\Editar usuario.png" />
@@ -165,6 +166,10 @@
     <Content Include="Images\LogoOpacidad15.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\Advertencia.png" />
   </ItemGroup>
 
   <ItemGroup>
