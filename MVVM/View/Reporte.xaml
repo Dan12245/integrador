@@ -42,10 +42,10 @@
                 </LinearGradientBrush>
             </Grid.Background>
 
-            <!-- Barra superior -->
+            <!-- Top Bar -->
             <Rectangle Margin="0,0,0,417" Fill="#FF262E75"/>
 
-            <!-- Título -->
+            <!-- Title -->
             <TextBlock x:Name="Texto_Bienvenida" 
                        TextWrapping="Wrap" 
                        VerticalAlignment="Top" 
@@ -54,13 +54,13 @@
                        TextAlignment="Center" 
                        Margin="0,13,0,0" 
                        Foreground="#FF8FA2DC" 
-                       Text="Error or Bug Reporting !"/>
+                       Text="Bug Report Page"/>
 
-            <!-- Imágenes de advertencia -->
+            <!-- Warning Images -->
             <Image Margin="106,24,654,441" Source="/Images/Advertencia.png" Stretch="Fill"/>
             <Image Margin="650,24,110,441" Source="/Images/Advertencia.png" Stretch="Fill"/>
 
-            <!-- Tipo de error -->
+            <!-- Error Type -->
             <TextBlock x:Name="Texto" 
                        HorizontalAlignment="Center" 
                        TextAlignment="Center" 
@@ -70,13 +70,11 @@
                        FontFamily="Cascadia Mono SemiLight" 
                        FontSize="20" 
                        Width="780" 
-                       Foreground="#FF273A36">
-                <Run Language="es-mx" Text="Select the type of problem:"/>
-            </TextBlock>
+                       Foreground="#FF273A36" 
+                       Text="Select the error:"/>
 
             <ComboBox x:Name="ErrorTypeComboBox" 
-                      HorizontalAlignment="Center" 
-                    
+                      HorizontalAlignment="Center"
                       Margin="0,126,0,0" 
                       VerticalAlignment="Top" 
                       Width="558" 
@@ -85,13 +83,11 @@
                 <ComboBoxItem Content="Functionality Error"/>
                 <ComboBoxItem Content="Visual/UI Error"/>
                 <ComboBoxItem Content="Performance Error"/>
-                <ComboBoxItem Content="Crash/Unexpected Termination"/>
+                <ComboBoxItem Content="Crash/Unexpected Closure"/>
                 <ComboBoxItem Content="Other"/>
             </ComboBox>
 
-            <!-- Severidad -->
-
-            <!-- Descripción -->
+            <!-- Description -->
             <TextBlock x:Name="Texto_Copiar" 
                        TextAlignment="Center" 
                        HorizontalAlignment="Center" 
@@ -102,7 +98,7 @@
                        FontSize="18" 
                        Width="780" 
                        Foreground="#FF273A36">
-                <Run Language="es-mx" Text="Briefly describe the problem you have encountered:"/>
+                <Run Text="Briefly describe the issue you encountered:"/>
             </TextBlock>
 
             <TextBox x:Name="DescriptionTextBox" 
@@ -115,9 +111,9 @@
                      AcceptsReturn="True"
                      VerticalScrollBarVisibility="Auto"/>
 
-            <!-- Botón Reportar -->
+            <!-- Report Button -->
             <Button x:Name="ReportButton"
-                    Content="Send Report" 
+                    Content="Report" 
                     HorizontalAlignment="Right" 
                     Margin="0,415,30,0" 
                     VerticalAlignment="Top" 
@@ -126,13 +122,13 @@
                     Foreground="#FF9A1D1D" 
                     Height="41" 
                     Width="200" 
-                    FontSize="22" 
+                    FontSize="28" 
                     FontFamily="Tw Cen MT"
                     Click="SubmitReport_Click"/>
 
-            <!-- Botón Ver Reportes -->
+            <!-- View Reports Button -->
             <Button x:Name="ViewReportsButton"
-                    Content="See Reports" 
+                    Content="View Reports" 
                     HorizontalAlignment="Left" 
                     Margin="370,415,0,0" 
                     VerticalAlignment="Top" 
@@ -145,7 +141,7 @@
                     FontFamily="Tw Cen MT"
                     Click="ViewReports_Click"/>
 
-            <!-- Mensaje motivacional -->
+            <!-- Motivational Message -->
             <TextBlock x:Name="Texto_Copiar1" 
                        TextAlignment="Center" 
                        HorizontalAlignment="Left" 
@@ -156,7 +152,7 @@
                        FontSize="18" 
                        Width="345" 
                        Foreground="#FF273A36">
-                <Run Language="es-mx" Text="Your feedback is always appreciated!"/>
+                <Run Text="Your feedback is always appreciated!"/>
             </TextBlock>
         </Grid>
     </Viewbox>
