@@ -19,7 +19,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
         public App()
         {
-            // Configurar licencia QuestPDF globalmente
+            // Configure license for QuestPDF
             QuestPDF.Settings.License = LicenseType.Community;
 
             IServiceCollection services = new ServiceCollection();

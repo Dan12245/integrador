@@ -13,7 +13,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.Controls
         {
             InitializeComponent();
         }
-
         #region ConfigCallouts
         private readonly List<Popup> _calloutPopups = new();
         private void Inicio_Help_Click(object sender, RoutedEventArgs e)

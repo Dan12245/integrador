@@ -57,7 +57,6 @@
     <None Remove="Menu Principal seleccionado.png" />
     <None Remove="Menu Principal.png" />
     <None Remove="Mes.png" />
-    <None Remove="MVVM\View\Place Holder Foto.jpg" />
     <None Remove="No.png" />
     <None Remove="Ojo.png" />
     <None Remove="perrito chivas.png" />
@@ -135,7 +134,6 @@
     <Resource Include="Images\Texto Inicio.png" />
     <Resource Include="Images\Usuario e invitados.png" />
     <Resource Include="Images\Vecindad.png" />
-    <Resource Include="MVVM\View\Place Holder Foto.jpg" />
   </ItemGroup>
 
   <ItemGroup>

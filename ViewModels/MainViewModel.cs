@@ -1,16 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.SKCharts;
 using SkiaSharp;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
-using System.Collections.Generic;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
 {
@@ -101,7 +98,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.ViewModels
                 if (uid <= 0) return;
                 var list = await cx.GetBuildingsForUser(uid);
 
-                // filtrar duplicados por Id y por Alias normalizado (trim, case-insensitive)
+                // filtrar duplicados por Id y por Alias normalizado
                 var ids = new HashSet<int>();
                 var aliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

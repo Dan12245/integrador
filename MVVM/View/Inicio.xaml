@@ -47,7 +47,6 @@
          AutoReverse="True"
          RepeatBehavior="2x"/>
         </Storyboard>
-        <vm:PeriodToCheckedConverter x:Key="PeriodToCheckedConverter"/>
     </UserControl.Resources>
     <Grid >
         <Grid.Background>
