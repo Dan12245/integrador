@@ -81,7 +81,7 @@
 
             <TextBlock x:Name="Texto_Nombre" HorizontalAlignment="Left" TextAlignment="Center" Margin="10,163,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="247" Foreground="#FF071148"/>
 
-            <Image Margin="76,49,0,276" Source="/MVVM/View/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
+            <Image Margin="76,49,0,276" Source="/Images/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
 
             <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" TextAlignment="Center" Margin="11,186,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="246" Height="28" Foreground="#FF071148">
                 <Run Text="Guests: 3000 :O"/>
