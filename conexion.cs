@@ -29,7 +29,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
          * Datos para acceder a la base de datos
          "User Id=postgres.eyroumbxtugceuwckkyg;Password=[YOUR-PASSWORD];Server=aws-1-us-east-2.pooler.supabase.com;Port=6543;Database=postgres"
         */
-
+        public string cadenaconexion()
+        {
+            string cadena_conexion = "User Id=" + usuario + ";" + "Password=" + password + ";" + "Server=" + server + ";" + "Port=" + puerto + ";" + "Database=" + bd;
+            return cadena_conexion;
+        }
         //cadena de conexion
         string cadena_conexion = "User Id=" + usuario + ";" + "Password=" + password + ";" + "Server=" + server + ";" + "Port=" + puerto + ";" + "Database=" + bd;
         //Esta funcion es relleno, solo es para comprobar si hay conexion con la base de datos
@@ -57,7 +61,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //Con esta funcion registramos a un usuario nuevo en la base de datos
         public async Task <bool> registrar_usuario(string nombre, string email, string password)
         {
-
             try
             {
                 await using (var con = new NpgsqlConnection(cadena_conexion))
@@ -88,7 +91,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     }
                 }
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine("Error:" + ex); return false;
@@ -121,7 +123,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                                     GlobalData.userid = userId;
                                     GlobalData.UserName = nombre;
                                     GlobalData.email = email;
-                                    return true; // sin MessageBox
+                                    return true;
                                 }
                                 else
                                 {
@@ -182,27 +184,31 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //aca ponemos funciones relacionadas a los domicilios
         #region domicilio
         //Funcion para agregar domicilio
-        public async void agregar_domicilio_async(string alias, string descripcion, int userId)
+        public async Task<int> agregar_domicilio(string alias, string descripcion, int userId)
         {
+            MessageBox.Show("si entró padrino");
             try
             {
-                await using (var con = new NpgsqlConnection(cadena_conexion))
-                {
-                    await con.OpenAsync();                    
-                    string query = "INSERT INTO cra.buildings (user_id, alias, description) VALUES (@user_id, @alias, @description)";
+                await using var conexion = new NpgsqlConnection(cadenaconexion());
+                await conexion.OpenAsync();
 
-                    await using (var ejecutor = new NpgsqlCommand(query, con))
-                    {
-                        ejecutor.Parameters.AddWithValue("@user_id", userId);
-                        ejecutor.Parameters.AddWithValue("@alias", alias);
-                        ejecutor.Parameters.AddWithValue("@description", descripcion);
-                        await ejecutor.ExecuteNonQueryAsync();
-                    }
-                }
-            }
+                string query = @"INSERT INTO cra.buildings (alias, description, user_id) 
+                        VALUES (@alias, @description, @user_id) 
+                        RETURNING building_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@alias", alias);
+                command.Parameters.AddWithValue("@description", descripcion ?? "");
+                command.Parameters.AddWithValue("@user_id", userId);
+
+                // Obtener el ID generado
+                var result = await command.ExecuteScalarAsync();
+                return Convert.ToInt32(result);
+            }            
             catch (Exception ex)
             {
                 Console.WriteLine("error:" + ex);
+                return -1;
             }
         }
 
@@ -210,8 +216,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         public async void eliminar_domicilio(string alias, int user_id)
         {
             try
-            {
-                // hacemos la conexion y la abrimos
+            {             
                 await using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     //hacemos nuestro query para buscar alias del domicilio a eliminar               
@@ -233,11 +238,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
         //con esto cambiamos los datos del domicilio que lit nomas es la descripcion y el alias
         //El que quiera cambiar eso nomas es pq le van a checar el fono yo creo
-        public async Task<bool> editar_domicilio(string alias, int buildingId)
+        public async Task<bool> editar_domicilio(string alias,string descripcion, int buildingId)
         {
-            NpgsqlConnection.ClearAllPools();
+          
             try
             {
+               
                 await using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     //hacemos nuestro query para buscar alias del domicilio a eliminar               
@@ -245,7 +251,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     //jalamos el id del usuario para poder buscar el edificio correcto
                     //hacemos nuestro query para buscar el id y lo almacenamos en nuestra variable
                     //estas variables se van a pasar por text box pero como no existen todavia se quedan en variables
-                    string descripcion = "tiene una puerta, un cuarto y tiene 3 baños";
                     string query = "UPDATE cra.buildings SET alias=@alias, description=@description WHERE building_id=@buildingId";
                     await using (NpgsqlCommand command = new NpgsqlCommand(query, con))
                     {
@@ -293,17 +298,17 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
 
-        public async Task<int> id_edificio(int userId)
+        public async Task<int> id_edificio(int userId, string alias)
         {
             try
-            {
+            {                
                 await using var con = new NpgsqlConnection(cadena_conexion);
                 await con.OpenAsync();
 
-                string query = "SELECT building_id FROM cra.buildings WHERE user_id = @user_id";
+                string query = "SELECT building_id FROM cra.buildings WHERE user_id = @user_id and alias = @alias";
                 await using var command = new NpgsqlCommand(query, con);
                 command.Parameters.AddWithValue("@user_id", userId);
-
+                command.Parameters.AddWithValue("@alias", alias.Trim());
                 object result = await command.ExecuteScalarAsync();
                 if (result == null || result == DBNull.Value)
                     return -1;

@@ -11,37 +11,25 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Npgsql;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Invitados;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
-    /// <summary>
-    /// Lógica de interacción para Usuario.xaml
-    /// </summary>
     public partial class Usuario : UserControl
     {
         conexion con = new conexion();
-        /// <summary>
-        /// creo que es la primera vez que voy a hacer notas asi queeee....
-        /// 
-        /// Este es el registro para hacer que el data grid agarre domicilios mediante los botones
-        /// de agregar, eliminar y editar :p
-        /// 
-        /// como primer paso, agregamos una public class Domicilios con los atributos que queremos
-        /// agregar al data grid :p
-        /// </summary>
         public class Domicilio
         {
-            public int Id { get; set; } //este es solo para la base de datos (o eso me dijo dani)
-            public string Nombre { get; set; } //nombre para que el usuario identifique su domicilio
-            public string Descripcion { get; set; } //y la descripcion, meramente de relleno(¿
+            public int Id { get; set; }
+            public string Nombre { get; set; }
+            public string NombreOriginal { get; set; }
+            public string Descripcion { get; set; }
         }
 
-        // Colección que alimenta el DataGrid.
         private ObservableCollection<Domicilio> Domicilios { get; set; } = new();
-
-        //ahora, crearemos una funcion para que agregue domicilios (buscar con CTRL + F "private void AgregarDomicilio()"
+      
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -51,66 +39,89 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 if (tb != null && !tb.IsReadOnly)
                 {
                     tb.IsReadOnly = true;
-                    // En lugar de Boton_Menu (no existe en este UserControl) movemos el foco al DataGrid
                     miDataGrid.Focus();
                 }
             }
         }
 
-        private const string FilePath = "Domicilios.json";
+        private string FilePath => $"Domicilios_{Login.userid}.json";
         public bool Editor = false;
+
         public Usuario()
         {
             InitializeComponent();
 
-            Domicilios = CargarDatos();
-            miDataGrid.ItemsSource = Domicilios;
-
+            Loaded += async (s, e) => await CargarDatosIniciales();
             if (Registro.GlobalData.UserName == null)
                 Registro.GlobalData.UserName = "Usuario";
+            Domicilios = CargarDatosJSON();
 
             InicializarTimer();
             ActualizarTextBox();
 
-            // Corregido: referencia explícita a Registro.GlobalData
             Texto_Nombre.Text = $"{Registro.GlobalData.UserName}";
             Barra_meta.Value = new Random().Next(10, 101);
             Datos_Usuario.Text = $"Invitados: " + new Random().Next(0, 101);
 
             ActualizarImagen();
         }
-
-
-        //funcion para actualizar la imagen del icono de editar/guardar
-        private void ActualizarImagen()
+        private async Task CargarDatosIniciales()
         {
-            //carga la ruta dependiendo de si estas en modo editor o no
-            string ruta = Editor ? "/Images/IconoGuardado.png" : "/Images/Editar.png";
-            //y actualiza la imagen del boton
-            BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
+            Domicilios = CargarDatosJSON();
+
+            if (Domicilios.Count == 0)
+            {
+                await Cargar_domicilios();
+            }
+
+            miDataGrid.ItemsSource = Domicilios;
         }
 
-
-        private DispatcherTimer timer;
-        private void InicializarTimer()
-        {
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromHours(1); // Actualiza cada hora
-            timer.Tick += Timer_Tick;
-            timer.Start();
-        }
-
-
-        //la funcion para cargar los datos del json, nada especial, solo lee el archivo y lo deserializa en la coleccion de domicilios
-        private ObservableCollection<Domicilio> CargarDatos()
+      
+        private async Task Cargar_domicilios()
         {
             try
-
             {
-                //detecta si es que el archivo existe
+                await using var conexion = new NpgsqlConnection(con.cadenaconexion());
+                await conexion.OpenAsync();
+
+                string query = "SELECT building_id, alias, description FROM cra.buildings WHERE user_id = @user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                Domicilios.Clear();
+
+                while (await reader.ReadAsync())
+                {
+                    var domicilio = new Domicilio
+                    {
+                        Id = reader.GetInt32(0),
+                        Nombre = reader.GetString(1),
+                        NombreOriginal = reader.GetString(1),
+                        Descripcion = reader.IsDBNull(2) ? "" : reader.GetString(2)
+                    };
+
+                    Domicilios.Add(domicilio);
+                }
+
+                GuardarJSON();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar domicilios: {ex.Message}");
+            }
+        }
+
+        // Cargar desde JSON 
+        private ObservableCollection<Domicilio> CargarDatosJSON()
+        {
+            try
+            {
                 if (File.Exists(FilePath))
                 {
-                    //si es asi, lee el archivo y deserializa el json en una coleccion de domicilios
                     string json = File.ReadAllText(FilePath);
                     var lista = JsonSerializer.Deserialize<ObservableCollection<Domicilio>>(json);
                     return lista ?? new ObservableCollection<Domicilio>();
@@ -118,37 +129,83 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar datos: {ex.Message}");
+                MessageBox.Show($"Error al cargar desde JSON: {ex.Message}");
             }
             return new ObservableCollection<Domicilio>();
         }
+       
+
+        // ⭐ Guardar solo en JSON (rápido)
+        private void GuardarJSON()
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(Domicilios, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(FilePath, json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al guardar JSON: {ex.Message}");
+            }
+        }
+
+        private void ActualizarImagen()
+        {
+            string ruta = Editor ? "/Images/IconoGuardado.png" : "/Images/Editar.png";
+            BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
+        }
+
+        private DispatcherTimer timer;
+        private void InicializarTimer()
+        {
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromHours(1);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+        }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
             ActualizarTextBox();
         }
 
-        /// <summary>
-        /// Esta funcion se utilizara a la hora de usar el boton de agregar domicilio
-        /// asi queeeeeeee, toca ver como funciona :p
-        /// </summary>
-
+        // Eliminar: BD + JSON
         private async void EliminarDomicilio()
         {
-            //detecta si es que tienes seleccionado algun elemento del data grid
             if (miDataGrid.SelectedItem != null)
             {
-                //si es asi, declara una variable domicilio que sera igual al domicilio seleccionado
                 var domicilio = (Domicilio)miDataGrid.SelectedItem;
-                string alias = domicilio.Nombre;
-                //y elimina ese domicilio de la coleccion de domicilios
-                con.eliminar_domicilio(alias, Login.userid);
-                Domicilios.Remove(domicilio);
+                string alias = domicilio.NombreOriginal; // Usar el original
+
+                var resultado = MessageBox.Show(
+                    $"¿Estás seguro de eliminar '{domicilio.Nombre}'?",
+                    "Confirmar eliminación",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning
+                );
+
+                if (resultado == MessageBoxResult.Yes)
+                {
+                    // Eliminar de la BD
+                    con.eliminar_domicilio(alias, Login.userid);
+
+                    // Eliminar de la colección
+                    Domicilios.Remove(domicilio);
+
+                    // ⭐ Actualizar JSON
+                    GuardarJSON();
+
+                    MessageBox.Show("Domicilio eliminado correctamente");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un domicilio primero");
             }
         }
 
         private void ActualizarTextBox()
         {
-            //cosa que calcula los dias restantes del mes, no se, esta chistoso xd
             DateTime hoy = DateTime.Now;
             int ultimoDia = DateTime.DaysInMonth(hoy.Year, hoy.Month);
             int diasRestantes = ultimoDia - hoy.Day + 1;
@@ -156,60 +213,93 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             Dias_restantes.Text = $"{diasRestantes} días restantes";
         }
 
-        /// <summary>
-        /// la funcion guardar datos es para basicamente, guardar datos (duh)
-        /// aqui te va toda la pinche mierda que es esto
-        /// </summary>
-        private void GuardarDatos()
+        // ⭐ Guardar: BD + JSON
+        private async void GuardarDatos()
         {
             try
             {
-                //esto creo el json, como? no se, preguntale a visual xd
-                string json = JsonSerializer.Serialize(Domicilios, new JsonSerializerOptions { WriteIndented = true });
-                //y esto lo guarda en un archivo llamado domicilios.json
-                File.WriteAllText(FilePath, json);
-                MessageBox.Show("Datos guardados correctamente.");
+                if (miDataGrid.SelectedItem == null)
+                {
+                    MessageBox.Show("Selecciona un domicilio primero");
+                    return;
+                }
+
+                var domicilio = (Domicilio)miDataGrid.SelectedItem;
+                string aliasNuevo = domicilio.Nombre;
+                string aliasOriginal = domicilio.NombreOriginal;
+                string desc = domicilio.Descripcion;
+
+                // Buscar con el alias ORIGINAL
+                int building_id = await con.id_edificio(Login.userid, aliasOriginal);
+
+                if (building_id != -1)
+                {
+                    // Actualizar en BD
+                    bool exito = await con.editar_domicilio(aliasNuevo, desc, building_id);
+
+                    if (exito)
+                    {
+                        // Actualizar el NombreOriginal
+                        domicilio.NombreOriginal = aliasNuevo;
+
+                        // ⭐ Guardar en JSON
+                        GuardarJSON();
+
+                        MessageBox.Show("Datos guardados correctamente.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"No se encontró el edificio '{aliasOriginal}' en la base de datos");
+                }
             }
             catch (Exception ex)
             {
-                //errorsito por si aca, no vaya a ser el viablo :anguished:
                 MessageBox.Show($"Error al guardar datos: {ex.Message}");
             }
         }
+
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
 
-        private void Boton_Agregar2_Click(object sender, RoutedEventArgs e)
+        // ⭐ Agregar: BD + JSON
+        private async void Boton_Agregar2_Click(object sender, RoutedEventArgs e)
         {
             var dialogo = new AgregarDomicilio();
 
-            // ShowDialog() devuelve true si presionaron Aceptar
             if (dialogo.ShowDialog() == true)
             {
-                // Obtener nuevo ID
-                int nuevoId = Domicilios.Count > 0 ? Domicilios.Max(p => p.Id) + 1 : 1;
+                // 1. Agregar SOLO a la BD
+                int nuevoId = await con.agregar_domicilio(dialogo.Nombre, dialogo.Descripcion, Login.userid);
 
-                // Crear nueva persona con los datos del diálogo
-
-                ///primero que nada, declaramos una variable llamada NuevoDomicilio como un nuevo domicilio (omg)
-                var NuevoDomicilio = new Domicilio
+                if (nuevoId > 0)
                 {
-                    //hacemos que el Id sea igual a la cantidad de Domicilios + 1 (asi no se repiten los Ids)
-                    Id = Domicilios.Count + 1,
-                    //declaramos el nombre como un nuevo domicilio
-                    Nombre = dialogo.Nombre,
-                    //y la descripcion como un campo vacio para que se pueda editar a gusto del usuario
-                    Descripcion = dialogo.Descripcion
-                };
-                //finalmente, agregamos el nuevo domicilio a la coleccion de Domicilios
-                Domicilios.Add(NuevoDomicilio);
+                    // 2. Crear el objeto local
+                    var nuevoDomicilio = new Domicilio
+                    {
+                        Id = nuevoId,
+                        Nombre = dialogo.Nombre,
+                        NombreOriginal = dialogo.Nombre,
+                        Descripcion = dialogo.Descripcion
+                    };
 
-                MessageBox.Show("Domicilio agregado exitosamente!", "Éxito",
+                    // 3. Agregar a la colección (esto actualiza el DataGrid automáticamente)
+                    Domicilios.Add(nuevoDomicilio);
+
+                    // 4. Guardar en JSON
+                    GuardarJSON();
+
+                    MessageBox.Show("Domicilio agregado exitosamente!", "Éxito",
                                   MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Error al agregar el domicilio", "Error",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            GuardarDatos();
         }
 
         private void Boton_Editar2_Click(object sender, RoutedEventArgs e)
@@ -219,7 +309,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
             if (!Editor)
             {
-                
                 GuardarDatos();
             }
 
@@ -228,14 +317,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 MessageBox.Show("Modo edición activado");
             }
 
-            ActualizarImagen(); 
+            ActualizarImagen();
         }
-
 
         private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e)
         {
-            EliminarDomicilio();            
-            GuardarDatos();
+            EliminarDomicilio();
         }
     }
 }
