@@ -6,48 +6,92 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using Npgsql;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
-using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Usuario;
 
 namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
-    /// <summary>
-    /// Lógica de interacción para Invitados.xaml
-    /// </summary>
     public partial class Invitados : UserControl
     {
+        conexion con = new conexion();
+
         public class Invitado
         {
-            public int Id { get; set; } //este es solo para la base de datos (o eso me dijo dani)
-            public string Nombre { get; set; } //nombre para que el usuario identifique a los invitados
-            public string Descripcion { get; set; } //y la descripcion, meramente de relleno(¿
+            public int Id { get; set; }
+            public string Nombre { get; set; }
+            public string NombreOriginal { get; set; }
+            public bool ReadOnly { get; set; }
         }
 
-        public ObservableCollection<Invitado> Usuario_Invitado { get; set; }
-        private const string FilePath = "Invitados.json";
+        public ObservableCollection<Invitado> Usuario_Invitado { get; set; } = new();
+
+        private string FilePath => $"Invitados_{Login.userid}.json";
+
         public bool Editor = false;
+
         public Invitados()
         {
             InitializeComponent();
-            Usuario_Invitado = CargarDatos();
-            Grid_Invitados.ItemsSource = Usuario_Invitado;
+            Loaded += async (s, e) => await CargarDatosIniciales();
             ActualizarImagen();
         }
 
-        private ObservableCollection<Invitado> CargarDatos()
+        private async Task CargarDatosIniciales()
+        {
+            Usuario_Invitado = CargarDatosJSON();
+
+            if (Usuario_Invitado.Count == 0)
+            {
+                await CargarInvitadosDesdeDBAsync();
+            }
+
+            Grid_Invitados.ItemsSource = Usuario_Invitado;
+        }
+
+        private async Task CargarInvitadosDesdeDBAsync()
         {
             try
-
             {
-                //detecta si es que el archivo existe
+                await using var conexion = new NpgsqlConnection(con.cadenaconexion());
+                await conexion.OpenAsync();
+
+                string query = "SELECT inv_user_id, name, read_only FROM cra.invited_users WHERE user_id = @user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                Usuario_Invitado.Clear();
+
+                while (await reader.ReadAsync())
+                {
+                    var invitado = new Invitado
+                    {
+                        Id = reader.GetInt32(0),
+                        Nombre = reader.GetString(1),
+                        NombreOriginal = reader.GetString(1),
+                        ReadOnly = reader.GetBoolean(2)
+                    };
+
+                    Usuario_Invitado.Add(invitado);
+                }
+
+                GuardarJSON();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar invitados: {ex.Message}");
+            }
+        }
+
+        private ObservableCollection<Invitado> CargarDatosJSON()
+        {
+            try
+            {
                 if (File.Exists(FilePath))
                 {
-                    //si es asi, lee el archivo y deserializa el json en una coleccion de Invitados
                     string json = File.ReadAllText(FilePath);
                     var lista = JsonSerializer.Deserialize<ObservableCollection<Invitado>>(json);
                     return lista ?? new ObservableCollection<Invitado>();
@@ -55,75 +99,203 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar datos: {ex.Message}");
+                MessageBox.Show($"Error al cargar desde JSON: {ex.Message}");
             }
             return new ObservableCollection<Invitado>();
         }
 
-        private void ActualizarImagen()
-        {
-            //carga la ruta dependiendo de si estas en modo editor o no
-            string ruta = Editor ? "/Images/IconoGuardado.png" : "/Images/Editar usuario.png";
-            //y actualiza la imagen del boton
-            BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
-        }
-        private void EliminarInvitado()
-        {
-            //detecta si es que tienes seleccionado algun elemento del data grid
-            if (Grid_Invitados.SelectedItem != null)
-            {
-                //si es asi, declara una variable domicilio que sera igual al domicilio seleccionado
-                var invitado = (Invitado)Grid_Invitados.SelectedItem;
-                //y elimina ese domicilio de la coleccion de usuario_invitado
-                Usuario_Invitado.Remove(invitado);
-            }
-        }
-        private void GuardarDatos()
+        private void GuardarJSON()
         {
             try
             {
-                //esto creo el json, como? no se, preguntale a visual xd
                 string json = JsonSerializer.Serialize(Usuario_Invitado, new JsonSerializerOptions { WriteIndented = true });
-                //y esto lo guarda en un archivo llamado usuario_invitado.json
                 File.WriteAllText(FilePath, json);
-                MessageBox.Show("Datos guardados correctamente.");
             }
             catch (Exception ex)
             {
-                //errorsito por si aca, no vaya a ser el viablo :anguished:
+                MessageBox.Show($"Error al guardar JSON: {ex.Message}");
+            }
+        }
+
+        private void ActualizarImagen()
+        {
+            string ruta = Editor ? "/Images/IconoGuardado.png" : "/Images/Editar usuario.png";
+            BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
+        }
+
+        // ⭐ Eliminar sin código de invitación
+        private async void EliminarInvitado()
+        {
+            if (Grid_Invitados.SelectedItem != null)
+            {
+                var invitado = (Invitado)Grid_Invitados.SelectedItem;
+
+                var resultado = MessageBox.Show(
+                    $"¿Estás seguro de eliminar a '{invitado.Nombre}'?",
+                    "Confirmar eliminación",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning
+                );
+
+                if (resultado == MessageBoxResult.Yes)
+                {
+                    // Eliminar directamente usando el ID
+                    bool exito = await EliminarInvitadoDB(invitado.Id);
+
+                    if (exito)
+                    {
+                        Usuario_Invitado.Remove(invitado);
+                        GuardarJSON();
+                        MessageBox.Show("Invitado eliminado correctamente");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un invitado primero");
+            }
+        }
+
+        // ⭐ Método directo para eliminar
+        private async Task<bool> EliminarInvitadoDB(int invUserId)
+        {
+            try
+            {
+                await using var conexion = new NpgsqlConnection(con.cadenaconexion());
+                await conexion.OpenAsync();
+
+                string query = "DELETE FROM cra.invited_users WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@inv_user_id", invUserId);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+
+                int filasAfectadas = await command.ExecuteNonQueryAsync();
+                return filasAfectadas > 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al eliminar invitado: {ex.Message}");
+                return false;
+            }
+        }
+
+        // ⭐ Agregar sin código de invitación
+        private async void Boton_Agregar_Click(object sender, RoutedEventArgs e)
+        {
+            var dialogo = new DialogoAgregarPersona();
+
+            if (dialogo.ShowDialog() == true)
+            {
+                bool readOnly = false; // O puedes agregarlo al diálogo
+
+                // Agregar directamente sin código
+                int nuevoId = await AgregarInvitadoDB(dialogo.Nombre, readOnly);
+
+                if (nuevoId > 0)
+                {
+                    var nuevoInvitado = new Invitado
+                    {
+                        Id = nuevoId,
+                        Nombre = dialogo.Nombre,
+                        NombreOriginal = dialogo.Nombre,
+                        ReadOnly = readOnly
+                    };
+
+                    Usuario_Invitado.Add(nuevoInvitado);
+                    GuardarJSON();
+
+                    MessageBox.Show("Invitado agregado exitosamente!", "Éxito",
+                                  MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Error al agregar el invitado", "Error",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        // ⭐ Método directo para agregar
+        private async Task<int> AgregarInvitadoDB(string nombre, bool readOnly)
+        {
+            try
+            {
+                await using var conexion = new NpgsqlConnection(con.cadenaconexion());
+                await conexion.OpenAsync();
+
+                string query = @"INSERT INTO cra.invited_users (user_id, name, read_only) 
+                                VALUES (@user_id, @name, @read_only) 
+                                RETURNING inv_user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+                command.Parameters.AddWithValue("@name", nombre);
+                command.Parameters.AddWithValue("@read_only", readOnly);
+
+                var result = await command.ExecuteScalarAsync();
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al agregar invitado: {ex.Message}");
+                return -1;
+            }
+        }
+
+        // ⭐ Editar
+        private async void GuardarDatos()
+        {
+            try
+            {
+                if (Grid_Invitados.SelectedItem == null)
+                {
+                    MessageBox.Show("Selecciona un invitado primero");
+                    return;
+                }
+
+                var invitado = (Invitado)Grid_Invitados.SelectedItem;
+
+                bool exito = await EditarInvitadoDB(invitado.Id, invitado.Nombre, invitado.ReadOnly);
+
+                if (exito)
+                {
+                    invitado.NombreOriginal = invitado.Nombre;
+                    GuardarJSON();
+                    MessageBox.Show("Datos guardados correctamente.");
+                }
+            }
+            catch (Exception ex)
+            {
                 MessageBox.Show($"Error al guardar datos: {ex.Message}");
             }
         }
 
-        private void Boton_Agregar_Click(object sender, RoutedEventArgs e)
+        private async Task<bool> EditarInvitadoDB(int invUserId, string nuevoNombre, bool readOnly)
         {
-            var dialogo = new DialogoAgregarPersona();
-
-            // ShowDialog() devuelve true si presionaron Aceptar
-            if (dialogo.ShowDialog() == true)
+            try
             {
-                // Obtener nuevo ID
-                int nuevoId = Usuario_Invitado.Count > 0 ? Usuario_Invitado.Max(p => p.Id) + 1 : 1;
+                await using var conexion = new NpgsqlConnection(con.cadenaconexion());
+                await conexion.OpenAsync();
 
-                // Crear nueva persona con los datos del diálogo
+                string query = @"UPDATE cra.invited_users 
+                                SET name = @name, read_only = @read_only 
+                                WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
 
-                ///primero que nada, declaramos una variable llamada NuevoDomicilio como un nuevo domicilio (omg)
-                var NuevoInvitado = new Invitado
-                {
-                    //hacemos que el Id sea igual a la cantidad de usuario_invitado + 1 (asi no se repiten los Ids)
-                    Id = Usuario_Invitado.Count + 1,
-                    //declaramos el nombre como un nuevo domicilio
-                    Nombre = dialogo.Nombre,
-                    //y la descripcion como un campo vacio para que se pueda editar a gusto del usuario
-                    Descripcion = dialogo.Descripcion
-                };
-            //finalmente, agregamos el nuevo domicilio a la coleccion de usuario_invitado
-            Usuario_Invitado.Add(NuevoInvitado);
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@name", nuevoNombre);
+                command.Parameters.AddWithValue("@read_only", readOnly);
+                command.Parameters.AddWithValue("@inv_user_id", invUserId);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
 
-            MessageBox.Show("Persona agregada exitosamente!", "Éxito",
-                              MessageBoxButton.OK, MessageBoxImage.Information);
+                int filasAfectadas = await command.ExecuteNonQueryAsync();
+                return filasAfectadas > 0;
             }
-            GuardarDatos();
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al editar invitado: {ex.Message}");
+                return false;
+            }
         }
 
         private void Boton_Editar_Click(object sender, RoutedEventArgs e)
@@ -135,8 +307,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             {
                 GuardarDatos();
             }
-
-            if (Editor)
+            else
             {
                 MessageBox.Show("Modo edición activado");
             }
@@ -147,7 +318,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         private void Boton_Eliminar_Click(object sender, RoutedEventArgs e)
         {
             EliminarInvitado();
-            GuardarDatos();
+        }
+
+        private void Grid_Invitados_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

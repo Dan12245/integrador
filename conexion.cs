@@ -1,13 +1,14 @@
 ﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View;
 using Npgsql;
 using NpgsqlTypes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 using Windows.System;
-using static SkiaSharp.HarfBuzz.SKShaper;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
-using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View;
+using static QuestPDF.Helpers.Colors;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 //ignoren este comentario solo es para llegar a las 600 lineas
 //_. . ..._ . ._. __. ___ _. _. ._ __. .. ..._ . _.__ ___ .._ .._ .__. 
@@ -345,37 +346,64 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 return -1;
             }
         }
+        public async Task<int> id_invitado(int userid, string name)
+        {
+            NpgsqlConnection.ClearAllPools();
+            try
+            {
+                await using var cone = new NpgsqlConnection(cadena_conexion);
+                await cone.OpenAsync();
+                string query = "SELECT inv_user_id FROM cra.invited_users WHERE user_id = @user_id and name=@name";
+                await using var command = new NpgsqlCommand(query, cone);
+                command.Parameters.AddWithValue("@userid", userid);
+                command.Parameters.AddWithValue("@name", name);
+                object result = await command.ExecuteScalarAsync();
+                if (result == null || result == DBNull.Value)
+                    return -1;
+
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("error:" + ex);
+                return -1;
+            }
+        }
 
         #endregion
         //aca van las funciones para los invitados
         #region invitados
-        public async Task<bool> existe_invitacion(string email)
+        public async Task<bool> existe_invitacion(int user_id, string invitacion)
         {
-            string invitacion = "437208959";
-            using (var con = new NpgsqlConnection(cadena_conexion))
+            try
             {
-                con.OpenAsync();
-                int user_id = await id_usuario(email);
-                string query = "SELECT COUNT(*) FROM cra.users WHERE inv_code=@inv_code";
-                using (var ejecutor = new NpgsqlCommand(query, con))
-                {
-                    ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
-                    int existe = Convert.ToInt32(ejecutor.ExecuteScalar());
-                    if (existe == 0)
-                    {
-                        MessageBox.Show("Código de invitación no válido.");
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-            }
+                await using var con = new NpgsqlConnection(cadena_conexion);
+                await con.OpenAsync();
 
+                string query = "SELECT COUNT(*) FROM cra.users WHERE inv_code = @inv_code AND user_id = @user_id";
+
+                await using var ejecutor = new NpgsqlCommand(query, con);
+                ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
+                ejecutor.Parameters.AddWithValue("@user_id", user_id);
+
+                int existe = Convert.ToInt32(await ejecutor.ExecuteScalarAsync()); 
+
+                if (existe == 0)
+                {
+                    MessageBox.Show("Código de invitación no válido.");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al verificar código: {ex.Message}");
+                return false;
+            }
         }
         //no se si esta funcion va aca o neh, asi que por mientras se queda aca
-        public async Task<bool> Invitar_usuario(string email, string name, bool y_o_n)
+        public async Task<bool> Invitar_usuario(int userid, string codigo, string name, bool y_o_n)
         {
             try
             {
@@ -384,14 +412,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 string invitacion = "437208959";
                 using (var con = new NpgsqlConnection(cadena_conexion))
                 {
-                    con.Open();
-                    int user_id = await id_usuario(email);
-                    if (await existe_invitacion(email))
+                    con.Open();                    
+                    if (await existe_invitacion(userid, codigo))
                     {
                         string query = "INSERT INTO cra.invited_users (user_id,name,read_only) VALUES (@user_id,@name,@read_only)";
                         using (var ejecutor = new NpgsqlCommand(query, con))
                         {
-                            ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                            ejecutor.Parameters.AddWithValue("@user_id", userid);
                             ejecutor.Parameters.AddWithValue("@name", name);
                             ejecutor.Parameters.AddWithValue("@read_only", y_o_n);
                             ejecutor.ExecuteNonQuery();
@@ -411,20 +438,19 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 return false;
             }
         }
-        public async Task editar_invitado(string email, string name, bool read_only)
+        public async Task editar_invitado(int userid, string codigo, string name, bool read_only)
         {
             try
             {
                 using (var con = new NpgsqlConnection(cadena_conexion))
                 {
-                    int user_id = await id_usuario(email);
-                    if (await existe_invitacion(email))
+                    if (await existe_invitacion(userid, codigo))
                     {
                         con.Open();
-                        string query = "UPDATE cra.invited_users SET user_id=@user_id and @read_only=read_only WHERE building_id=@building_id AND day=@day";
+                        string query = "UPDATE cra.invited_users SET name=@name, read_only=@read_only WHERE user_id=@user_id AND name=@old_name";
                         using (var ejecutor = new NpgsqlCommand(query, con))
                         {
-                            ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                            ejecutor.Parameters.AddWithValue("@user_id", userid);
                             ejecutor.Parameters.AddWithValue("@read_only", read_only);
                             ejecutor.ExecuteNonQuery();
                             MessageBox.Show("Consumo cambiado");
@@ -437,20 +463,19 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 Console.WriteLine("error:" + ex);
             }
         }
-        public async Task eliminar_invitado(string email, string name)
+        public async Task eliminar_invitado(int userid, string codigo, string name)
         {
             try
             {
                 using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     con.Open();
-                    int user_id = await id_usuario(email);
-                    if (await existe_invitacion(email))
+                    if (await existe_invitacion(userid, codigo))
                     {
                         string query = "DELETE FROM cra.invited_users WHERE user_id = @user_id and name=@name;";
                         using (var ejecutor = new NpgsqlCommand(query, con))
                         {
-                            ejecutor.Parameters.AddWithValue("@user_id", user_id);
+                            ejecutor.Parameters.AddWithValue("@user_id", userid);
                             ejecutor.Parameters.AddWithValue("@name", name);
                             ejecutor.ExecuteNonQuery();
                         }
