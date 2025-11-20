@@ -322,7 +322,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
 
-        public async Task<int> consumo_id(int building_id)
+        public async Task<int> id_consumo(int building_id)
         {
             try
             {
