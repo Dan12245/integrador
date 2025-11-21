@@ -149,7 +149,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         }
 
         //funcion para eliminar a un usuario
-        public async void Eliminar_usuario(string email)
+        public async void Eliminar_usuario(string email, int userID)
         {
             //En teoria ya deberia de borrar usuarios, y por ende deberian jalar todas las funciones
             //pq dependian del email, entonces cuando quieran usar una funcion de las que cree solamente
@@ -167,10 +167,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     //aca nomas hacemos un DELETE ya que postgress puede borrar todo con una configuracion
                     //que ya esta activada para borrar todo lo relacionado con la foreign key, en este caso
                     //el id del usuario, asi que ya no hay que meter mas que este query
-                    string query = "DELETE FROM cra.users WHERE email = @email;";
+                    string query = "DELETE FROM cra.users WHERE email = @email AND user user_id=@user_id;";
                     await using (NpgsqlCommand command = new NpgsqlCommand(query, con))
                     {
                         command.Parameters.AddWithValue("@email", email);
+                        command.Parameters.AddWithValue("@user_id", userID);
                         command.ExecuteNonQuery();
                     }
                     MessageBox.Show("usuario eliminado");
