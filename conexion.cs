@@ -403,96 +403,78 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
         //no se si esta funcion va aca o neh, asi que por mientras se queda aca
-        public async Task<bool> Invitar_usuario(int userid, string codigo, string name, bool y_o_n)
+        public async Task<int> agregar_invitado(string nombre, bool readOnly)
         {
             try
             {
-                //esta variable tambien se puede borrar sin tanto pedo, nomas ando esperando a que
-                //suelten la version con los botones para lo demas
-                string invitacion = "437208959";
-                using (var con = new NpgsqlConnection(cadena_conexion))
-                {
-                    con.Open();                    
-                    if (await existe_invitacion(userid, codigo))
-                    {
-                        string query = "INSERT INTO cra.invited_users (user_id,name,read_only) VALUES (@user_id,@name,@read_only)";
-                        using (var ejecutor = new NpgsqlCommand(query, con))
-                        {
-                            ejecutor.Parameters.AddWithValue("@user_id", userid);
-                            ejecutor.Parameters.AddWithValue("@name", name);
-                            ejecutor.Parameters.AddWithValue("@read_only", y_o_n);
-                            ejecutor.ExecuteNonQuery();
+                await using var conexion = new NpgsqlConnection(cadena_conexion);
+                await conexion.OpenAsync();
 
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
+                string query = @"INSERT INTO cra.invited_users (user_id, name, read_only) 
+                                VALUES (@user_id, @name, @read_only) 
+                                RETURNING inv_user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+                command.Parameters.AddWithValue("@name", nombre);
+                command.Parameters.AddWithValue("@read_only", readOnly);
+
+                var result = await command.ExecuteScalarAsync();
+                return Convert.ToInt32(result);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("error:" + ex);
+                MessageBox.Show($"Error al agregar invitado: {ex.Message}");
+                return -1;
+            }
+        }
+        public async Task<bool> editar_invitado(int invUserId, string nuevoNombre, bool readOnly)
+        {
+            try
+            {
+                await using var conexion = new NpgsqlConnection(cadena_conexion);
+                await conexion.OpenAsync();
+
+                string query = @"UPDATE cra.invited_users 
+                                SET name = @name, read_only = @read_only 
+                                WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@name", nuevoNombre);
+                command.Parameters.AddWithValue("@read_only", readOnly);
+                command.Parameters.AddWithValue("@inv_user_id", invUserId);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+
+                int filasAfectadas = await command.ExecuteNonQueryAsync();
+                return filasAfectadas > 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al editar invitado: {ex.Message}");
                 return false;
             }
         }
-        public async Task editar_invitado(int userid, string codigo, string name, bool read_only)
+        public async Task<bool> eliminar_invitado(int invUserId)
         {
             try
             {
-                using (var con = new NpgsqlConnection(cadena_conexion))
-                {
-                    if (await existe_invitacion(userid, codigo))
-                    {
-                        con.Open();
-                        string query = "UPDATE cra.invited_users SET name=@name, read_only=@read_only WHERE user_id=@user_id AND name=@old_name";
-                        using (var ejecutor = new NpgsqlCommand(query, con))
-                        {
-                            ejecutor.Parameters.AddWithValue("@user_id", userid);
-                            ejecutor.Parameters.AddWithValue("@read_only", read_only);
-                            ejecutor.ExecuteNonQuery();
-                            MessageBox.Show("Consumo cambiado");
-                        }
-                    }
-                }
+                await using var conexion = new NpgsqlConnection(cadena_conexion);
+                await conexion.OpenAsync();
+
+                string query = "DELETE FROM cra.invited_users WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@inv_user_id", invUserId);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+
+                int filasAfectadas = await command.ExecuteNonQueryAsync();
+                return filasAfectadas > 0;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("error:" + ex);
+                MessageBox.Show($"Error al eliminar invitado: {ex.Message}");
+                return false;
             }
-        }
-        public async Task eliminar_invitado(int userid, string codigo, string name)
-        {
-            try
-            {
-                using (var con = new NpgsqlConnection(cadena_conexion))
-                {
-                    con.Open();
-                    if (await existe_invitacion(userid, codigo))
-                    {
-                        string query = "DELETE FROM cra.invited_users WHERE user_id = @user_id and name=@name;";
-                        using (var ejecutor = new NpgsqlCommand(query, con))
-                        {
-                            ejecutor.Parameters.AddWithValue("@user_id", userid);
-                            ejecutor.Parameters.AddWithValue("@name", name);
-                            ejecutor.ExecuteNonQuery();
-                        }
-                        MessageBox.Show("invitado eliminado");
-                    }
-                    else
-                    {
-                        MessageBox.Show("invitado no encontrado");
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("error:" + ex);
-            }
-
         }
         #endregion
         #region Reportes

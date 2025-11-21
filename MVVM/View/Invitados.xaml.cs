@@ -139,8 +139,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
                 if (resultado == MessageBoxResult.Yes)
                 {
+                    int idinvitado = invitado.Id;
                     // Eliminar directamente usando el ID
-                    bool exito = await EliminarInvitadoDB(invitado.Id);
+                    bool exito = await con.eliminar_invitado(idinvitado);
 
                     if (exito)
                     {
@@ -157,28 +158,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         }
 
         // ⭐ Método directo para eliminar
-        private async Task<bool> EliminarInvitadoDB(int invUserId)
-        {
-            try
-            {
-                await using var conexion = new NpgsqlConnection(con.cadenaconexion());
-                await conexion.OpenAsync();
-
-                string query = "DELETE FROM cra.invited_users WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
-
-                await using var command = new NpgsqlCommand(query, conexion);
-                command.Parameters.AddWithValue("@inv_user_id", invUserId);
-                command.Parameters.AddWithValue("@user_id", Login.userid);
-
-                int filasAfectadas = await command.ExecuteNonQueryAsync();
-                return filasAfectadas > 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al eliminar invitado: {ex.Message}");
-                return false;
-            }
-        }
+       
 
         // ⭐ Agregar sin código de invitación
         private async void Boton_Agregar_Click(object sender, RoutedEventArgs e)
@@ -190,7 +170,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 bool readOnly = false; // O puedes agregarlo al diálogo
 
                 // Agregar directamente sin código
-                int nuevoId = await AgregarInvitadoDB(dialogo.Nombre, readOnly);
+                int nuevoId = await con.agregar_invitado(dialogo.Nombre, readOnly);
 
                 if (nuevoId > 0)
                 {
@@ -215,35 +195,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 }
             }
         }
-
-        // ⭐ Método directo para agregar
-        private async Task<int> AgregarInvitadoDB(string nombre, bool readOnly)
-        {
-            try
-            {
-                await using var conexion = new NpgsqlConnection(con.cadenaconexion());
-                await conexion.OpenAsync();
-
-                string query = @"INSERT INTO cra.invited_users (user_id, name, read_only) 
-                                VALUES (@user_id, @name, @read_only) 
-                                RETURNING inv_user_id";
-
-                await using var command = new NpgsqlCommand(query, conexion);
-                command.Parameters.AddWithValue("@user_id", Login.userid);
-                command.Parameters.AddWithValue("@name", nombre);
-                command.Parameters.AddWithValue("@read_only", readOnly);
-
-                var result = await command.ExecuteScalarAsync();
-                return Convert.ToInt32(result);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al agregar invitado: {ex.Message}");
-                return -1;
-            }
-        }
-
-        // ⭐ Editar
         private async void GuardarDatos()
         {
             try
@@ -256,7 +207,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
                 var invitado = (Invitado)Grid_Invitados.SelectedItem;
 
-                bool exito = await EditarInvitadoDB(invitado.Id, invitado.Nombre, invitado.ReadOnly);
+                bool exito = await con.editar_invitado(invitado.Id, invitado.Nombre, invitado.ReadOnly);
 
                 if (exito)
                 {
@@ -271,32 +222,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
         }
 
-        private async Task<bool> EditarInvitadoDB(int invUserId, string nuevoNombre, bool readOnly)
-        {
-            try
-            {
-                await using var conexion = new NpgsqlConnection(con.cadenaconexion());
-                await conexion.OpenAsync();
-
-                string query = @"UPDATE cra.invited_users 
-                                SET name = @name, read_only = @read_only 
-                                WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
-
-                await using var command = new NpgsqlCommand(query, conexion);
-                command.Parameters.AddWithValue("@name", nuevoNombre);
-                command.Parameters.AddWithValue("@read_only", readOnly);
-                command.Parameters.AddWithValue("@inv_user_id", invUserId);
-                command.Parameters.AddWithValue("@user_id", Login.userid);
-
-                int filasAfectadas = await command.ExecuteNonQueryAsync();
-                return filasAfectadas > 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al editar invitado: {ex.Message}");
-                return false;
-            }
-        }
+       
 
         private void Boton_Editar_Click(object sender, RoutedEventArgs e)
         {
