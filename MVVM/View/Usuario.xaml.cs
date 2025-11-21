@@ -290,6 +290,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
                     // 4. Guardar en JSON
                     GuardarJSON();
+                    await RecargarDomicilios();
 
                     MessageBox.Show("Domicilio agregado exitosamente!", "Éxito",
                                   MessageBoxButton.OK, MessageBoxImage.Information);
@@ -319,7 +320,19 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
             ActualizarImagen();
         }
-
+        // ⭐ Método para recargar el DataGrid de domicilios
+        public async Task RecargarDomicilios()
+        {
+            try
+            {
+                await Cargar_domicilios();
+                miDataGrid.Items.Refresh(); // Forzar actualización visual
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al recargar domicilios: {ex.Message}");
+            }
+        }
         private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e)
         {
             EliminarDomicilio();

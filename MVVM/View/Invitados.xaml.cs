@@ -79,10 +79,25 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                 }
 
                 GuardarJSON();
+                await RecargarInvitados();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al cargar invitados: {ex.Message}");
+            }
+        }
+
+        // ⭐ Método para recargar el DataGrid de invitados
+        public async Task RecargarInvitados()
+        {
+            try
+            {
+                await CargarInvitadosDesdeDBAsync();
+                Grid_Invitados.Items.Refresh(); // Forzar actualización visual
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al recargar invitados: {ex.Message}");
             }
         }
 
