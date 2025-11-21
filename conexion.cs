@@ -187,7 +187,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //Funcion para agregar domicilio
         public async Task<int> agregar_domicilio(string alias, string descripcion, int userId)
         {
-            MessageBox.Show("si entró padrino");
+           // MessageBox.Show("si entró padrino");
             try
             {
                 await using var conexion = new NpgsqlConnection(cadenaconexion());
