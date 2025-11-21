@@ -410,9 +410,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 await using var conexion = new NpgsqlConnection(cadena_conexion);
                 await conexion.OpenAsync();
 
-                string query = @"INSERT INTO cra.invited_users (user_id, name, read_only) 
-                                VALUES (@user_id, @name, @read_only) 
-                                RETURNING inv_user_id";
+                string query = "INSERT INTO cra.invited_users (user_id, name, read_only) VALUES (@user_id, @name, @read_only) RETURNING inv_user_id";
 
                 await using var command = new NpgsqlCommand(query, conexion);
                 command.Parameters.AddWithValue("@user_id", Login.userid);
@@ -435,9 +433,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 await using var conexion = new NpgsqlConnection(cadena_conexion);
                 await conexion.OpenAsync();
 
-                string query = @"UPDATE cra.invited_users 
-                                SET name = @name, read_only = @read_only 
-                                WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
+                string query = "UPDATE cra.invited_users SET name = @name, read_only = @read_only WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
 
                 await using var command = new NpgsqlCommand(query, conexion);
                 command.Parameters.AddWithValue("@name", nuevoNombre);
