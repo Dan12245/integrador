@@ -17,10 +17,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         }
         private async void Boton_Eliminar_Usuario(object sender, RoutedEventArgs e)
         {
-            Login log = new Login();
             conexion con = new conexion();
             string user_email = GlobalData.email;
-            con.Eliminar_usuario(user_email);
+            con.Eliminar_usuario(user_email, Login.userid);
 
             if (Application.Current.MainWindow?.DataContext is not MainViewModel shell)
                 return;

@@ -60,7 +60,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             contraseña_place_holder.Text = string.IsNullOrWhiteSpace(contraseña) ? "Contraseña" : string.Empty;
             repetir_contraseña_place_holder.Text = string.IsNullOrWhiteSpace(repetir_contraseña) ? "Repetir Contraseña" : string.Empty;
         }
-        private void Boton_Registrarse(object sender, RoutedEventArgs e)
+        private async void Boton_Registrarse(object sender, RoutedEventArgs e)
         {
             string name = Campo_Nombre.Text;
             string email = Campo_Email.Text;
@@ -96,6 +96,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             con.registrar_usuario(name, email, contraseña);
             GlobalData.UserName = name;
             GlobalData.email = email;
+            Login.userid =await con.id_usuario(email);
 
             // Navegar a Inicio tras registro exitoso
             shell.NavigateToInicioCommand.Execute(null);

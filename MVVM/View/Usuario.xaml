@@ -114,7 +114,7 @@
                     FontSize="16"
                     ToolTip="Edit consumption goal"/>
 
-            <DataGrid x:Name="miDataGrid" AutoGenerateColumns="False" Margin="284,49,83,127" BorderBrush="#FF1B0F73" Background="White" Foreground="#FF102567" FontFamily="Verdana" IsReadOnly="True">
+            <DataGrid x:Name="miDataGrid" AutoGenerateColumns="False" Margin="284,49,83,127" BorderBrush="#FF1B0F73" Background="White" Foreground="#FF102567" FontFamily="Verdana" IsReadOnly="True" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Home Name" Binding="{Binding Nombre}" Width="*"/>
                     <DataGridTextColumn Header="Description" Binding="{Binding Descripcion}" Width="*"/>

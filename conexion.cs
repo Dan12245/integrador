@@ -1,13 +1,14 @@
 ﻿using Consumo_Reducido_de_Agua_ahora_si_definitivo;
+using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View;
 using Npgsql;
 using NpgsqlTypes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 using Windows.System;
-using static SkiaSharp.HarfBuzz.SKShaper;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
-using Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View;
+using static QuestPDF.Helpers.Colors;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 //ignoren este comentario solo es para llegar a las 600 lineas
 //_. . ..._ . ._. __. ___ _. _. ._ __. .. ..._ . _.__ ___ .._ .._ .__. 
@@ -30,7 +31,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
          * Datos para acceder a la base de datos
          "User Id=postgres.eyroumbxtugceuwckkyg;Password=[YOUR-PASSWORD];Server=aws-1-us-east-2.pooler.supabase.com;Port=6543;Database=postgres"
         */
-
+        public string cadenaconexion()
+        {
+            string cadena_conexion = "User Id=" + usuario + ";" + "Password=" + password + ";" + "Server=" + server + ";" + "Port=" + puerto + ";" + "Database=" + bd;
+            return cadena_conexion;
+        }
         //cadena de conexion
         string cadena_conexion = "User Id=" + usuario + ";" + "Password=" + password + ";" + "Server=" + server + ";" + "Port=" + puerto + ";" + "Database=" + bd + ";" + "Pooling=" + pooling;
         //Esta funcion es relleno, solo es para comprobar si hay conexion con la base de datos
@@ -58,7 +63,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //Con esta funcion registramos a un usuario nuevo en la base de datos
         public async Task<bool> registrar_usuario(string nombre, string email, string password)
         {
-
             try
             {
                 await using (var con = new NpgsqlConnection(cadena_conexion))
@@ -89,7 +93,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     }
                 }
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine("Error:" + ex); return false;
@@ -122,7 +125,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                                     GlobalData.userid = userId;
                                     GlobalData.UserName = nombre;
                                     GlobalData.email = email;
-                                    return true; // sin MessageBox
+                                    return true;
                                 }
                                 else
                                 {
@@ -147,7 +150,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         }
 
         //funcion para eliminar a un usuario
-        public async void Eliminar_usuario(string email)
+        public async void Eliminar_usuario(string email, int userID)
         {
             //En teoria ya deberia de borrar usuarios, y por ende deberian jalar todas las funciones
             //pq dependian del email, entonces cuando quieran usar una funcion de las que cree solamente
@@ -165,10 +168,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     //aca nomas hacemos un DELETE ya que postgress puede borrar todo con una configuracion
                     //que ya esta activada para borrar todo lo relacionado con la foreign key, en este caso
                     //el id del usuario, asi que ya no hay que meter mas que este query
-                    string query = "DELETE FROM cra.users WHERE email = @email;";
+                    string query = "DELETE FROM cra.users WHERE email = @email AND user user_id=@user_id;";
                     await using (NpgsqlCommand command = new NpgsqlCommand(query, con))
                     {
                         command.Parameters.AddWithValue("@email", email);
+                        command.Parameters.AddWithValue("@user_id", userID);
                         command.ExecuteNonQuery();
                     }
                     MessageBox.Show("usuario eliminado");
@@ -183,27 +187,31 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //aca ponemos funciones relacionadas a los domicilios
         #region domicilio
         //Funcion para agregar domicilio
-        public async void agregar_domicilio_async(string alias, string descripcion, int userId)
+        public async Task<int> agregar_domicilio(string alias, string descripcion, int userId)
         {
+           // MessageBox.Show("si entró padrino");
             try
             {
-                await using (var con = new NpgsqlConnection(cadena_conexion))
-                {
-                    await con.OpenAsync();
-                    string query = "INSERT INTO cra.buildings (user_id, alias, description) VALUES (@user_id, @alias, @description)";
+                await using var conexion = new NpgsqlConnection(cadenaconexion());
+                await conexion.OpenAsync();
 
-                    await using (var ejecutor = new NpgsqlCommand(query, con))
-                    {
-                        ejecutor.Parameters.AddWithValue("@user_id", userId);
-                        ejecutor.Parameters.AddWithValue("@alias", alias);
-                        ejecutor.Parameters.AddWithValue("@description", descripcion);
-                        await ejecutor.ExecuteNonQueryAsync();
-                    }
-                }
-            }
+                string query = @"INSERT INTO cra.buildings (alias, description, user_id) 
+                        VALUES (@alias, @description, @user_id) 
+                        RETURNING building_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@alias", alias);
+                command.Parameters.AddWithValue("@description", descripcion ?? "");
+                command.Parameters.AddWithValue("@user_id", userId);
+
+                // Obtener el ID generado
+                var result = await command.ExecuteScalarAsync();
+                return Convert.ToInt32(result);
+            }            
             catch (Exception ex)
             {
                 Console.WriteLine("error:" + ex);
+                return -1;
             }
         }
 
@@ -211,8 +219,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         public async void eliminar_domicilio(string alias, int user_id)
         {
             try
-            {
-                // hacemos la conexion y la abrimos
+            {             
                 await using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     //hacemos nuestro query para buscar alias del domicilio a eliminar               
@@ -234,11 +241,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
         //con esto cambiamos los datos del domicilio que lit nomas es la descripcion y el alias
         //El que quiera cambiar eso nomas es pq le van a checar el fono yo creo
-        public async Task<bool> editar_domicilio(string alias, int buildingId)
+        public async Task<bool> editar_domicilio(string alias,string descripcion, int buildingId)
         {
-            NpgsqlConnection.ClearAllPools();
+          
             try
             {
+               
                 await using (var con = new NpgsqlConnection(cadena_conexion))
                 {
                     //hacemos nuestro query para buscar alias del domicilio a eliminar               
@@ -246,7 +254,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     //jalamos el id del usuario para poder buscar el edificio correcto
                     //hacemos nuestro query para buscar el id y lo almacenamos en nuestra variable
                     //estas variables se van a pasar por text box pero como no existen todavia se quedan en variables
-                    string descripcion = "tiene una puerta, un cuarto y tiene 3 baños";
                     string query = "UPDATE cra.buildings SET alias=@alias, description=@description WHERE building_id=@buildingId";
                     await using (NpgsqlCommand command = new NpgsqlCommand(query, con))
                     {
@@ -294,17 +301,17 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
 
-        public async Task<int> id_edificio(int userId)
+        public async Task<int> id_edificio(int userId, string alias)
         {
             try
-            {
+            {                
                 await using var con = new NpgsqlConnection(cadena_conexion);
                 await con.OpenAsync();
 
-                string query = "SELECT building_id FROM cra.buildings WHERE user_id = @user_id";
+                string query = "SELECT building_id FROM cra.buildings WHERE user_id = @user_id and alias = @alias";
                 await using var command = new NpgsqlCommand(query, con);
                 command.Parameters.AddWithValue("@user_id", userId);
-
+                command.Parameters.AddWithValue("@alias", alias.Trim());
                 object result = await command.ExecuteScalarAsync();
                 if (result == null || result == DBNull.Value)
                     return -1;
@@ -318,7 +325,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
         }
 
-        public async Task<int> consumo_id(int building_id)
+        public async Task<int> id_consumo(int building_id)
         {
             try
             {
@@ -341,129 +348,131 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                 return -1;
             }
         }
+        public async Task<int> id_invitado(int userid, string name)
+        {
+            NpgsqlConnection.ClearAllPools();
+            try
+            {
+                await using var cone = new NpgsqlConnection(cadena_conexion);
+                await cone.OpenAsync();
+                string query = "SELECT inv_user_id FROM cra.invited_users WHERE user_id = @user_id and name=@name";
+                await using var command = new NpgsqlCommand(query, cone);
+                command.Parameters.AddWithValue("@userid", userid);
+                command.Parameters.AddWithValue("@name", name);
+                object result = await command.ExecuteScalarAsync();
+                if (result == null || result == DBNull.Value)
+                    return -1;
+
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("error:" + ex);
+                return -1;
+            }
+        }
 
         #endregion
         //aca van las funciones para los invitados
         #region invitados
-        public async Task<bool> existe_invitacion(string email)
-        {
-            string invitacion = "437208959";
-            using (var con = new NpgsqlConnection(cadena_conexion))
-            {
-                con.OpenAsync();
-                int user_id = await id_usuario(email);
-                string query = "SELECT COUNT(*) FROM cra.users WHERE inv_code=@inv_code";
-                using (var ejecutor = new NpgsqlCommand(query, con))
-                {
-                    ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
-                    int existe = Convert.ToInt32(ejecutor.ExecuteScalar());
-                    if (existe == 0)
-                    {
-                        MessageBox.Show("Código de invitación no válido.");
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-            }
-
-        }
-        //no se si esta funcion va aca o neh, asi que por mientras se queda aca
-        public async Task<bool> Invitar_usuario(string email, string name, bool y_o_n)
+        public async Task<bool> existe_invitacion(int user_id, string invitacion)
         {
             try
             {
-                //esta variable tambien se puede borrar sin tanto pedo, nomas ando esperando a que
-                //suelten la version con los botones para lo demas
-                string invitacion = "437208959";
-                using (var con = new NpgsqlConnection(cadena_conexion))
-                {
-                    con.Open();
-                    int user_id = await id_usuario(email);
-                    if (await existe_invitacion(email))
-                    {
-                        string query = "INSERT INTO cra.invited_users (user_id,name,read_only) VALUES (@user_id,@name,@read_only)";
-                        using (var ejecutor = new NpgsqlCommand(query, con))
-                        {
-                            ejecutor.Parameters.AddWithValue("@user_id", user_id);
-                            ejecutor.Parameters.AddWithValue("@name", name);
-                            ejecutor.Parameters.AddWithValue("@read_only", y_o_n);
-                            ejecutor.ExecuteNonQuery();
+                await using var con = new NpgsqlConnection(cadena_conexion);
+                await con.OpenAsync();
 
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                string query = "SELECT COUNT(*) FROM cra.users WHERE inv_code = @inv_code AND user_id = @user_id";
+
+                await using var ejecutor = new NpgsqlCommand(query, con);
+                ejecutor.Parameters.AddWithValue("@inv_code", invitacion);
+                ejecutor.Parameters.AddWithValue("@user_id", user_id);
+
+                int existe = Convert.ToInt32(await ejecutor.ExecuteScalarAsync()); 
+
+                if (existe == 0)
+                {
+                    MessageBox.Show("Código de invitación no válido.");
+                    return false;
                 }
+
+                return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("error:" + ex);
+                MessageBox.Show($"Error al verificar código: {ex.Message}");
                 return false;
             }
         }
-        public async Task editar_invitado(string email, string name, bool read_only)
+        //no se si esta funcion va aca o neh, asi que por mientras se queda aca
+        public async Task<int> agregar_invitado(string nombre, bool readOnly)
         {
             try
             {
-                using (var con = new NpgsqlConnection(cadena_conexion))
-                {
-                    int user_id = await id_usuario(email);
-                    if (await existe_invitacion(email))
-                    {
-                        con.Open();
-                        string query = "UPDATE cra.invited_users SET user_id=@user_id and @read_only=read_only WHERE building_id=@building_id AND day=@day";
-                        using (var ejecutor = new NpgsqlCommand(query, con))
-                        {
-                            ejecutor.Parameters.AddWithValue("@user_id", user_id);
-                            ejecutor.Parameters.AddWithValue("@read_only", read_only);
-                            ejecutor.ExecuteNonQuery();
-                            MessageBox.Show("Consumo cambiado");
-                        }
-                    }
-                }
+                await using var conexion = new NpgsqlConnection(cadena_conexion);
+                await conexion.OpenAsync();
+
+                string query = "INSERT INTO cra.invited_users (user_id, name, read_only) VALUES (@user_id, @name, @read_only) RETURNING inv_user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+                command.Parameters.AddWithValue("@name", nombre);
+                command.Parameters.AddWithValue("@read_only", readOnly);
+
+                var result = await command.ExecuteScalarAsync();
+                return Convert.ToInt32(result);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("error:" + ex);
+                MessageBox.Show($"Error al agregar invitado: {ex.Message}");
+                return -1;
             }
         }
-        public async Task eliminar_invitado(string email, string name)
+        public async Task<bool> editar_invitado(int invUserId, string nuevoNombre, bool readOnly)
         {
             try
             {
-                using (var con = new NpgsqlConnection(cadena_conexion))
-                {
-                    con.Open();
-                    int user_id = await id_usuario(email);
-                    if (await existe_invitacion(email))
-                    {
-                        string query = "DELETE FROM cra.invited_users WHERE user_id = @user_id and name=@name;";
-                        using (var ejecutor = new NpgsqlCommand(query, con))
-                        {
-                            ejecutor.Parameters.AddWithValue("@user_id", user_id);
-                            ejecutor.Parameters.AddWithValue("@name", name);
-                            ejecutor.ExecuteNonQuery();
-                        }
-                        MessageBox.Show("invitado eliminado");
-                    }
-                    else
-                    {
-                        MessageBox.Show("invitado no encontrado");
-                    }
+                await using var conexion = new NpgsqlConnection(cadena_conexion);
+                await conexion.OpenAsync();
 
-                }
+                string query = "UPDATE cra.invited_users SET name = @name, read_only = @read_only WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@name", nuevoNombre);
+                command.Parameters.AddWithValue("@read_only", readOnly);
+                command.Parameters.AddWithValue("@inv_user_id", invUserId);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+
+                int filasAfectadas = await command.ExecuteNonQueryAsync();
+                return filasAfectadas > 0;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("error:" + ex);
+                MessageBox.Show($"Error al editar invitado: {ex.Message}");
+                return false;
             }
+        }
+        public async Task<bool> eliminar_invitado(int invUserId)
+        {
+            try
+            {
+                await using var conexion = new NpgsqlConnection(cadena_conexion);
+                await conexion.OpenAsync();
 
+                string query = "DELETE FROM cra.invited_users WHERE inv_user_id = @inv_user_id AND user_id = @user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@inv_user_id", invUserId);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+
+                int filasAfectadas = await command.ExecuteNonQueryAsync();
+                return filasAfectadas > 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al eliminar invitado: {ex.Message}");
+                return false;
+            }
         }
         #endregion
         #region Reportes

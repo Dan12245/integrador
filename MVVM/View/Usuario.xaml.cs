@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Npgsql;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Invitados;
 using static Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Registro;
 
@@ -19,10 +20,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 {
     public partial class Usuario : UserControl
     {
+        conexion con = new conexion();
         public class Domicilio
         {
             public int Id { get; set; }
             public string Nombre { get; set; }
+            public string NombreOriginal { get; set; }
             public string Descripcion { get; set; }
         }
 
@@ -33,17 +36,27 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         }
 
         public class EstadoMes
+        private ObservableCollection<Domicilio> Domicilios { get; set; } = new();
+      
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Enter)
+            {
+                TextBox tb = sender as TextBox;
+                if (tb != null && !tb.IsReadOnly)
+                {
+                    tb.IsReadOnly = true;
+                    miDataGrid.Focus();
+                }
+            }
+        }
             public int MesActual { get; set; }
             public int AnioActual { get; set; }
             public bool MensajeMostrado { get; set; } = false;
         }
 
-        public ObservableCollection<Domicilio> Domicilios { get; set; }
-
-        private const string FilePath = "Domicilios.json";
-        private const string MetaFilePath = "MetaConsumo.json";
-        private const string EstadoMesFilePath = "EstadoMes.json";
+        private string FilePath => $"Domicilios_{Login.userid}.json";
         public bool Editor = false;
         private ConfiguracionMeta configuracionMeta;
         private EstadoMes estadoMes;
@@ -52,11 +65,10 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             InitializeComponent();
 
-            Domicilios = CargarDatos();
-            miDataGrid.ItemsSource = Domicilios;
-
+            Loaded += async (s, e) => await CargarDatosIniciales();
             if (Registro.GlobalData.UserName == null)
-                Registro.GlobalData.UserName = "User";
+                Registro.GlobalData.UserName = "Usuario";
+            Domicilios = CargarDatosJSON();
 
             configuracionMeta = CargarConfiguracionMeta();
             estadoMes = CargarEstadoMes();
@@ -65,8 +77,9 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             ActualizarTextBox();
             ActualizarBarraMeta();
 
-            Texto_Nombre.Text = $"{GlobalData.UserName}";
-            Datos_Usuario.Text = $"Guests: " + new Random().Next(0, 101);
+            Texto_Nombre.Text = $"{Registro.GlobalData.UserName}";
+            Barra_meta.Value = new Random().Next(10, 101);
+            Datos_Usuario.Text = $"Invitados: " + new Random().Next(0, 101);
 
             ActualizarImagen();
         }
@@ -296,7 +309,14 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             };
+        private async Task CargarDatosIniciales()
+        {
+            Domicilios = CargarDatosJSON();
 
+            if (Domicilios.Count == 0)
+            {
+                await Cargar_domicilios();
+            }
             btnCancelar.Click += (s, args) =>
             {
                 dialogo.DialogResult = false;
@@ -322,16 +342,52 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
         }
 
-        private DispatcherTimer timer;
-        private void InicializarTimer()
+
+      
+        private async Task Cargar_domicilios()
         {
+            try
+            {
+                await using var conexion = new NpgsqlConnection(con.cadenaconexion());
+                await conexion.OpenAsync();
+
+                string query = "SELECT building_id, alias, description FROM cra.buildings WHERE user_id = @user_id";
+
+                await using var command = new NpgsqlCommand(query, conexion);
+                command.Parameters.AddWithValue("@user_id", Login.userid);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                Domicilios.Clear();
+
+                while (await reader.ReadAsync())
+                {
+                    var domicilio = new Domicilio
+                    {
+                        Id = reader.GetInt32(0),
+                        Nombre = reader.GetString(1),
+                        NombreOriginal = reader.GetString(1),
+                        Descripcion = reader.IsDBNull(2) ? "" : reader.GetString(2)
+                    };
+
+                    Domicilios.Add(domicilio);
+                }
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromHours(1);
             timer.Tick += Timer_Tick;
             timer.Start();
         }
 
-        private ObservableCollection<Domicilio> CargarDatos()
+                GuardarJSON();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar domicilios: {ex.Message}");
+            }
+        }
+
+        // Cargar desde JSON 
+        private ObservableCollection<Domicilio> CargarDatosJSON()
         {
             try
             {
@@ -348,18 +404,74 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
             return new ObservableCollection<Domicilio>();
         }
+       
+
+        // ⭐ Guardar solo en JSON (rápido)
+        private void GuardarJSON()
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(Domicilios, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(FilePath, json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al guardar JSON: {ex.Message}");
+            }
+        }
+
+        private void ActualizarImagen()
+        {
+            string ruta = Editor ? "/Images/IconoGuardado.png" : "/Images/Editar.png";
+            BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
+        }
+
+        private DispatcherTimer timer;
+        private void InicializarTimer()
+        {
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromHours(1);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+        }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
             ActualizarTextBox();
         }
 
-        private void EliminarDomicilio()
+        // Eliminar: BD + JSON
+        private async void EliminarDomicilio()
         {
             if (miDataGrid.SelectedItem != null)
             {
                 var domicilio = (Domicilio)miDataGrid.SelectedItem;
-                Domicilios.Remove(domicilio);
+                string alias = domicilio.NombreOriginal; // Usar el original
+
+                var resultado = MessageBox.Show(
+                    $"¿Estás seguro de eliminar '{domicilio.Nombre}'?",
+                    "Confirmar eliminación",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning
+                );
+
+                if (resultado == MessageBoxResult.Yes)
+                {
+                    // Eliminar de la BD
+                    con.eliminar_domicilio(alias, Login.userid);
+
+                    // Eliminar de la colección
+                    Domicilios.Remove(domicilio);
+
+                    // ⭐ Actualizar JSON
+                    GuardarJSON();
+
+                    MessageBox.Show("Domicilio eliminado correctamente");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un domicilio primero");
             }
         }
 
@@ -442,13 +554,45 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
         }
 
-        private void GuardarDatos()
+        // ⭐ Guardar: BD + JSON
+        private async void GuardarDatos()
         {
             try
             {
-                string json = JsonSerializer.Serialize(Domicilios, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(FilePath, json);
-                MessageBox.Show("Data saved successfully.");
+                if (miDataGrid.SelectedItem == null)
+                {
+                    MessageBox.Show("Selecciona un domicilio primero");
+                    return;
+                }
+
+                var domicilio = (Domicilio)miDataGrid.SelectedItem;
+                string aliasNuevo = domicilio.Nombre;
+                string aliasOriginal = domicilio.NombreOriginal;
+                string desc = domicilio.Descripcion;
+
+                // Buscar con el alias ORIGINAL
+                int building_id = await con.id_edificio(Login.userid, aliasOriginal);
+
+                if (building_id != -1)
+                {
+                    // Actualizar en BD
+                    bool exito = await con.editar_domicilio(aliasNuevo, desc, building_id);
+
+                    if (exito)
+                    {
+                        // Actualizar el NombreOriginal
+                        domicilio.NombreOriginal = aliasNuevo;
+
+                        // ⭐ Guardar en JSON
+                        GuardarJSON();
+
+                        MessageBox.Show("Datos guardados correctamente.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"No se encontró el edificio '{aliasOriginal}' en la base de datos");
+                }
             }
             catch (Exception ex)
             {
@@ -461,27 +605,43 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
         }
 
-        private void Boton_Agregar2_Click(object sender, RoutedEventArgs e)
+        // ⭐ Agregar: BD + JSON
+        private async void Boton_Agregar2_Click(object sender, RoutedEventArgs e)
         {
             var dialogo = new AgregarDomicilio();
 
             if (dialogo.ShowDialog() == true)
             {
-                int nuevoId = Domicilios.Count > 0 ? Domicilios.Max(p => p.Id) + 1 : 1;
+                // 1. Agregar SOLO a la BD
+                int nuevoId = await con.agregar_domicilio(dialogo.Nombre, dialogo.Descripcion, Login.userid);
 
-                var NuevoDomicilio = new Domicilio
+                if (nuevoId > 0)
                 {
-                    Id = Domicilios.Count + 1,
-                    Nombre = dialogo.Nombre,
-                    Descripcion = dialogo.Descripcion
-                };
+                    // 2. Crear el objeto local
+                    var nuevoDomicilio = new Domicilio
+                    {
+                        Id = nuevoId,
+                        Nombre = dialogo.Nombre,
+                        NombreOriginal = dialogo.Nombre,
+                        Descripcion = dialogo.Descripcion
+                    };
 
-                Domicilios.Add(NuevoDomicilio);
+                    // 3. Agregar a la colección (esto actualiza el DataGrid automáticamente)
+                    Domicilios.Add(nuevoDomicilio);
 
-                MessageBox.Show("Person added successfully!", "Success",
+                    // 4. Guardar en JSON
+                    GuardarJSON();
+                    await RecargarDomicilios();
+
+                    MessageBox.Show("Domicilio agregado exitosamente!", "Éxito",
                                   MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Error al agregar el domicilio", "Error",
+                                  MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            GuardarDatos();
         }
 
         private void Boton_Editar2_Click(object sender, RoutedEventArgs e)
@@ -501,11 +661,22 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
             ActualizarImagen();
         }
-
+        // ⭐ Método para recargar el DataGrid de domicilios
+        public async Task RecargarDomicilios()
+        {
+            try
+            {
+                await Cargar_domicilios();
+                miDataGrid.Items.Refresh(); // Forzar actualización visual
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al recargar domicilios: {ex.Message}");
+            }
+        }
         private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e)
         {
             EliminarDomicilio();
-            GuardarDatos();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
