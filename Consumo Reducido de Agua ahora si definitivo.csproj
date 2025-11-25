@@ -50,6 +50,8 @@
     <None Remove="Images\Eliminar.png" />
     <None Remove="Images\Help.png" />
     <None Remove="Images\logotilin2-blanco.png" />
+    <None Remove="Images\mirenestenuevorobos.png" />
+    <None Remove="Images\utilisateur.png" />
     <None Remove="logo programa Pagina.png" />
     <None Remove="logo programa.png" />
     <None Remove="Logo.png" />
@@ -123,6 +125,9 @@
     <Resource Include="Images\Menu Principal seleccionado.png" />
     <Resource Include="Images\Menu Principal.png" />
     <Resource Include="Images\Mes.png" />
+    <Resource Include="Images\mirenestenuevorobos.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\No.png" />
     <Resource Include="Images\Ojo.png" />
     <Resource Include="Images\perrito chivas.png" />
@@ -133,6 +138,9 @@
     <Resource Include="Images\teto-tetoris.gif" />
     <Resource Include="Images\Texto Inicio.png" />
     <Resource Include="Images\Usuario e invitados.png" />
+    <Resource Include="Images\utilisateur.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\Vecindad.png" />
   </ItemGroup>
 

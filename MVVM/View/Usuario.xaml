@@ -79,11 +79,11 @@
 
             <Rectangle HorizontalAlignment="Center" Height="2" Margin="0,42,0,0" Stroke="#FF212B69" VerticalAlignment="Top" Width="800"/>
 
-            <TextBlock x:Name="Texto_Nombre" HorizontalAlignment="Left" TextAlignment="Center" Margin="10,163,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="247" Foreground="#FF071148"/>
+            <TextBlock x:Name="Texto_Nombre" HorizontalAlignment="Left" TextAlignment="Center" Margin="10,175,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="246" Foreground="#FF071148"/>
 
-            <Image Margin="76,49,0,276" Source="/Images/Place Holder Foto.jpg" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
+            <Image Margin="76,61,0,264" Source="/Images/utilisateur.png" Stretch="Fill" HorizontalAlignment="Left" Width="114"/>
 
-            <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" TextAlignment="Center" Margin="11,186,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="246" Height="28" Foreground="#FF071148">
+            <TextBlock x:Name="Datos_Usuario" HorizontalAlignment="Left" TextAlignment="Center" Margin="11,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" FontFamily="Cascadia Mono SemiLight" FontSize="20" Width="246" Height="28" Foreground="#FF071148">
                 <Run Text="Guests: 3000 :O"/>
             </TextBlock>
 
@@ -136,8 +136,6 @@
             <Button x:Name="Boton_Editar2" Click="Boton_Editar2_Click" Margin="732,152,14,224" Background="Transparent" BorderBrush="{x:Null}">
                 <Image x:Name="BotonImagen" Source="/Images/Editar.png" Stretch="Uniform"/>
             </Button>
-
-            <Button Content="Log Out" HorizontalAlignment="Left" Margin="47,237,0,0" VerticalAlignment="Top" Height="59" Width="174" Click="Button_Click"/>
 
         </Grid>
     </Viewbox>

@@ -137,11 +137,13 @@
                 </Viewbox>
             </Grid>
             <Viewbox Grid.Column="4">
-                <Button x:Name="btnSalto" Height="75" Width="75" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{x:Null}" BorderBrush="{x:Null}" Click="btnSalto_Click">
+                <Button x:Name="btnSalto" Height="75" Width="75" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{x:Null}" Click="btnSalto_Click">
                     <Button.RenderTransform>
                         <TranslateTransform x:Name="btnSaltoTransform" Y="0"/>
                     </Button.RenderTransform>
-                    <Image Stretch="Uniform" gif:ImageBehavior.AnimatedSource="/Images/teto-tetoris.gif"/>
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Images/mirenestenuevorobos.png"/>
+                    </Button.Background>
                 </Button>
             </Viewbox>
             <Viewbox Grid.Column="3" MaxWidth="100">
@@ -151,7 +153,6 @@
                     </Button.Background>
                 </Button>
             </Viewbox>
-            <Image Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stretch="Uniform" Source="/Images/perrito chivas.png" />
             <Viewbox Grid.Column="1" MaxWidth="100">
                 <Button Grid.Column="1" Click="btnAnterior_Click" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" >
                     <Button.RenderTransform>
