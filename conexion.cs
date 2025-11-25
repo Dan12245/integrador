@@ -45,13 +45,13 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             {
                 conex.ConnectionString = cadena_conexion;
                 conex.Open();
-                // Removed MessageBox de prueba
+
                 conex.Close();
 
             }
             catch (Exception e)
             {
-                MessageBox.Show("no se pudo conectar a la base de datos, error:" + e.ToString());
+                //MessageBox.Show("no se pudo conectar a la base de datos, error:" + e.ToString());
             }
             return conex;
         }
@@ -175,7 +175,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                         command.Parameters.AddWithValue("@user_id", userID);
                         command.ExecuteNonQuery();
                     }
-                    MessageBox.Show("usuario eliminado");
+                    //MessageBox.Show("usuario eliminado");
                 }
             }
             catch (Exception ex)
@@ -189,7 +189,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
         //Funcion para agregar domicilio
         public async Task<int> agregar_domicilio(string alias, string descripcion, int userId)
         {
-           // MessageBox.Show("si entró padrino");
+           // //MessageBox.Show("si entró padrino");
             try
             {
                 await using var conexion = new NpgsqlConnection(cadenaconexion());
@@ -392,7 +392,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
 
                 if (existe == 0)
                 {
-                    MessageBox.Show("Código de invitación no válido.");
+                    //MessageBox.Show("Código de invitación no válido.");
                     return false;
                 }
 
@@ -400,7 +400,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al verificar código: {ex.Message}");
+                //MessageBox.Show($"Error al verificar código: {ex.//Message}");
                 return false;
             }
         }
@@ -424,7 +424,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al agregar invitado: {ex.Message}");
+                //MessageBox.Show($"Error al agregar invitado: {ex.//Message}");
                 return -1;
             }
         }
@@ -448,7 +448,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al editar invitado: {ex.Message}");
+                //MessageBox.Show($"Error al editar invitado: {ex.//Message}");
                 return false;
             }
         }
@@ -470,7 +470,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al eliminar invitado: {ex.Message}");
+                //MessageBox.Show($"Error al eliminar invitado: {ex.//Message}");
                 return false;
             }
         }
@@ -491,11 +491,11 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo
                     ejecutor.Parameters.AddWithValue("@description", description);
                     await ejecutor.ExecuteNonQueryAsync();
                 }
-                MessageBox.Show("Error enviado");
+                //MessageBox.Show("Error enviado");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("error, " + ex.ToString());
+                //MessageBox.Show("error, " + ex.ToString());
             }
         }
         #endregion
