@@ -21,6 +21,8 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
     public partial class Usuario : UserControl
     {
         conexion con = new conexion();
+
+        // ===== Models =====
         public class Domicilio
         {
             public int Id { get; set; }
@@ -35,41 +37,34 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             public double PromedioActual { get; set; } = 0.0;
         }
 
+        // Proper definition with required properties
         public class EstadoMes
-        private ObservableCollection<Domicilio> Domicilios { get; set; } = new();
-      
-
-        private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                TextBox tb = sender as TextBox;
-                if (tb != null && !tb.IsReadOnly)
-                {
-                    tb.IsReadOnly = true;
-                    miDataGrid.Focus();
-                }
-            }
-        }
             public int MesActual { get; set; }
             public int AnioActual { get; set; }
             public bool MensajeMostrado { get; set; } = false;
         }
 
+        // ===== Private fields =====
+        private ObservableCollection<Domicilio> Domicilios { get; set; } = new();
+        private const string MetaFilePath = "MetaConsumo.json"; // missing constant added
+        private const string EstadoMesFilePath = "EstadoMes.json"; // missing constant added
         private string FilePath => $"Domicilios_{Login.userid}.json";
         public bool Editor = false;
         private ConfiguracionMeta configuracionMeta;
         private EstadoMes estadoMes;
+        private DispatcherTimer timer;
 
         public Usuario()
         {
             InitializeComponent();
 
             Loaded += async (s, e) => await CargarDatosIniciales();
-            if (Registro.GlobalData.UserName == null)
-                Registro.GlobalData.UserName = "Usuario";
-            Domicilios = CargarDatosJSON();
 
+            if (Registro.GlobalData.UserName == null)
+                Registro.GlobalData.UserName = "User";
+
+            Domicilios = CargarDatosJSON();
             configuracionMeta = CargarConfiguracionMeta();
             estadoMes = CargarEstadoMes();
 
@@ -82,6 +77,30 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             Datos_Usuario.Text = $"Invitados: " + new Random().Next(0, 101);
 
             ActualizarImagen();
+        }
+
+        // === Event handlers / helpers ===
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (sender is TextBox tb && !tb.IsReadOnly)
+                {
+                    tb.IsReadOnly = true;
+                    miDataGrid.Focus();
+                }
+            }
+        }
+
+        private async Task CargarDatosIniciales()
+        {
+            // Load from JSON first; if empty load from DB.
+            Domicilios = CargarDatosJSON();
+            if (Domicilios.Count == 0)
+            {
+                await Cargar_domicilios();
+            }
+            miDataGrid.ItemsSource = Domicilios;
         }
 
         private ConfiguracionMeta CargarConfiguracionMeta()
@@ -149,7 +168,6 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         private void VerificarNuevoMes()
         {
             DateTime hoy = DateTime.Now;
-
             if (estadoMes.MesActual != hoy.Month || estadoMes.AnioActual != hoy.Year)
             {
                 estadoMes.MesActual = hoy.Month;
@@ -164,25 +182,12 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             if (configuracionMeta.MetaConsumo > 0)
             {
                 double porcentaje = (configuracionMeta.PromedioActual / configuracionMeta.MetaConsumo) * 100;
-                porcentaje = Math.Max(0, Math.Min(100, porcentaje));
-
+                porcentaje = Math.Clamp(porcentaje, 0, 100);
                 Barra_meta.Value = porcentaje;
-
-                Meta_de_consumo_texto.Text =
-                    $"Consumption: {configuracionMeta.PromedioActual:F1} m³ / Goal: {configuracionMeta.MetaConsumo:F1} m³ ({porcentaje:F1}%)";
-
-                if (porcentaje <= 70)
-                {
-                    Barra_meta.Foreground = new SolidColorBrush(Color.FromRgb(76, 175, 80));
-                }
-                else if (porcentaje <= 90)
-                {
-                    Barra_meta.Foreground = new SolidColorBrush(Color.FromRgb(255, 193, 7));
-                }
-                else
-                {
-                    Barra_meta.Foreground = new SolidColorBrush(Color.FromRgb(244, 67, 54));
-                }
+                Meta_de_consumo_texto.Text = $"Consumption: {configuracionMeta.PromedioActual:F1} m³ / Goal: {configuracionMeta.MetaConsumo:F1} m³ ({porcentaje:F1}%)";
+                if (porcentaje <= 70) Barra_meta.Foreground = new SolidColorBrush(Color.FromRgb(76, 175, 80));
+                else if (porcentaje <= 90) Barra_meta.Foreground = new SolidColorBrush(Color.FromRgb(255, 193, 7));
+                else Barra_meta.Foreground = new SolidColorBrush(Color.FromRgb(244, 67, 54));
             }
         }
 
@@ -202,74 +207,21 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            var txtMeta = new TextBlock
-            {
-                Text = "Monthly Consumption Goal (Cubic Meters):",
-                FontSize = 16,
-                Margin = new Thickness(20, 0, 20, 2),
-                VerticalAlignment = VerticalAlignment.Top
-            };
-
-            var inputMeta = new TextBox
-            {
-                Text = configuracionMeta.MetaConsumo.ToString("F1"),
-                FontSize = 16,
-                Margin = new Thickness(20, 15, 20, 19),
-                VerticalAlignment = VerticalAlignment.Bottom
-            };
-
-            var txtPromedio = new TextBlock
-            {
-                Text = "Current Average (Cubic Meters):",
-                FontSize = 16,
-                Margin = new Thickness(20, 0, 20, 5),
-                VerticalAlignment = VerticalAlignment.Top
-            };
+            var txtMeta = new TextBlock { Text = "Monthly Consumption Goal (Cubic Meters):", FontSize = 16, Margin = new Thickness(20, 0, 20, 2), VerticalAlignment = VerticalAlignment.Top };
+            var inputMeta = new TextBox { Text = configuracionMeta.MetaConsumo.ToString("F1"), FontSize = 16, Margin = new Thickness(20, 15, 20, 19), VerticalAlignment = VerticalAlignment.Bottom };
+            var txtPromedio = new TextBlock { Text = "Current Average (Cubic Meters):", FontSize = 16, Margin = new Thickness(20, 0, 20, 5), VerticalAlignment = VerticalAlignment.Top };
             Grid.SetRow(txtPromedio, 1);
-
-            var inputPromedio = new TextBox
-            {
-                Text = configuracionMeta.PromedioActual.ToString("F1"),
-                FontSize = 16,
-                Margin = new Thickness(20, 10, 20, 20),
-                VerticalAlignment = VerticalAlignment.Bottom
-            };
+            var inputPromedio = new TextBox { Text = configuracionMeta.PromedioActual.ToString("F1"), FontSize = 16, Margin = new Thickness(20, 10, 20, 20), VerticalAlignment = VerticalAlignment.Bottom };
             Grid.SetRow(inputPromedio, 1);
-
-            var panelBotones = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 10, 0, 10)
-            };
+            var panelBotones = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 10, 0, 10) };
             Grid.SetRow(panelBotones, 2);
 
-            var btnGuardar = new Button
-            {
-                Content = "Save",
-                Width = 100,
-                Height = 35,
-                Margin = new Thickness(5),
-                Background = new SolidColorBrush(Color.FromRgb(76, 175, 80)),
-                Foreground = Brushes.White,
-                FontSize = 14
-            };
-
-            var btnCancelar = new Button
-            {
-                Content = "Cancel",
-                Width = 100,
-                Height = 35,
-                Margin = new Thickness(5),
-                Background = new SolidColorBrush(Color.FromRgb(244, 67, 54)),
-                Foreground = Brushes.White,
-                FontSize = 14
-            };
+            var btnGuardar = new Button { Content = "Save", Width = 100, Height = 35, Margin = new Thickness(5), Background = new SolidColorBrush(Color.FromRgb(76, 175, 80)), Foreground = Brushes.White, FontSize = 14 };
+            var btnCancelar = new Button { Content = "Cancel", Width = 100, Height = 35, Margin = new Thickness(5), Background = new SolidColorBrush(Color.FromRgb(244, 67, 54)), Foreground = Brushes.White, FontSize = 14 };
 
             btnGuardar.Click += (s, args) =>
             {
-                if (double.TryParse(inputMeta.Text, out double meta) &&
-                    double.TryParse(inputPromedio.Text, out double promedio))
+                if (double.TryParse(inputMeta.Text, out double meta) && double.TryParse(inputPromedio.Text, out double promedio))
                 {
                     if (meta > 0 && promedio >= 0)
                     {
@@ -279,59 +231,29 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                         ActualizarBarraMeta();
                         dialogo.DialogResult = true;
                         dialogo.Close();
-
                         if (promedio > meta)
                         {
-                            MessageBox.Show(
-                                "You have exceeded your consumption limit!\n\n" +
-                                $"Current consumption: {promedio:F1} m³\n" +
-                                $"Set goal: {meta:F1} m³\n" +
-                                $"Excess: {(promedio - meta):F1} m³",
-                                "Limit Exceeded",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Warning);
+                            MessageBox.Show($"You have exceeded your consumption limit!\n\nCurrent consumption: {promedio:F1} m³\nSet goal: {meta:F1} m³\nExcess: {(promedio - meta):F1} m³", "Limit Exceeded", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                         else
                         {
-                            MessageBox.Show("Goal successfully updated", "Success",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+                            MessageBox.Show("Goal successfully updated", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                     }
-                    else
-                    {
-                        MessageBox.Show("The values must be greater than 0", "Error",
-                            MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
+                    else MessageBox.Show("The values must be greater than 0", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
-                else
-                {
-                    MessageBox.Show("Please enter valid numeric values", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                else MessageBox.Show("Please enter valid numeric values", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             };
-        private async Task CargarDatosIniciales()
-        {
-            Domicilios = CargarDatosJSON();
 
-            if (Domicilios.Count == 0)
-            {
-                await Cargar_domicilios();
-            }
-            btnCancelar.Click += (s, args) =>
-            {
-                dialogo.DialogResult = false;
-                dialogo.Close();
-            };
+            btnCancelar.Click += (s, args) => { dialogo.DialogResult = false; dialogo.Close(); };
 
             panelBotones.Children.Add(btnGuardar);
             panelBotones.Children.Add(btnCancelar);
-
             grid.Children.Add(txtMeta);
             grid.Children.Add(inputMeta);
             grid.Children.Add(txtPromedio);
             grid.Children.Add(inputPromedio);
             grid.Children.Add(panelBotones);
-
             dialogo.Content = grid;
             dialogo.ShowDialog();
         }
@@ -342,24 +264,17 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
         }
 
-
-      
         private async Task Cargar_domicilios()
         {
             try
             {
                 await using var conexion = new NpgsqlConnection(con.cadenaconexion());
                 await conexion.OpenAsync();
-
                 string query = "SELECT building_id, alias, description FROM cra.buildings WHERE user_id = @user_id";
-
                 await using var command = new NpgsqlCommand(query, conexion);
                 command.Parameters.AddWithValue("@user_id", Login.userid);
-
                 await using var reader = await command.ExecuteReaderAsync();
-
                 Domicilios.Clear();
-
                 while (await reader.ReadAsync())
                 {
                     var domicilio = new Domicilio
@@ -369,24 +284,16 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
                         NombreOriginal = reader.GetString(1),
                         Descripcion = reader.IsDBNull(2) ? "" : reader.GetString(2)
                     };
-
                     Domicilios.Add(domicilio);
                 }
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromHours(1);
-            timer.Tick += Timer_Tick;
-            timer.Start();
-        }
-
                 GuardarJSON();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar domicilios: {ex.Message}");
+                MessageBox.Show($"Error loading buildings: {ex.Message}");
             }
         }
 
-        // Cargar desde JSON 
         private ObservableCollection<Domicilio> CargarDatosJSON()
         {
             try
@@ -404,9 +311,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
             return new ObservableCollection<Domicilio>();
         }
-       
 
-        // ⭐ Guardar solo en JSON (rápido)
         private void GuardarJSON()
         {
             try
@@ -416,82 +321,43 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al guardar JSON: {ex.Message}");
+                MessageBox.Show($"Error saving JSON: {ex.Message}");
             }
         }
 
-        private void ActualizarImagen()
-        {
-            string ruta = Editor ? "/Images/IconoGuardado.png" : "/Images/Editar.png";
-            BotonImagen.Source = new BitmapImage(new Uri(ruta, UriKind.Relative));
-        }
-
-        private DispatcherTimer timer;
         private void InicializarTimer()
         {
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromHours(1);
+            timer = new DispatcherTimer { Interval = TimeSpan.FromHours(1) };
             timer.Tick += Timer_Tick;
             timer.Start();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            ActualizarTextBox();
-        }
+        private void Timer_Tick(object sender, EventArgs e) => ActualizarTextBox();
 
-        // Eliminar: BD + JSON
         private async void EliminarDomicilio()
         {
-            if (miDataGrid.SelectedItem != null)
+            if (miDataGrid.SelectedItem is Domicilio domicilio)
             {
-                var domicilio = (Domicilio)miDataGrid.SelectedItem;
-                string alias = domicilio.NombreOriginal; // Usar el original
-
-                var resultado = MessageBox.Show(
-                    $"¿Estás seguro de eliminar '{domicilio.Nombre}'?",
-                    "Confirmar eliminación",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning
-                );
-
+                string alias = domicilio.NombreOriginal;
+                var resultado = MessageBox.Show($"Are you sure of delete? '{domicilio.Nombre}'?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (resultado == MessageBoxResult.Yes)
                 {
-                    // Eliminar de la BD
                     con.eliminar_domicilio(alias, Login.userid);
-
-                    // Eliminar de la colección
                     Domicilios.Remove(domicilio);
-
-                    // ⭐ Actualizar JSON
                     GuardarJSON();
-
-                    MessageBox.Show("Domicilio eliminado correctamente");
+                    MessageBox.Show("Building deleted succesfully");
                 }
             }
-            else
-            {
-                MessageBox.Show("Selecciona un domicilio primero");
-            }
+            else MessageBox.Show("First select a building");
         }
 
         public void ActualizarTextBox()
         {
             VerificarNuevoMes();
-
             DateTime hoy = DateTime.Now;
             int ultimoDia = DateTime.DaysInMonth(hoy.Year, hoy.Month);
             int diasRestantes = ultimoDia - hoy.Day;
-
-            if (diasRestantes > 0)
-            {
-                Dias_restantes.Text = $"{diasRestantes} days remaining";
-            }
-            else
-            {
-                Dias_restantes.Text = "Last day of the month";
-            }
-
+            Dias_restantes.Text = diasRestantes > 0 ? $"{diasRestantes} days remaining" : "Last day of the month";
             if (diasRestantes == 0 && !estadoMes.MensajeMostrado)
             {
                 MostrarResumenMensual();
@@ -502,97 +368,62 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
 
         private void MostrarResumenMensual()
         {
-            if (configuracionMeta.MetaConsumo > 0)
+            if (configuracionMeta.MetaConsumo <= 0)
             {
-                double porcentajeConsumo = (configuracionMeta.PromedioActual / configuracionMeta.MetaConsumo) * 100;
-                double porcentajeReduccion = 100 - porcentajeConsumo;
-
-                string mensaje;
-                string titulo;
-                MessageBoxImage icono;
-
-                if (configuracionMeta.PromedioActual <= configuracionMeta.MetaConsumo)
-                {
-                    mensaje =
-                        "🎉 Congratulations! You have reached your consumption goal.\n\n" +
-                        "📊 Monthly Summary:\n" +
-                        $"• Set goal: {configuracionMeta.MetaConsumo:F1} m³\n" +
-                        $"• Actual consumption: {configuracionMeta.PromedioActual:F1} m³\n" +
-                        $"• You reduced your consumption by {Math.Abs(porcentajeReduccion):F1}%\n" +
-                        $"• Savings: {(configuracionMeta.MetaConsumo - configuracionMeta.PromedioActual):F1} m³\n\n" +
-                        "Keep it up! 💧";
-
-                    titulo = "✅ Goal Achieved";
-                    icono = MessageBoxImage.Information;
-                }
-                else
-                {
-                    double exceso = configuracionMeta.PromedioActual - configuracionMeta.MetaConsumo;
-
-                    mensaje =
-                        "⚠️ You did not reach your goal this month.\n\n" +
-                        "📊 Monthly Summary:\n" +
-                        $"• Set goal: {configuracionMeta.MetaConsumo:F1} m³\n" +
-                        $"• Actual consumption: {configuracionMeta.PromedioActual:F1} m³\n" +
-                        $"• You exceeded the goal by {(porcentajeConsumo - 100):F1}%\n" +
-                        $"• Excess consumption: {exceso:F1} m³\n\n" +
-                        "💡 Tip: Try reducing your usage next month.";
-
-                    titulo = "❌ Goal Not Reached";
-                    icono = MessageBoxImage.Warning;
-                }
-
-                MessageBox.Show(mensaje, titulo, MessageBoxButton.OK, icono);
+                MessageBox.Show("No consumption goal has been set to evaluate this month's usage.", "No Goal", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            double porcentajeConsumo = (configuracionMeta.PromedioActual / configuracionMeta.MetaConsumo) * 100;
+            double porcentajeReduccion = 100 - porcentajeConsumo;
+            if (configuracionMeta.PromedioActual <= configuracionMeta.MetaConsumo)
+            {
+                MessageBox.Show(
+                    "🎉 Congratulations! You have reached your consumption goal.\n\n" +
+                    "📊 Monthly Summary:\n" +
+                    $"• Set goal: {configuracionMeta.MetaConsumo:F1} m³\n" +
+                    $"• Actual consumption: {configuracionMeta.PromedioActual:F1} m³\n" +
+                    $"• You reduced your consumption by {Math.Abs(porcentajeReduccion):F1}%\n" +
+                    $"• Savings: {(configuracionMeta.MetaConsumo - configuracionMeta.PromedioActual):F1} m³\n\n" +
+                    "Keep it up! 💧", "✅ Goal Achieved", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
+                double exceso = configuracionMeta.PromedioActual - configuracionMeta.MetaConsumo;
                 MessageBox.Show(
-                    "No consumption goal has been set to evaluate this month's usage.",
-                    "No Goal",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                    "⚠️ You did not reach your goal this month.\n\n" +
+                    "📊 Monthly Summary:\n" +
+                    $"• Set goal: {configuracionMeta.MetaConsumo:F1} m³\n" +
+                    $"• Actual consumption: {configuracionMeta.PromedioActual:F1} m³\n" +
+                    $"• You exceeded the goal by {(porcentajeConsumo - 100):F1}%\n" +
+                    $"• Excess consumption: {exceso:F1} m³\n\n" +
+                    "💡 Tip: Try reducing your usage next month.", "❌ Goal Not Reached", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
-        // ⭐ Guardar: BD + JSON
         private async void GuardarDatos()
         {
             try
             {
-                if (miDataGrid.SelectedItem == null)
+                if (miDataGrid.SelectedItem is not Domicilio domicilio)
                 {
-                    MessageBox.Show("Selecciona un domicilio primero");
+                    MessageBox.Show("First select a building");
                     return;
                 }
-
-                var domicilio = (Domicilio)miDataGrid.SelectedItem;
                 string aliasNuevo = domicilio.Nombre;
                 string aliasOriginal = domicilio.NombreOriginal;
                 string desc = domicilio.Descripcion;
-
-                // Buscar con el alias ORIGINAL
                 int building_id = await con.id_edificio(Login.userid, aliasOriginal);
-
                 if (building_id != -1)
                 {
-                    // Actualizar en BD
                     bool exito = await con.editar_domicilio(aliasNuevo, desc, building_id);
-
                     if (exito)
                     {
-                        // Actualizar el NombreOriginal
                         domicilio.NombreOriginal = aliasNuevo;
-
-                        // ⭐ Guardar en JSON
                         GuardarJSON();
-
-                        MessageBox.Show("Datos guardados correctamente.");
+                        MessageBox.Show("Data saved succesfully.");
                     }
                 }
-                else
-                {
-                    MessageBox.Show($"No se encontró el edificio '{aliasOriginal}' en la base de datos");
-                }
+                else MessageBox.Show($"The building '{aliasOriginal}' was not found");
             }
             catch (Exception ex)
             {
@@ -600,47 +431,23 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
             }
         }
 
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
 
-        }
-
-        // ⭐ Agregar: BD + JSON
         private async void Boton_Agregar2_Click(object sender, RoutedEventArgs e)
         {
             var dialogo = new AgregarDomicilio();
-
             if (dialogo.ShowDialog() == true)
             {
-                // 1. Agregar SOLO a la BD
                 int nuevoId = await con.agregar_domicilio(dialogo.Nombre, dialogo.Descripcion, Login.userid);
-
                 if (nuevoId > 0)
                 {
-                    // 2. Crear el objeto local
-                    var nuevoDomicilio = new Domicilio
-                    {
-                        Id = nuevoId,
-                        Nombre = dialogo.Nombre,
-                        NombreOriginal = dialogo.Nombre,
-                        Descripcion = dialogo.Descripcion
-                    };
-
-                    // 3. Agregar a la colección (esto actualiza el DataGrid automáticamente)
+                    var nuevoDomicilio = new Domicilio { Id = nuevoId, Nombre = dialogo.Nombre, NombreOriginal = dialogo.Nombre, Descripcion = dialogo.Descripcion };
                     Domicilios.Add(nuevoDomicilio);
-
-                    // 4. Guardar en JSON
                     GuardarJSON();
                     await RecargarDomicilios();
-
-                    MessageBox.Show("Domicilio agregado exitosamente!", "Éxito",
-                                  MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Building added succesfully!", "Ok", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                else
-                {
-                    MessageBox.Show("Error al agregar el domicilio", "Error",
-                                  MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                else MessageBox.Show("Error adding building", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -648,43 +455,23 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View
         {
             Editor = !Editor;
             miDataGrid.IsReadOnly = !Editor;
-
-            if (!Editor)
-            {
-                GuardarDatos();
-            }
-
-            if (Editor)
-            {
-                MessageBox.Show("Edit mode activated");
-            }
-
+            if (!Editor) GuardarDatos(); else MessageBox.Show("Edit mode activated");
             ActualizarImagen();
         }
-        // ⭐ Método para recargar el DataGrid de domicilios
+
         public async Task RecargarDomicilios()
         {
             try
             {
                 await Cargar_domicilios();
-                miDataGrid.Items.Refresh(); // Forzar actualización visual
+                miDataGrid.Items.Refresh();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al recargar domicilios: {ex.Message}");
+                MessageBox.Show($"Eror loading buildings: {ex.Message}");
             }
-        }
-        private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e)
-        {
-            EliminarDomicilio();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (Application.Current.MainWindow is MainWindow main)
-            {
-                main.CambiarEscena(new Login());
-            }
-        }
+        private void Boton_Eliminar2_Click(object sender, RoutedEventArgs e) => EliminarDomicilio();
     }
 }

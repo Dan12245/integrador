@@ -48,17 +48,17 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Editors
 
         private async void AddOrUpdate_Click(object sender, RoutedEventArgs e)
         {
-            if (_vm.SelectedBuilding == null) { MessageBox.Show("Seleccione un edificio en Inicio."); return; }
-            if (InputDate is not DateTime selectedDate) { MessageBox.Show("Seleccione una fecha válida."); return; }
-            if (selectedDate < _vm.StartOfYear || selectedDate > _vm.Today) { MessageBox.Show("Fecha fuera de rango."); return; }
-            if (string.IsNullOrWhiteSpace(ConsumoTextBox.Text)) { MessageBox.Show("Ingrese un consumo numérico."); return; }
+            if (_vm.SelectedBuilding == null) { MessageBox.Show("Select a building."); return; }
+            if (InputDate is not DateTime selectedDate) { MessageBox.Show("Select a valid date."); return; }
+            if (selectedDate < _vm.StartOfYear || selectedDate > _vm.Today) { MessageBox.Show("Date out of range."); return; }
+            if (string.IsNullOrWhiteSpace(ConsumoTextBox.Text)) { MessageBox.Show("Numeric values only."); return; }
             var raw = ConsumoTextBox.Text.Replace(',', '.');
-            if (!double.TryParse(raw, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out double consumo) || consumo <0) { MessageBox.Show("Valor de consumo inválido."); return; }
+            if (!double.TryParse(raw, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out double consumo) || consumo <0) { MessageBox.Show("Invalid data consumption."); return; }
             consumo = Math.Round(consumo,2, MidpointRounding.AwayFromZero);
             var ok = await _vm.SaveOrUpdateConsumptionAsync(selectedDate, consumo);
             if (!ok)
             {
-                MessageBox.Show("No se pudo guardar en la base de datos. Verifique conexión y que existe el índice único (building_id, day).");
+                MessageBox.Show("It was not able to save. Check internet conexion.");
                 return;
             }
             ConsumoTextBox.Text = string.Empty;
@@ -69,7 +69,7 @@ namespace Consumo_Reducido_de_Agua_ahora_si_definitivo.MVVM.View.Editors
         {
             if (SelectedEntry == null || _vm.SelectedBuilding == null) { return; }
             var ok = await _vm.DeleteConsumptionAsync(SelectedEntry.Day.Date);
-            if (!ok) { MessageBox.Show("No se pudo eliminar en la base de datos."); return; }
+            if (!ok) { MessageBox.Show("It was not possible delete the data."); return; }
             SelectedEntry = null;
             ConsumoTextBox.Text = string.Empty;
             _userClickedGridCell = false; UpdateDeleteButtonState();
