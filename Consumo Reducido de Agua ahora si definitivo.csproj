@@ -125,7 +125,9 @@
     <Resource Include="Images\Menu Principal seleccionado.png" />
     <Resource Include="Images\Menu Principal.png" />
     <Resource Include="Images\Mes.png" />
-    <Resource Include="Images\mirenestenuevorobos.png" />
+    <Resource Include="Images\mirenestenuevorobos.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\No.png" />
     <Resource Include="Images\Ojo.png" />
     <Resource Include="Images\perrito chivas.png" />
